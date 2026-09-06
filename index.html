@@ -105,11 +105,12 @@
             transition: opacity 1s ease-in-out;
         }
 
-        .login-card input { 
+        .login-card input, .login-card select { 
             width: 100%; padding: 11px; margin-top: 6px; margin-bottom: 12px;
             background: #111724; border: 1px solid #2a364f; 
             border-radius: 8px; font-size: 14px; color: #ffffff; outline: none;
         }
+        .login-card select option { background: #111724; color: #fff; }
 
         /* PASSWORD EYE TOGGLE WRAPPER */
         .password-wrapper {
@@ -151,13 +152,190 @@
         }
         .brand-title-en { font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: 900; color: #fff; }
         .brand-sub-en { font-size: 11px; font-weight: 800; color: var(--primary-accent); letter-spacing: 0.5px; }
+        
+        .print-date-bar {
+            display: flex; justify-content: space-between; font-size: 11px; font-weight: bold;
+            color: var(--primary-accent); margin-bottom: 12px; background: #151d2a; padding: 6px 10px;
+            border-radius: 4px; border: 1px solid var(--border-color);
+        }
 
-        .btn-delete { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .tabs { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 5px; 
+            margin-bottom: 12px; 
+            border-bottom: 2px solid var(--border-color); 
+            padding-bottom: 6px; 
+        }
+        .tab-btn { 
+            padding: 8px 10px; background: #182232; border: 1px solid var(--border-color); font-weight: bold; cursor: pointer; 
+            border-radius: 6px; font-size: 11px; flex: 1 1 calc(12% - 5px); min-width: 110px; text-align: center; color: #ccc;
+        }
+        .tab-btn.active { background: var(--primary-accent); color: #000; border-color: var(--primary-accent); }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .card { background: var(--header-bg); padding: 10px; border-radius: 8px; border-left: 4px solid var(--primary-accent); box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .card h3 { margin: 0 0 4px 0; font-size: 11px; text-transform: uppercase; color: #aaa; }
+        .card p { margin: 0; font-size: 15px; font-weight: bold; color: #fff; }
+
+        form, .section-box { background: var(--header-bg); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .form-group { display: flex; flex-direction: column; gap: 3px; }
+        label { font-weight: bold; font-size: 11px; color: #ccc; }
+        input, select, textarea { padding: 8px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); border-radius: 5px; font-size: 13px; width: 100%; box-sizing: border-box; }
+        
+        button.btn-add { background: var(--primary-accent); color: #000; border: none; padding: 9px 12px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 13px; }
+        button.btn-excel { background: #1D6F42; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        button.btn-edit { background: #ffc107; color: #000; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        button.btn-delete { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        button.btn-print { background: #0288d1; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 8px; border-radius: 6px; border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; background: var(--card-bg); font-size: 12px; table-layout: fixed; }
+        th, td { border: 1px solid var(--border-color); padding: 6px 8px; text-align: left; word-wrap: break-word; }
+        th { background-color: #152238; color: var(--primary-accent); text-align: center; }
+
+        .pos-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 768px) {
+            .pos-container { grid-template-columns: 1fr; }
+            .brand-header-custom { grid-template-columns: 1fr; text-align: center; gap: 8px; }
+            .tab-btn { flex: 1 1 calc(33% - 5px); }
+        }
+
+        .pos-card { background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+
+        .snd-invoice-preview { background: #fff; padding: 10px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; color: #000; box-sizing: border-box; width: 100%; }
+        .snd-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px dashed #000; padding-bottom: 6px; margin-bottom: 6px; }
+        .snd-table { width: 100%; border-collapse: collapse; margin: 6px 0; table-layout: fixed; }
+        .snd-table th, .snd-table td { border-bottom: 1px solid #ddd; padding: 3px 2px; font-size: 10px; color: #000; }
+
+        .badge-pending { background: #ffc107; color: #000; padding: 2px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+        .badge-approved { background: #28a745; color: #fff; padding: 2px 5px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+
+        /* LIVE AI ASSISTANT WIDGET STYLES */
+        #aiAssistantContainer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9990;
+        }
+
+        .ai-toggle-btn {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #000;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0,230,118,0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-chat-box {
+            display: none;
+            width: 320px;
+            height: 400px;
+            background: var(--card-bg);
+            border: 1px solid var(--primary-accent);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            flex-direction: column;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .ai-chat-header {
+            background: #152238;
+            color: var(--primary-accent);
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ai-chat-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .ai-msg {
+            padding: 6px 10px;
+            border-radius: 8px;
+            max-width: 85%;
+            word-wrap: break-word;
+        }
+
+        .ai-msg.user {
+            background: #00c853;
+            color: #000;
+            align-self: flex-end;
+            font-weight: bold;
+        }
+
+        .ai-msg.bot {
+            background: #182232;
+            color: #fff;
+            align-self: flex-start;
+            border: 1px solid var(--border-color);
+        }
+
+        .ai-chat-footer {
+            padding: 8px;
+            display: flex;
+            gap: 5px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ai-chat-footer input {
+            flex: 1;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        @page { size: A4 landscape; margin: 5mm; }
+        @media print {
+            .no-print, .tabs, form, button, .user-info-bar, .print-date-bar, #aiAssistantContainer, #tradingBgCanvas { display: none !important; }
+            body { background: white !important; padding: 0; margin: 0; color: #000; font-size: 11px; }
+            .container { box-shadow: none; padding: 0; width: 100%; border: none; background: white; }
+            body.print-invoice-mode * { visibility: hidden; }
+            body.print-invoice-mode #printWrapper, body.print-invoice-mode #printWrapper * { visibility: visible; }
+            
+            #printWrapper {
+                position: absolute; left: 0; top: 0; width: 100vw; height: 100vh;
+                display: flex !important; flex-direction: row !important; justify-content: space-around; align-items: center;
+                padding: 2mm; box-sizing: border-box; background: #fff;
+            }
+
+            .a5-invoice-half {
+                width: 48%; height: 98%; border: 1px dashed #000; padding: 8px;
+                box-sizing: border-box; font-family: 'Courier New', Courier, monospace; overflow: hidden;
+            }
+        }
+        #printWrapper { display: none; }
     </style>
 </head>
 <body>
 
+<!-- ANIMATED TRADING BACKGROUND CANVAS -->
 <canvas id="tradingBgCanvas"></canvas>
+
+<!-- AUDIO FOR QARI SUDAIS BISMILLAH -->
+<audio id="bismillahAudio" src="https://server8.mp3quran.net/sds/001.mp3" preload="auto"></audio>
 
 <!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="no-print">
@@ -168,8 +346,8 @@
         <h2 style="color: var(--primary-accent);">🔒 System Login</h2>
         <p style="font-size: 11px; color: #888; margin-bottom: 12px;">HUSSAIN TRADERS - ERP v10.0</p>
         
-        <label style="text-align: left; display: block;">Enter Username:</label>
-        <input type="text" id="loginUserInput" placeholder="Enter Username" value="admin">
+        <label style="text-align: left; display: block;">Select Login User:</label>
+        <select id="loginUserSelect"></select>
         
         <label style="text-align: left; display: block; margin-top: 5px;">Password:</label>
         <div class="password-wrapper">
@@ -185,10 +363,12 @@
     <div class="user-info-bar no-print">
         <div>👤 Active User: <strong id="loggedUsername">ADMIN</strong> (<span id="userRoleBadge">Admin</span>)</div>
         <div>
+            <button class="btn-excel" onclick="toggleNightMode()" style="margin-right: 8px;">🌙 / ☀️ Mode</button>
             <button class="btn-delete" onclick="logout()">Logout 🚪</button>
         </div>
     </div>
 
+    <!-- MAIN BRAND HEADER -->
     <div class="brand-header-custom">
         <div>
             <img src="Gemini_Generated_Image_mrfbflmrfbflmrfb.jpeg" alt="Hussain Traders Logo" class="brand-logo" onerror="this.style.display='none'">
@@ -202,43 +382,794 @@
         </div>
     </div>
 
-    <div style="padding: 20px; text-align: center;">
-        <h3>سسٹم کامیابی سے لاگ ان ہو چکا ہے۔</h3>
-        <p>آپ **admin / admin** کے ذریعے سائن ان ہیں۔</p>
+    <div class="print-date-bar no-print">
+        <div>REPORT TYPE: <span id="reportTypeLabel">Dashboard Overview</span></div>
+        <div>LIVE TIME & DATE: <span id="liveDateTimeLabel" style="color: var(--primary-accent);">--</span></div>
+    </div>
+    
+    <!-- TABS -->
+    <div class="tabs no-print">
+        <button class="tab-btn active" id="tab_dashboard" onclick="openTab('dashboard', this)">📊 Dashboard</button>
+        <button class="tab-btn" id="tab_posSales" onclick="openTab('posSales', this)">🛒 Order Punching</button>
+        <button class="tab-btn" id="tab_recoveryEntry" onclick="openTab('recoveryEntry', this)">💰 Wasoli</button>
+        <button class="tab-btn" id="tab_recoveryApprovals" onclick="openTab('recoveryApprovals', this)">✅ Approvals</button>
+        <button class="tab-btn" id="tab_invoicesList" onclick="openTab('invoicesList', this)">📄 Saved Invoices</button>
+        <button class="tab-btn" id="tab_discountReport" onclick="openTab('discountReport', this)">🏷️ Discount Report</button>
+        <button class="tab-btn" id="tab_profitLoss" onclick="openTab('profitLoss', this)">📈 Profit & Loss</button>
+        <button class="tab-btn" id="tab_picklistTab" onclick="openTab('picklistTab', this)">📦 Warehouse Picklist</button>
+        <button class="tab-btn" id="tab_ledger" onclick="openTab('ledger', this)">🔍 Shop Ledger</button>
+        <button class="tab-btn" id="tab_shops" onclick="openTab('shops', this)">🏪 Shops Mgmt</button>
+        <button class="tab-btn" id="tab_stockManagement" onclick="openTab('stockManagement', this)">📦 Stock Mgmt</button>
+        <button class="tab-btn" id="tab_bookerReports" onclick="openTab('bookerReports', this)">📋 Shopwise Report</button>
+        <button class="tab-btn" id="tab_deliveryMen" onclick="openTab('deliveryMen', this)">🚚 Delivery Men</button>
+        <button class="tab-btn" id="tab_users" onclick="openTab('users', this)">⚙️ Permissions</button>
+        <button class="tab-btn" id="tab_backup" onclick="openTab('backup', this)">💾 Backup</button>
+    </div>
+
+    <!-- 1. DASHBOARD -->
+    <div id="dashboard" class="tab-content active">
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Market Credit</h3>
+                <p id="dashTotalUdhaar">Rs. 0</p>
+            </div>
+            <div class="card">
+                <h3>Total Registered Shops</h3>
+                <p id="dashTotalShops">0</p>
+            </div>
+            <div class="card">
+                <h3>Total Discounts Given</h3>
+                <p id="dashTotalDiscount" style="color: #ff5252;">Rs. 0</p>
+            </div>
+            <div class="card">
+                <h3>Pending Recoveries</h3>
+                <p id="dashPendingRecoveries">Rs. 0</p>
+            </div>
+        </div>
+
+        <h3>Market Credit & Booker Wise Detail</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 35px;">#</th>
+                        <th>Booker Name</th>
+                        <th style="width: 70px;">Shops</th>
+                        <th style="width: 70px;">Punched</th>
+                        <th>Market Credit</th>
+                        <th>Recovery</th>
+                        <th>Pending</th>
+                        <th>Net Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="dashBookerSummaryTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 2. POS / ORDER PUNCHING -->
+    <div id="posSales" class="tab-content">
+        <h3 id="posFormModeTitle">🛒 Order Punching & Billing</h3>
+        <div class="pos-container">
+            <div class="pos-card">
+                <h4 style="color: var(--primary-accent); margin-bottom: 8px;">Order Details</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Invoice No:</label>
+                        <input type="text" id="posInvNum" readonly style="font-weight: bold; color: var(--primary-accent);">
+                    </div>
+                    <div class="form-group">
+                        <label>Order Date *:</label>
+                        <input type="date" id="posInvDate" onchange="calculatePosTotals()">
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Date *:</label>
+                        <input type="date" id="posDeliveryDate" onchange="calculatePosTotals()">
+                    </div>
+                    <div class="form-group">
+                        <label>Booker *:</label>
+                        <select id="posBookerSelect" onchange="filterPosShopsByBooker()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Shop *:</label>
+                        <select id="posShopSelect" onchange="updatePrevShopName()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Delivery Person:</label>
+                        <select id="posDeliveryPersonSelect" onchange="calculatePosTotals()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Type:</label>
+                        <select id="posPaymentType" onchange="calculatePosTotals()">
+                            <option value="Credit">Credit (ادھار)</option>
+                            <option value="Cash">Cash (نقد)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--primary-accent); margin: 12px 0 8px 0;">Add Products</h4>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 6px; margin-bottom: 8px;">
+                    <div>
+                        <input type="text" id="posStockInput" list="stockDatalist" placeholder="🔍 Search Product..." onchange="autoFillItemRateFromInput()">
+                        <datalist id="stockDatalist"></datalist>
+                    </div>
+                    <input type="number" id="posItemQty" placeholder="Qty" value="1">
+                    <input type="number" id="posItemRate" placeholder="Rate">
+                    <button class="btn-add" onclick="addPosItem()">+ Add</button>
+                </div>
+
+                <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item Description</th>
+                                <th style="width: 40px;">Qty</th>
+                                <th style="width: 55px;">Rate</th>
+                                <th style="width: 65px;">Total</th>
+                                <th style="width: 30px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="posItemsTbody"></tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px;">
+                        <span>Subtotal:</span><strong id="posSubtotalLbl">Rs. 0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">
+                        <span>Discount / Adjustment:</span>
+                        <input type="number" id="posDiscount" value="0" oninput="calculatePosTotals()" style="width: 90px; text-align: right; padding: 4px;">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">
+                        <span>On-Spot Cash Paid:</span>
+                        <input type="number" id="posPaid" value="0" oninput="calculatePosTotals()" style="width: 90px; text-align: right; padding: 4px;">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px; border-top: 2px solid var(--primary-accent); padding-top: 4px;">
+                        <span>Net Credit Balance:</span><strong id="posGrandTotalLbl" style="color: var(--primary-accent);">Rs. 0</strong>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+                    <button class="btn-add" id="btnSaveInvoice" style="flex:1; min-width: 120px;" onclick="savePosInvoice(false)">Save Order 💾</button>
+                    <button class="btn-excel" style="background: #0288d1; flex:1; min-width: 120px;" onclick="savePosInvoice(true)">Save & Print 🖨️</button>
+                    <button class="btn-delete" onclick="resetPosForm()">Reset / Cancel</button>
+                </div>
+            </div>
+
+            <!-- LIVE INVOICE PREVIEW -->
+            <div class="pos-card">
+                <div class="snd-invoice-preview" id="livePreviewBox">
+                    <div class="snd-header">
+                        <div>
+                            <h3 style="margin:0; font-size: 15px; font-family: 'Montserrat', sans-serif;">HUSSAIN TRADERS</h3>
+                            <p style="font-size:9px; font-weight: bold;">Bannu Road, Dera Ismail Khan</p>
+                            <p style="font-size:9px; font-weight: bold; color: #1b5e20;">Phone: 03347218606</p>
+                            <p style="margin-top: 4px; font-weight: bold; font-size: 10px; border: 1px solid #000; display: inline-block; padding: 1px 4px;">SALES INVOICE</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <img src="Gemini_Generated_Image_mrfbflmrfbflmrfb.jpeg" style="height: 75px; width: auto; object-fit: contain;" alt="Logo" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                    <div style="font-size: 9px; margin-bottom: 6px; display: flex; justify-content: space-between; border-bottom: 1px dashed #000; padding-bottom: 4px;">
+                        <div>
+                            <div><strong>Inv #:</strong> <span id="prevInvNum">INV-1001</span></div>
+                            <div><strong>Shop:</strong> <span id="prevCustomer">GENERAL SHOP</span></div>
+                            <div><strong>Owner:</strong> <span id="prevOwner">N/A</span></div>
+                            <div><strong>Contact:</strong> <span id="prevShopContact">03xx-xxxxxxx</span></div>
+                            <div><strong>Address:</strong> <span id="prevShopAddress">D.I.Khan</span></div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div><strong>Date:</strong> <span id="prevDate">--</span></div>
+                            <div><strong>Deliv Date:</strong> <span id="prevDeliveryDate">--</span></div>
+                            <div><strong>Booker:</strong> <span id="prevBooker">ADMIN</span></div>
+                            <div><strong>Delivery Man:</strong> <span id="prevDeliveryMan">N/A</span></div>
+                            <div><strong>Type:</strong> <span id="prevPaymentType" style="font-weight:bold;">Credit</span></div>
+                        </div>
+                    </div>
+
+                    <table class="snd-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 45%;">Item Description</th>
+                                <th style="text-align: center; width: 15%;">Qty</th>
+                                <th style="text-align: right; width: 20%;">Rate</th>
+                                <th style="text-align: right; width: 20%;">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prevItemsTbody">
+                            <tr><td colspan="4" style="text-align:center;">No Items Added</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div style="border-top: 1px dashed #000; padding-top: 4px; font-size: 10px;">
+                        <div style="display: flex; justify-content: space-between;"><span>Sub Total:</span><span id="prevSubtotal">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Discount:</span><span id="prevDiscount">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between; font-weight:bold;"><span>Grand Total:</span><span id="prevGrandTotal">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Cash Paid:</span><span id="prevPaid">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between; color: #d32f2f; font-weight:bold;"><span>Balance Due:</span><span id="prevBalance">Rs. 0</span></div>
+                    </div>
+
+                    <div style="margin-top: 15px; border-top: 1px solid #000; padding-top: 10px; display: flex; justify-content: space-between; font-size: 9px;">
+                        <div style="text-align: center; width: 45%;">
+                            <div>_______________________</div>
+                            <div>Customer Signature</div>
+                        </div>
+                        <div style="text-align: center; width: 45%;">
+                            <div>_______________________</div>
+                            <div>Delivery Man Signature</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. WASOLI / RECOVERY ENTRY -->
+    <div id="recoveryEntry" class="tab-content">
+        <h3>💰 Market Wasoli / Cash Recovery Submission</h3>
+        <div class="section-box no-print" style="max-width: 500px; margin: 0 auto;">
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label>Recovery Date:</label>
+                <input type="date" id="recDate">
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label>Booker Name:</label>
+                <select id="recBookerSelect" onchange="filterRecoveryShopsByBooker()"></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label>Select Shop / Customer:</label>
+                <select id="recShopSelect"></select>
+            </div>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label>Recovered Cash Amount (Rs):</label>
+                <input type="number" id="recAmount" placeholder="Enter Cash Amount Collected">
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label>Remarks / Notes:</label>
+                <input type="text" id="recNotes" placeholder="Optional details...">
+            </div>
+            <button class="btn-add" style="width: 100%;" onclick="submitRecoveryEntry()">Submit Recovery For Approval 📤</button>
+        </div>
+
+        <h3>Recent Recovery Entries</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Date</th>
+                        <th>Shop Name</th>
+                        <th>Booker</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="userRecoveryTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. ADMIN APPROVALS -->
+    <div id="recoveryApprovals" class="tab-content">
+        <h3>✅ Admin Approval Center for Market Recovery</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Date</th>
+                        <th>Booker Name</th>
+                        <th>Shop Name</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="adminApprovalTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 5. SAVED INVOICES WITH EDIT OPTION -->
+    <div id="invoicesList" class="tab-content">
+        <h3>📄 Saved Invoices & Orders (غلط انوائس کو یہاں سے ٹھیک / ایڈٹ کریں)</h3>
+        <div class="section-box no-print">
+            <input type="text" id="searchInvoiceInput" placeholder="Search Invoice No, Shop or Booker..." oninput="renderInvoicesList()">
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Inv #</th>
+                        <th>Date</th>
+                        <th>Delivery Date</th>
+                        <th>Booker</th>
+                        <th>Shop Name</th>
+                        <th>Grand Total</th>
+                        <th>Balance</th>
+                        <th class="no-print" style="width: 140px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="invoicesTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. DISCOUNT REPORT -->
+    <div id="discountReport" class="tab-content">
+        <h3>🏷️ Total Discount Report</h3>
+        <div class="section-box no-print">
+            <div class="form-grid">
+                <div>
+                    <label>Filter Booker:</label>
+                    <select id="discBookerFilter" onchange="renderDiscountReport()"><option value="ALL">All Bookers</option></select>
+                </div>
+                <div>
+                    <label>Filter Date:</label>
+                    <input type="date" id="discDateFilter" onchange="renderDiscountReport()">
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-excel" style="width:100%;" onclick="window.print()">Print Discount Report 🖨️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive print-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Invoice No</th>
+                        <th>Date</th>
+                        <th>Booker Name</th>
+                        <th>Shop Name</th>
+                        <th>Subtotal</th>
+                        <th>Discount Given (Rs)</th>
+                        <th>Final Total</th>
+                    </tr>
+                </thead>
+                <tbody id="discountReportTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 7. PROFIT & LOSS REPORT -->
+    <div id="profitLoss" class="tab-content">
+        <h3>📈 Profit & Loss Report</h3>
+        <div class="section-box no-print">
+            <div class="form-grid">
+                <div>
+                    <label>Select View Period:</label>
+                    <select id="plPeriodSelect" onchange="renderProfitLossReport()">
+                        <option value="Daily">Daily (روزانہ)</option>
+                        <option value="Weekly">Weekly (ہفتہ وار)</option>
+                        <option value="Monthly">Monthly (ماہانہ)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>Total Sales Volume</h3>
+                <p id="plTotalSales">Rs. 0</p>
+            </div>
+            <div class="card">
+                <h3>Total Purchase Cost</h3>
+                <p id="plTotalCost">Rs. 0</p>
+            </div>
+            <div class="card">
+                <h3>Net Profit Amount</h3>
+                <p id="plNetProfit" style="color:var(--primary-accent);">Rs. 0</p>
+            </div>
+            <div class="card">
+                <h3>Profit Margin (%)</h3>
+                <p id="plProfitMargin" style="color:#0288d1;">0 %</p>
+            </div>
+        </div>
+
+        <div class="table-responsive print-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Time Period</th>
+                        <th>Total Sales</th>
+                        <th>Total Cost</th>
+                        <th>Discounts</th>
+                        <th>Net Profit (Rs)</th>
+                        <th>Profit Margin (%)</th>
+                    </tr>
+                </thead>
+                <tbody id="profitLossTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 8. WAREHOUSE PICKLIST -->
+    <div id="picklistTab" class="tab-content">
+        <h3>📦 Warehouse Stock Picklist</h3>
+        <div class="section-box no-print">
+            <div class="form-grid">
+                <div>
+                    <label>Filter Date:</label>
+                    <input type="date" id="picklistDate" onchange="renderPicklist()">
+                </div>
+                <div>
+                    <label>Filter Booker:</label>
+                    <select id="picklistBookerSelect" onchange="renderPicklist()"></select>
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-excel" style="width:100%;" onclick="window.print()">Print Picklist 🖨️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-area" style="background:#fff; color:#000; padding:15px; border:1px solid #ccc;">
+            <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:10px;">
+                <div class="urdu-title-main" style="color:#d32f2f;">حُسَیْن ٹْرِیَڈَرْزْ</div>
+                <h2>HUSSAIN TRADERS - WAREHOUSE STOCK PICKLIST</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">#</th>
+                            <th>Product Name</th>
+                            <th style="width:120px; text-align:center;">Total Qty Picked</th>
+                        </tr>
+                    </thead>
+                    <tbody id="picklistTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. SHOP LEDGER -->
+    <div id="ledger" class="tab-content">
+        <h3>🔍 Shop Ledger Details</h3>
+        <div class="section-box no-print" style="display:flex; gap:10px;">
+            <select id="ledgerShopFilter" onchange="renderLedger()" style="max-width: 250px;"></select>
+            <button class="btn-excel" onclick="window.print()">Print Ledger 🖨️</button>
+        </div>
+        <div class="table-responsive print-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Date</th>
+                        <th>Shop Name</th>
+                        <th>Booker</th>
+                        <th>Type / Ref</th>
+                        <th>Credit</th>
+                        <th>Recovery</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="ledgerTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 10. SHOPS MANAGEMENT -->
+    <div id="shops" class="tab-content">
+        <h3>🏪 Shops Management</h3>
+        <div class="section-box no-print" id="shopAdminControls">
+            <h4>Add New Shop</h4>
+            <div class="form-grid" style="margin-top: 8px;">
+                <input type="text" id="newShopName" placeholder="Shop Name *">
+                <input type="text" id="newOwnerName" placeholder="Owner Name *">
+                <input type="text" id="newShopContact" placeholder="Contact Number *">
+                <input type="text" id="newShopAddress" placeholder="Shop Address *">
+                <select id="newShopBooker"></select>
+                <button class="btn-add" onclick="addSingleShop()">Add Shop</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Shop Name</th>
+                        <th>Owner Name</th>
+                        <th>Contact</th>
+                        <th>Address</th>
+                        <th>Booker</th>
+                        <th>Net Balance</th>
+                        <th class="no-print">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="shopsTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 11. STOCK MANAGEMENT -->
+    <div id="stockManagement" class="tab-content">
+        <h3>📦 Stock & Inventory Management</h3>
+        <div class="form-grid section-box no-print" id="stockAddControls">
+            <input type="date" id="stockDate">
+            <input type="text" id="stockItemName" placeholder="Product Name">
+            <input type="number" id="stockCostPrice" placeholder="Purchase Cost (Rs)">
+            <input type="number" id="stockQty" placeholder="Purchased Qty">
+            <input type="number" id="stockSalePrice" placeholder="Selling Price (Rs)">
+            <button class="btn-add" onclick="addStockItem()">Add Stock Item</button>
+        </div>
+
+        <h3>Live Inventory Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Product Name</th>
+                        <th>Purchase Cost</th>
+                        <th>Selling Price</th>
+                        <th>Available Stock</th>
+                        <th class="no-print">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="stockReportTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 12. SHOP WISE REPORT -->
+    <div id="bookerReports" class="tab-content">
+        <h3>📋 Single-Page Shop Wise Sale & Recovery Report</h3>
+        <div class="section-box no-print">
+            <div class="form-grid">
+                <div>
+                    <label>Filter Date:</label>
+                    <input type="date" id="shopReportDate" onchange="renderShopWiseReport()">
+                </div>
+                <div>
+                    <label>Filter Booker:</label>
+                    <select id="shopReportBookerSelect" onchange="renderShopWiseReport()"><option value="ALL">All Bookers</option></select>
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-print" style="width:100%; padding: 8px;" onclick="window.print()">Print Report 🖨️</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-area" style="background:#fff; color:#000; padding: 10px; border:1px solid #ccc;">
+            <div style="text-align: center; border-bottom:2px solid #000; padding-bottom:5px; margin-bottom:10px;">
+                <div class="urdu-title-main" style="color:#d32f2f;">حُسَیْن ٹْرِیَڈَرْزْ</div>
+                <h2 style="margin:0;">HUSSAIN TRADERS - BOOKER SHOPWISE REPORT</h2>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+                            <th style="width: 20%;">Shop Name</th>
+                            <th style="width: 15%;">Booker</th>
+                            <th style="width: 35%;">Stock Items Lifted</th>
+                            <th style="width: 15%;">Sale Amount</th>
+                            <th style="width: 15%;">Recovery Cash</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shopWiseReportTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 13. DELIVERY MEN -->
+    <div id="deliveryMen" class="tab-content">
+        <h3>🚚 Delivery Men Management</h3>
+        <div class="form-grid section-box no-print">
+            <input type="text" id="newDeliveryManName" placeholder="Delivery Man Name">
+            <input type="text" id="newDeliveryManPhone" placeholder="Phone Number">
+            <button class="btn-add" onclick="addDeliveryMan()">Add Delivery Person</button>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Delivery Man Name</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="deliveryMenTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 14. USER ROLES -->
+    <div id="users" class="tab-content">
+        <h3>⚙️ User Roles & Access Control</h3>
+        <div class="section-box no-print">
+            <h4 id="userFormTitle">Add / Edit User & Assign Permissions</h4>
+            <input type="hidden" id="editingUserIdx" value="-1">
+            <div class="form-grid" style="margin-top: 8px;">
+                <input type="text" id="newUsername" placeholder="Username (e.g. Huzaifa)">
+                
+                <div class="password-wrapper">
+                    <input type="password" id="newUserPass" placeholder="Password">
+                    <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('newUserPass', this)">👁️</button>
+                </div>
+
+                <select id="newUserRole">
+                    <option value="Booker">Booker</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            
+            <h5 style="margin: 10px 0 5px 0;">Granular Module Permissions:</h5>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px;">
+                <label><input type="checkbox" id="perm_posSales" checked> Order Punching / POS</label>
+                <label><input type="checkbox" id="perm_recoveryEntry" checked> Wasoli / Recovery</label>
+                <label><input type="checkbox" id="perm_invoicesList" checked> Saved Invoices</label>
+                <label><input type="checkbox" id="perm_discountReport" checked> Discount Report</label>
+                <label><input type="checkbox" id="perm_profitLoss"> Profit & Loss</label>
+                <label><input type="checkbox" id="perm_stockManagement"> Stock Management</label>
+                <label><input type="checkbox" id="perm_shops"> Shops Mgmt</label>
+                <label><input type="checkbox" id="perm_ledger" checked> Shop Ledger</label>
+                <label><input type="checkbox" id="perm_bookerReports" checked> Shopwise Report</label>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <button class="btn-add" id="btnSaveUser" onclick="saveUserRecord()">Save User & Role</button>
+                <button class="btn-delete" id="btnCancelUserEdit" onclick="resetUserForm()" style="display:none;">Cancel Edit</button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:30px;">#</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Assigned Permissions</th>
+                        <th style="width:120px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 15. BACKUP -->
+    <div id="backup" class="tab-content">
+        <h3>💾 Daily Auto Backup & Restore</h3>
+        <div class="section-box">
+            <button class="btn-add" style="background: #6f42c1; color: #fff;" onclick="downloadBackup()">Download Backup (JSON) 📥</button>
+            <hr style="margin: 15px 0; border-color: var(--border-color);">
+            <h4>Restore System Data</h4>
+            <input type="file" id="restoreFileInput" accept=".json" style="margin-top: 8px;">
+            <button class="btn-excel" style="background: #fd7e14; margin-top: 8px;" onclick="restoreBackup()">Restore Data 📤</button>
+        </div>
     </div>
 </div>
 
+<!-- LIVE AI ASSISTANT WIDGET -->
+<div id="aiAssistantContainer" class="no-print">
+    <div class="ai-chat-box" id="aiChatBox">
+        <div class="ai-chat-header">
+            <span>🤖 Hussain Traders AI Assistant</span>
+            <button onclick="toggleAiAssistant()" style="background:none; border:none; color:#fff; cursor:pointer; font-weight:bold;">✖</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-msg bot">السلام علیکم! میں حسين ٹریڈرز کا AI اسسٹنٹ ہوں۔ میں آپ کی کیا مدد کر سکتا ہوں؟</div>
+        </div>
+        <div class="ai-chat-footer">
+            <input type="text" id="aiInputMsg" placeholder="سوال پوچھیں..." onkeypress="if(event.key==='Enter') sendAiMessage()">
+            <button class="btn-add" style="padding: 4px 8px; font-size: 11px;" onclick="sendAiMessage()">Send</button>
+        </div>
+    </div>
+    <button class="ai-toggle-btn" onclick="toggleAiAssistant()">
+        🤖 Live AI Assistant
+    </button>
+</div>
+
+<div id="printWrapper">
+    <div class="a5-invoice-half" id="printSideA"></div>
+    <div class="a5-invoice-half" id="printSideB"></div>
+</div>
+
 <script>
-    let dbUsers = JSON.parse(localStorage.getItem('ht_users')) || [];
-    
-    // Ensure default admin user always exists
-    if (!dbUsers.some(u => u.username && u.username.toLowerCase() === 'admin')) {
-        dbUsers.push({ username: 'admin', pass: 'admin', role: 'Admin', perms: ['all'] });
-        localStorage.setItem('ht_users', JSON.stringify(dbUsers));
+    // DYNAMIC TRADING ANIMATED BACKGROUND CANVAS CODE
+    const canvas = document.getElementById('tradingBgCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let candles = [];
+
+    function resizeCanvas() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        initCandles();
     }
 
-    let currentUser = null;
-
-    function attemptLogin() {
-        const usernameInput = document.getElementById('loginUserInput').value.trim().toLowerCase();
-        const passInput = document.getElementById('loginPass').value;
-        
-        // Hardcoded Fallback + LocalStorage verification
-        if ((usernameInput === 'admin' && passInput === 'admin') || dbUsers.some(u => u.username && u.username.toLowerCase() === usernameInput && u.pass === passInput)) {
-            const found = dbUsers.find(u => u.username && u.username.toLowerCase() === usernameInput) || { username: 'admin', role: 'Admin' };
-            currentUser = found;
-            document.getElementById('loggedUsername').innerText = found.username.toUpperCase();
-            document.getElementById('userRoleBadge').innerText = found.role || 'Admin';
-            document.getElementById('loginOverlay').style.display = 'none';
-        } else {
-            alert('غلط یوزر نیم یا پاسورڈ! (Default: admin / admin)');
+    function initCandles() {
+        candles = [];
+        const count = Math.floor(width / 35);
+        for (let i = 0; i < count; i++) {
+            let open = Math.random() * (height * 0.6) + (height * 0.2);
+            let close = open + (Math.random() - 0.5) * 120;
+            let high = Math.min(open, close) - Math.random() * 40;
+            let low = Math.max(open, close) + Math.random() * 40;
+            candles.push({
+                x: i * 35 + 15,
+                open, close, high, low,
+                speed: (Math.random() - 0.5) * 1.5,
+                isGreen: close <= open
+            });
         }
     }
 
-    function logout() {
-        document.getElementById('loginOverlay').style.display = 'flex';
+    function drawTradingCanvas() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw background grid lines
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+        for (let y = 0; y < height; y += 40) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(width, y);
+            ctx.stroke();
+        }
+        for (let x = 0; x < width; x += 50) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, height);
+            ctx.stroke();
+        }
+
+        // Draw animated trend line
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(0, 230, 118, 0.25)';
+        ctx.lineWidth = 2;
+        candles.forEach((c, idx) => {
+            let midY = (c.open + c.close) / 2;
+            if (idx === 0) ctx.moveTo(c.x, midY);
+            else ctx.lineTo(c.x, midY);
+        });
+        ctx.stroke();
+
+        // Draw Candlesticks
+        candles.forEach(c => {
+            c.close += c.speed;
+            if (Math.random() < 0.03) c.speed = (Math.random() - 0.5) * 1.5;
+
+            let color = c.close <= c.open ? '#00e676' : '#ff5252';
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+
+            // Wick
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.moveTo(c.x, c.high);
+            ctx.lineTo(c.x, c.low);
+            ctx.stroke();
+
+            // Body
+            let bodyTop = Math.min(c.open, c.close);
+            let bodyHeight = Math.max(Math.abs(c.close - c.open), 4);
+            ctx.fillRect(c.x - 6, bodyTop, 12, bodyHeight);
+        });
+
+        requestAnimationFrame(drawTradingCanvas);
     }
 
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    drawTradingCanvas();
+
+    // PASSWORD VISIBILITY TOGGLE FUNCTION
     function togglePasswordVisibility(inputId, btn) {
         const input = document.getElementById(inputId);
         if (input.type === "password") {
@@ -248,6 +1179,954 @@
             input.type = "password";
             btn.innerText = "👁️";
         }
+    }
+
+    // DYNAMIC BUSINESS / TRADING IMAGES FOR LOGIN SLIDER
+    const businessImages = [
+        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&w=600&q=80",
+        "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80"
+    ];
+    let currentImgIndex = 0;
+
+    function startLoginSlider() {
+        setInterval(() => {
+            currentImgIndex = (currentImgIndex + 1) % businessImages.length;
+            const imgEl = document.getElementById('loginSliderImg');
+            if(imgEl) {
+                imgEl.style.opacity = 0.2;
+                setTimeout(() => {
+                    imgEl.src = businessImages[currentImgIndex];
+                    imgEl.style.opacity = 1;
+                }, 300);
+            }
+        }, 3500);
+    }
+
+    function playEntrySound() {
+        try {
+            const ctxAud = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctxAud.createOscillator();
+            const gain = ctxAud.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, ctxAud.currentTime);
+            gain.gain.setValueAtTime(0.1, ctxAud.currentTime);
+            osc.connect(gain);
+            gain.connect(ctxAud.destination);
+            osc.start();
+            osc.stop(ctxAud.currentTime + 0.15);
+        } catch(e) { console.log(e); }
+    }
+
+    // AI ASSISTANT FUNCTIONS
+    function toggleAiAssistant() {
+        const chatBox = document.getElementById('aiChatBox');
+        chatBox.style.display = (chatBox.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    function sendAiMessage() {
+        const input = document.getElementById('aiInputMsg');
+        const text = input.value.trim();
+        if(!text) return;
+
+        const body = document.getElementById('aiChatBody');
+        body.innerHTML += `<div class="ai-msg user">${text}</div>`;
+        input.value = '';
+
+        setTimeout(() => {
+            let response = "آپ کے سوال کا جواب پروسیس کیا جا رہا ہے...";
+            if(text.includes("سیل") || text.includes("sale")) {
+                response = `کل سیلز انوائسز کی تعداد: ${dbInvoices.length} ہے۔`;
+            } else if(text.includes("اسٹاک") || text.includes("stock")) {
+                response = `موجودہ رجسٹرڈ اسٹاک آئٹمز: ${dbStock.length}۔`;
+            } else if(text.includes("شاپ") || text.includes("shop")) {
+                response = `کل رجسٹرڈ دکانیں: ${dbShops.length}۔`;
+            } else {
+                response = "حسین ٹریڈرز ERP اسسٹنٹ آپ کے ساتھ آن لائن ہے۔ میں آپ کی سیلز، وصولی اور رپورٹنگ میں مدد کر سکتا ہوں۔";
+            }
+            body.innerHTML += `<div class="ai-msg bot">${response}</div>`;
+            body.scrollTop = body.scrollHeight;
+        }, 600);
+
+        body.scrollTop = body.scrollHeight;
+    }
+
+    // INITIAL DATABASE
+    let dbInvoices = JSON.parse(localStorage.getItem('ht_invoices')) || [];
+    let dbShops = JSON.parse(localStorage.getItem('ht_shops')) || [
+        { name: 'AL-MADINA GENERAL STORE', owner: 'Muhammad Ali', contact: '03347218606', address: 'Bannu Road, D.I.Khan', booker: 'Huzaifa' }
+    ];
+    let dbStock = JSON.parse(localStorage.getItem('ht_stock')) || [];
+    let dbRecoveries = JSON.parse(localStorage.getItem('ht_recoveries')) || [];
+    let dbDeliveryMen = JSON.parse(localStorage.getItem('ht_delivery_men')) || [
+        { name: 'Tariq Khan', phone: '0311-9988776' }
+    ];
+    let dbUsers = JSON.parse(localStorage.getItem('ht_users')) || [
+        { username: 'admin', pass: 'admin', role: 'Admin', perms: ['all'] },
+        { username: 'Huzaifa', pass: '1234', role: 'Booker', perms: ['posSales', 'recoveryEntry', 'invoicesList', 'discountReport', 'stockManagement', 'shops', 'ledger', 'bookerReports', 'picklistTab'] }
+    ];
+
+    let currentUser = dbUsers[0];
+    let currentPosItems = [];
+    let editingInvoiceId = null;
+
+    window.onload = function() {
+        startLoginSlider();
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        const today = new Date().toISOString().slice(0,10);
+        document.getElementById('posInvDate').value = today;
+        document.getElementById('posDeliveryDate').value = today;
+        document.getElementById('recDate').value = today;
+        document.getElementById('stockDate').value = today;
+        document.getElementById('shopReportDate').value = today;
+        document.getElementById('picklistDate').value = today;
+        
+        populateUserLoginDropdown();
+        populateBookerDropdowns();
+        populateDeliveryMenDropdown();
+        populateStockDatalist();
+        renderDashboard();
+        renderInvoicesList();
+        renderLedger();
+        renderShops();
+        renderStockReport();
+        renderDeliveryMen();
+        renderUsers();
+        renderRecoveryTables();
+        generateNextInvoiceNum();
+        applyRolePermissions();
+    };
+
+    function updateClock() {
+        document.getElementById('liveDateTimeLabel').innerText = new Date().toLocaleString();
+    }
+
+    function toggleNightMode() {
+        document.body.classList.toggle('dark-mode');
+    }
+
+    // POPULATE LOGIN DROPDOWN PROPERLY (FIXED UNDEFINED ERROR)
+    function populateUserLoginDropdown() {
+        const sel = document.getElementById('loginUserSelect');
+        if(!sel) return;
+        if(dbUsers && dbUsers.length > 0) {
+            sel.innerHTML = dbUsers.map(u => `<option value="${u.username}">${u.username} (${u.role || 'User'})</option>`).join('');
+        } else {
+            sel.innerHTML = `<option value="admin">admin (Admin)</option>`;
+        }
+    }
+
+    function attemptLogin() {
+        const uName = document.getElementById('loginUserSelect').value;
+        const pass = document.getElementById('loginPass').value;
+        const found = dbUsers.find(x => x.username === uName && x.pass === pass);
+        
+        if(found) {
+            currentUser = found;
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('loggedUsername').innerText = currentUser.username;
+            document.getElementById('userRoleBadge').innerText = currentUser.role;
+
+            playEntrySound();
+            
+            const audio = document.getElementById('bismillahAudio');
+            if(audio) {
+                audio.play().catch(e => console.log('Audio Autoplay Blocked:', e));
+            }
+
+            applyRolePermissions();
+            populateBookerDropdowns();
+            renderDashboard();
+            renderShops();
+            renderRecoveryTables();
+            filterPosShopsByBooker();
+            filterRecoveryShopsByBooker();
+        } else {
+            alert('غلط پاسورڈ!');
+        }
+    }
+
+    function logout() {
+        document.getElementById('loginOverlay').style.display = 'flex';
+    }
+
+    function applyRolePermissions() {
+        const isAdmin = currentUser.role === 'Admin';
+        const tabsMap = ['dashboard', 'posSales', 'recoveryEntry', 'recoveryApprovals', 'invoicesList', 'discountReport', 'profitLoss', 'picklistTab', 'ledger', 'shops', 'stockManagement', 'bookerReports', 'deliveryMen', 'users', 'backup'];
+        
+        tabsMap.forEach(t => {
+            const btn = document.getElementById(`tab_${t}`);
+            if(!btn) return;
+
+            if(isAdmin || (currentUser.perms && currentUser.perms.includes('all')) || (currentUser.perms && currentUser.perms.includes(t)) || t === 'dashboard') {
+                btn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+
+        const shopAdmin = document.getElementById('shopAdminControls');
+        if(shopAdmin) shopAdmin.style.display = (isAdmin || (currentUser.perms && currentUser.perms.includes('shops'))) ? 'block' : 'none';
+        
+        const stockAdd = document.getElementById('stockAddControls');
+        if(stockAdd) stockAdd.style.display = (isAdmin || (currentUser.perms && currentUser.perms.includes('stockManagement'))) ? 'grid' : 'none';
+    }
+
+    function openTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if(btn) btn.classList.add('active');
+        if(tabId === 'bookerReports') renderShopWiseReport();
+        if(tabId === 'picklistTab') renderPicklist();
+        if(tabId === 'discountReport') renderDiscountReport();
+        if(tabId === 'profitLoss') renderProfitLossReport();
+    }
+
+    function populateBookerDropdowns() {
+        const bookers = dbUsers.map(u => u.username);
+        let opts = bookers.map(b => `<option value="${b}">${b}</option>`).join('');
+        
+        document.getElementById('posBookerSelect').innerHTML = opts;
+        document.getElementById('recBookerSelect').innerHTML = opts;
+        document.getElementById('newShopBooker').innerHTML = opts;
+        document.getElementById('shopReportBookerSelect').innerHTML = `<option value="ALL">All Bookers</option>` + opts;
+        document.getElementById('picklistBookerSelect').innerHTML = `<option value="ALL">All Bookers</option>` + opts;
+        document.getElementById('discBookerFilter').innerHTML = `<option value="ALL">All Bookers</option>` + opts;
+
+        filterPosShopsByBooker();
+        filterRecoveryShopsByBooker();
+    }
+
+    function populateDeliveryMenDropdown() {
+        const sel = document.getElementById('posDeliveryPersonSelect');
+        sel.innerHTML = dbDeliveryMen.map(d => `<option value="${d.name}">${d.name}</option>`).join('');
+    }
+
+    function populateStockDatalist() {
+        const datalist = document.getElementById('stockDatalist');
+        datalist.innerHTML = dbStock.map(stk => `<option value="${stk.name}">Rs. ${stk.salePrice}</option>`).join('');
+    }
+
+    function autoFillItemRateFromInput() {
+        const inputVal = document.getElementById('posStockInput').value.trim().toUpperCase();
+        const found = dbStock.find(s => s.name.toUpperCase() === inputVal);
+        if(found) document.getElementById('posItemRate').value = found.salePrice;
+    }
+
+    function filterPosShopsByBooker() {
+        const selectedBooker = document.getElementById('posBookerSelect').value;
+        const shopSel = document.getElementById('posShopSelect');
+        
+        let filteredShops = dbShops;
+        if(currentUser.role !== 'Admin' && (!currentUser.perms || !currentUser.perms.includes('all'))) {
+            filteredShops = dbShops.filter(s => s.booker === currentUser.username);
+            document.getElementById('posBookerSelect').value = currentUser.username;
+        } else {
+            if(selectedBooker) filteredShops = dbShops.filter(s => s.booker === selectedBooker);
+        }
+
+        shopSel.innerHTML = filteredShops.map(s => `<option value="${s.name}">${s.name}</option>`).join('') || '<option value="">No Shops Found</option>';
+        updatePrevShopName();
+    }
+
+    function filterRecoveryShopsByBooker() {
+        const selectedBooker = document.getElementById('recBookerSelect').value;
+        const shopSel = document.getElementById('recShopSelect');
+        
+        let filteredShops = dbShops;
+        if(currentUser.role !== 'Admin' && (!currentUser.perms || !currentUser.perms.includes('all'))) {
+            filteredShops = dbShops.filter(s => s.booker === currentUser.username);
+            document.getElementById('recBookerSelect').value = currentUser.username;
+        } else {
+            if(selectedBooker) filteredShops = dbShops.filter(s => s.booker === selectedBooker);
+        }
+
+        shopSel.innerHTML = filteredShops.map(s => `<option value="${s.name}">${s.name}</option>`).join('') || '<option value="">No Shops Found</option>';
+    }
+
+    function updatePrevShopName() {
+        const sName = document.getElementById('posShopSelect').value || 'GENERAL SHOP';
+        const foundShop = dbShops.find(s => s.name.toUpperCase() === sName.toUpperCase());
+
+        document.getElementById('prevCustomer').innerText = sName.toUpperCase();
+        document.getElementById('prevOwner').innerText = foundShop ? (foundShop.owner || 'N/A') : 'N/A';
+        document.getElementById('prevShopAddress').innerText = foundShop ? (foundShop.address || 'D.I.Khan') : 'D.I.Khan';
+        document.getElementById('prevShopContact').innerText = foundShop ? (foundShop.contact || 'N/A') : 'N/A';
+    }
+
+    function generateNextInvoiceNum() {
+        const nextNum = 1001 + dbInvoices.length;
+        document.getElementById('posInvNum').value = `INV-${nextNum}`;
+        document.getElementById('prevInvNum').innerText = `INV-${nextNum}`;
+    }
+
+    function addPosItem() {
+        const desc = document.getElementById('posStockInput').value.trim().toUpperCase();
+        const qty = parseFloat(document.getElementById('posItemQty').value) || 0;
+        const rate = parseFloat(document.getElementById('posItemRate').value) || 0;
+
+        if(!desc || qty <= 0 || rate <= 0) {
+            alert('پروڈکٹ درج کریں!');
+            return;
+        }
+
+        playEntrySound();
+        currentPosItems.push({ desc, qty, rate, amount: qty * rate });
+        document.getElementById('posStockInput').value = '';
+        document.getElementById('posItemQty').value = '1';
+        document.getElementById('posItemRate').value = '';
+        renderPosItems();
+    }
+
+    function renderPosItems() {
+        const tbody = document.getElementById('posItemsTbody');
+        const prevTbody = document.getElementById('prevItemsTbody');
+        let html = '', prevHtml = '';
+
+        currentPosItems.forEach((item, idx) => {
+            html += `<tr><td>${item.desc}</td><td>${item.qty}</td><td>${item.rate}</td><td>${item.amount}</td><td><button class="btn-delete" onclick="currentPosItems.splice(${idx},1);renderPosItems();">X</button></td></tr>`;
+            prevHtml += `<tr><td>${item.desc}</td><td style="text-align:center;">${item.qty}</td><td style="text-align:right;">${item.rate}</td><td style="text-align:right;">${item.amount}</td></tr>`;
+        });
+
+        tbody.innerHTML = html;
+        if(prevTbody) prevTbody.innerHTML = prevHtml || `<tr><td colspan="4" style="text-align:center;">No Items Added</td></tr>`;
+        calculatePosTotals();
+    }
+
+    function calculatePosTotals() {
+        let subtotal = currentPosItems.reduce((acc, i) => acc + i.amount, 0);
+        let discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+        let paid = parseFloat(document.getElementById('posPaid').value) || 0;
+        let grandTotal = Math.max(0, subtotal - discount);
+        let balance = grandTotal - paid;
+
+        document.getElementById('posSubtotalLbl').innerText = `Rs. ${subtotal.toLocaleString()}`;
+        document.getElementById('posGrandTotalLbl').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+
+        document.getElementById('prevSubtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
+        document.getElementById('prevDiscount').innerText = `Rs. ${discount.toLocaleString()}`;
+        document.getElementById('prevGrandTotal').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+        document.getElementById('prevPaid').innerText = `Rs. ${paid.toLocaleString()}`;
+        document.getElementById('prevBalance').innerText = `Rs. ${balance.toLocaleString()}`;
+
+        document.getElementById('prevDate').innerText = document.getElementById('posInvDate').value;
+        document.getElementById('prevDeliveryDate').innerText = document.getElementById('posDeliveryDate').value;
+        document.getElementById('prevBooker').innerText = document.getElementById('posBookerSelect').value;
+        document.getElementById('prevDeliveryMan').innerText = document.getElementById('posDeliveryPersonSelect').value || 'N/A';
+        document.getElementById('prevPaymentType').innerText = document.getElementById('posPaymentType').value;
+    }
+
+    function editInvoice(id) {
+        const inv = dbInvoices.find(i => i.id === id);
+        if(!inv) return;
+
+        editingInvoiceId = inv.id;
+        currentPosItems = [...inv.items];
+
+        document.getElementById('posInvNum').value = inv.invNum;
+        document.getElementById('posInvDate').value = inv.date;
+        document.getElementById('posDeliveryDate').value = inv.deliveryDate;
+        document.getElementById('posBookerSelect').value = inv.booker;
+        document.getElementById('posShopSelect').value = inv.shop;
+        document.getElementById('posDeliveryPersonSelect').value = inv.deliveryMan || '';
+        document.getElementById('posPaymentType').value = inv.paymentType || 'Credit';
+        document.getElementById('posDiscount').value = inv.discount;
+        document.getElementById('posPaid').value = inv.paid;
+
+        document.getElementById('posFormModeTitle').innerText = `✏️ Edit & Update Invoice (${inv.invNum})`;
+        document.getElementById('btnSaveInvoice').innerText = 'Update Invoice 🔄';
+
+        openTab('posSales');
+        renderPosItems();
+    }
+
+    function savePosInvoice(shouldPrint) {
+        const invNum = document.getElementById('posInvNum').value;
+        const date = document.getElementById('posInvDate').value;
+        const deliveryDate = document.getElementById('posDeliveryDate').value;
+        const booker = document.getElementById('posBookerSelect').value;
+        const shop = document.getElementById('posShopSelect').value;
+        const deliveryMan = document.getElementById('posDeliveryPersonSelect').value;
+        const paymentType = document.getElementById('posPaymentType').value;
+
+        if(!shop || currentPosItems.length === 0) {
+            alert('شاپ اور آئٹم منتخب کریں!');
+            return;
+        }
+
+        playEntrySound();
+
+        let subtotal = currentPosItems.reduce((acc, i) => acc + i.amount, 0);
+        let discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+        let paid = parseFloat(document.getElementById('posPaid').value) || 0;
+        let grandTotal = Math.max(0, subtotal - discount);
+
+        const invoiceData = {
+            id: editingInvoiceId || `INV_${Date.now()}`,
+            invNum, date, deliveryDate, booker, shop, deliveryMan, paymentType, items: [...currentPosItems],
+            subtotal, discount, grandTotal, paid, balance: grandTotal - paid
+        };
+
+        if(editingInvoiceId) {
+            const idx = dbInvoices.findIndex(i => i.id === editingInvoiceId);
+            if(idx !== -1) dbInvoices[idx] = invoiceData;
+            alert('انوائس کامیابی سے اپ ڈیٹ ہو گئی ہے!');
+        } else {
+            dbInvoices.push(invoiceData);
+            alert('آرڈر محفوظ ہو گیا ہے!');
+        }
+
+        localStorage.setItem('ht_invoices', JSON.stringify(dbInvoices));
+
+        if(shouldPrint) {
+            triggerDuplicateA5Print();
+        }
+
+        resetPosForm();
+        renderDashboard();
+        renderInvoicesList();
+        renderLedger();
+    }
+
+    function triggerDuplicateA5Print() {
+        const previewContent = document.getElementById('livePreviewBox').innerHTML;
+        const printWrapper = document.getElementById('printWrapper');
+
+        printWrapper.className = 'print-layout-centered';
+        document.getElementById('printSideA').innerHTML = previewContent;
+        document.getElementById('printSideB').innerHTML = previewContent;
+        document.getElementById('printSideB').style.display = 'block';
+
+        document.body.classList.add('print-invoice-mode');
+        window.print();
+        document.body.classList.remove('print-invoice-mode');
+    }
+
+    function resetPosForm() {
+        currentPosItems = [];
+        editingInvoiceId = null;
+        document.getElementById('posDiscount').value = '0';
+        document.getElementById('posPaid').value = '0';
+        document.getElementById('posFormModeTitle').innerText = '🛒 Order Punching & Billing';
+        document.getElementById('btnSaveInvoice').innerText = 'Save Order 💾';
+        renderPosItems();
+        generateNextInvoiceNum();
+    }
+
+    function renderDiscountReport() {
+        const selBooker = document.getElementById('discBookerFilter').value;
+        const selDate = document.getElementById('discDateFilter').value;
+        const tbody = document.getElementById('discountReportTbody');
+        
+        let filtered = dbInvoices.filter(i => i.discount > 0);
+        if(selBooker !== 'ALL') filtered = filtered.filter(i => i.booker === selBooker);
+        if(selDate) filtered = filtered.filter(i => i.date === selDate);
+
+        let html = '', sno = 1;
+        filtered.forEach(inv => {
+            html += `
+                <tr>
+                    <td>${sno++}</td>
+                    <td><strong>${inv.invNum}</strong></td>
+                    <td>${inv.date}</td>
+                    <td>${inv.booker}</td>
+                    <td><strong>${inv.shop}</strong></td>
+                    <td>Rs. ${inv.subtotal.toLocaleString()}</td>
+                    <td style="color:#ff5252; font-weight:bold;">Rs. ${inv.discount.toLocaleString()}</td>
+                    <td>Rs. ${inv.grandTotal.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html || '<tr><td colspan="8" style="text-align:center;">کوئی ڈسکاؤنٹ رپورٹ نہیں ملی</td></tr>';
+    }
+
+    function renderProfitLossReport() {
+        const period = document.getElementById('plPeriodSelect').value;
+        const tbody = document.getElementById('profitLossTbody');
+
+        let totalSalesSum = 0, totalCostSum = 0, totalDiscSum = 0;
+        let groups = {};
+
+        dbInvoices.forEach(inv => {
+            let key = inv.date;
+            if(period === 'Monthly') key = inv.date.substring(0, 7);
+            if(period === 'Weekly') {
+                const d = new Date(inv.date);
+                const weekNum = Math.ceil(d.getDate() / 7);
+                key = `${inv.date.substring(0, 7)} Week ${weekNum}`;
+            }
+
+            if(!groups[key]) groups[key] = { sales: 0, cost: 0, disc: 0 };
+
+            let invCost = 0;
+            inv.items.forEach(it => {
+                const stk = dbStock.find(s => s.name.toUpperCase() === it.desc.toUpperCase());
+                const costPrice = stk ? (stk.costPrice || stk.salePrice * 0.8) : (it.rate * 0.8);
+                invCost += (costPrice * it.qty);
+            });
+
+            groups[key].sales += inv.grandTotal;
+            groups[key].cost += invCost;
+            groups[key].disc += inv.discount;
+
+            totalSalesSum += inv.grandTotal;
+            totalCostSum += invCost;
+            totalDiscSum += inv.discount;
+        });
+
+        let netProfitSum = totalSalesSum - totalCostSum;
+        let overallMargin = totalSalesSum > 0 ? ((netProfitSum / totalSalesSum) * 100).toFixed(1) : 0;
+
+        document.getElementById('plTotalSales').innerText = `Rs. ${totalSalesSum.toLocaleString()}`;
+        document.getElementById('plTotalCost').innerText = `Rs. ${totalCostSum.toLocaleString()}`;
+        document.getElementById('plNetProfit').innerText = `Rs. ${netProfitSum.toLocaleString()}`;
+        document.getElementById('plProfitMargin').innerText = `${overallMargin} %`;
+
+        let html = '', sno = 1;
+        for(let periodKey in groups) {
+            let pSales = groups[periodKey].sales;
+            let pCost = groups[periodKey].cost;
+            let pDisc = groups[periodKey].disc;
+            let pProfit = pSales - pCost;
+            let pMargin = pSales > 0 ? ((pProfit / pSales) * 100).toFixed(1) : 0;
+
+            html += `
+                <tr>
+                    <td>${sno++}</td>
+                    <td><strong>${periodKey}</strong></td>
+                    <td>Rs. ${pSales.toLocaleString()}</td>
+                    <td>Rs. ${pCost.toLocaleString()}</td>
+                    <td>Rs. ${pDisc.toLocaleString()}</td>
+                    <td style="color:${pProfit >= 0 ? '#00e676':'#ff5252'}; font-weight:bold;">Rs. ${pProfit.toLocaleString()}</td>
+                    <td style="color:#0288d1; font-weight:bold;">${pMargin} %</td>
+                </tr>
+            `;
+        }
+
+        tbody.innerHTML = html || '<tr><td colspan="7" style="text-align:center;">کوئی نفع و نقصان کا ڈیٹا موجود نہیں</td></tr>';
+    }
+
+    function addSingleShop() {
+        const name = document.getElementById('newShopName').value.trim().toUpperCase();
+        const owner = document.getElementById('newOwnerName').value.trim();
+        const contact = document.getElementById('newShopContact').value.trim();
+        const address = document.getElementById('newShopAddress').value.trim();
+        const booker = document.getElementById('newShopBooker').value;
+
+        if(!name || !owner || !contact || !address) {
+            alert('دوکان کا نام، مالک کا نام، رابطہ اور ایڈریس لازمی درج کریں!');
+            return;
+        }
+
+        playEntrySound();
+        dbShops.push({ name, owner, contact, address, booker });
+        localStorage.setItem('ht_shops', JSON.stringify(dbShops));
+        
+        document.getElementById('newShopName').value = '';
+        document.getElementById('newOwnerName').value = '';
+        document.getElementById('newShopContact').value = '';
+        document.getElementById('newShopAddress').value = '';
+        
+        renderShops();
+        populateBookerDropdowns();
+        alert('دوکان کامیابی سے شامل ہو گئی!');
+    }
+
+    function renderShops() {
+        const tbody = document.getElementById('shopsTable');
+        let html = '';
+
+        dbShops.forEach((s, idx) => {
+            const shopInvoices = dbInvoices.filter(i => i.shop.toUpperCase() === s.name.toUpperCase());
+            const credit = shopInvoices.reduce((acc, i) => acc + i.grandTotal, 0);
+            const approvedRec = dbRecoveries.filter(r => r.shop.toUpperCase() === s.name.toUpperCase() && r.status === 'Approved').reduce((acc, r) => acc + r.amount, 0) + shopInvoices.reduce((acc, i) => acc + i.paid, 0);
+            const net = credit - approvedRec;
+
+            html += `
+                <tr>
+                    <td>${idx+1}</td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.owner || 'N/A'}</td>
+                    <td>${s.contact || 'N/A'}</td>
+                    <td>${s.address || 'N/A'}</td>
+                    <td>${s.booker || 'ADMIN'}</td>
+                    <td style="color:${net > 0 ? '#ff5252':'#00e676'}; font-weight:bold;">Rs. ${net.toLocaleString()}</td>
+                    <td class="no-print">
+                        <button class="btn-delete" onclick="deleteShop(${idx})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+        document.getElementById('dashTotalShops').innerText = dbShops.length;
+    }
+
+    function deleteShop(idx) {
+        if(confirm('ڈیلیٹ کریں؟')) {
+            dbShops.splice(idx, 1);
+            localStorage.setItem('ht_shops', JSON.stringify(dbShops));
+            renderShops();
+        }
+    }
+
+    function addDeliveryMan() {
+        const name = document.getElementById('newDeliveryManName').value.trim();
+        const phone = document.getElementById('newDeliveryManPhone').value.trim();
+        if(name) {
+            playEntrySound();
+            dbDeliveryMen.push({ name, phone });
+            localStorage.setItem('ht_delivery_men', JSON.stringify(dbDeliveryMen));
+            document.getElementById('newDeliveryManName').value = '';
+            document.getElementById('newDeliveryManPhone').value = '';
+            renderDeliveryMen();
+            populateDeliveryMenDropdown();
+        }
+    }
+
+    function renderDeliveryMen() {
+        const tbody = document.getElementById('deliveryMenTable');
+        tbody.innerHTML = dbDeliveryMen.map((d, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${d.name}</strong></td>
+                <td>${d.phone || 'N/A'}</td>
+                <td><button class="btn-delete" onclick="dbDeliveryMen.splice(${i},1);localStorage.setItem('ht_delivery_men',JSON.stringify(dbDeliveryMen));renderDeliveryMen();populateDeliveryMenDropdown();">Delete</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function saveUserRecord() {
+        const username = document.getElementById('newUsername').value.trim();
+        const pass = document.getElementById('newUserPass').value.trim();
+        const role = document.getElementById('newUserRole').value;
+        const editIdx = parseInt(document.getElementById('editingUserIdx').value);
+
+        if(!username || !pass) {
+            alert('یوزر نیم اور پاسورڈ لازمی درج کریں!');
+            return;
+        }
+
+        let perms = [];
+        if(role === 'Admin') {
+            perms = ['all'];
+        } else {
+            ['posSales', 'recoveryEntry', 'invoicesList', 'discountReport', 'profitLoss', 'stockManagement', 'shops', 'ledger', 'bookerReports', 'picklistTab'].forEach(p => {
+                if(document.getElementById(`perm_${p}`)?.checked) perms.push(p);
+            });
+        }
+
+        playEntrySound();
+
+        if(editIdx >= 0) {
+            dbUsers[editIdx] = { username, pass, role, perms };
+            alert('یوزر کی معلومات اپ ڈیٹ ہو گئیں!');
+        } else {
+            dbUsers.push({ username, pass, role, perms });
+            alert('نیا یوزر شامل ہو گیا!');
+        }
+
+        localStorage.setItem('ht_users', JSON.stringify(dbUsers));
+        resetUserForm();
+        renderUsers();
+        populateBookerDropdowns();
+        populateUserLoginDropdown();
+    }
+
+    function editUser(idx) {
+        const u = dbUsers[idx];
+        if(!u) return;
+
+        document.getElementById('editingUserIdx').value = idx;
+        document.getElementById('newUsername').value = u.username;
+        document.getElementById('newUserPass').value = u.pass;
+        document.getElementById('newUserRole').value = u.role;
+
+        const allPerms = ['posSales', 'recoveryEntry', 'invoicesList', 'discountReport', 'profitLoss', 'stockManagement', 'shops', 'ledger', 'bookerReports', 'picklistTab'];
+        allPerms.forEach(p => {
+            const chk = document.getElementById(`perm_${p}`);
+            if(chk) chk.checked = (u.role === 'Admin' || (u.perms && (u.perms.includes('all') || u.perms.includes(p))));
+        });
+
+        document.getElementById('userFormTitle').innerText = `Edit User: ${u.username}`;
+        document.getElementById('btnSaveUser').innerText = 'Update User 🔄';
+        document.getElementById('btnCancelUserEdit').style.display = 'inline-block';
+    }
+
+    function resetUserForm() {
+        document.getElementById('editingUserIdx').value = '-1';
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newUserPass').value = '';
+        document.getElementById('newUserRole').value = 'Booker';
+        
+        ['posSales', 'recoveryEntry', 'invoicesList', 'discountReport', 'profitLoss', 'stockManagement', 'shops', 'ledger', 'bookerReports', 'picklistTab'].forEach(p => {
+            const chk = document.getElementById(`perm_${p}`);
+            if(chk) chk.checked = true;
+        });
+
+        document.getElementById('userFormTitle').innerText = 'Add / Edit User & Assign Permissions';
+        document.getElementById('btnSaveUser').innerText = 'Save User & Role';
+        document.getElementById('btnCancelUserEdit').style.display = 'none';
+    }
+
+    function renderUsers() {
+        const tbody = document.getElementById('usersTable');
+        tbody.innerHTML = dbUsers.map((u, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${u.username}</strong></td>
+                <td>${u.role}</td>
+                <td>${u.perms ? u.perms.join(', ') : 'All'}</td>
+                <td>
+                    <button class="btn-edit" onclick="editUser(${i})">Edit ✏️</button>
+                    <button class="btn-delete" onclick="if(confirm('ڈیلیٹ کریں؟')){dbUsers.splice(${i},1);localStorage.setItem('ht_users',JSON.stringify(dbUsers));renderUsers();populateUserLoginDropdown();}">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderDashboard() {
+        let totalMarketBalance = 0;
+        let totalDiscountSum = 0;
+        let pendingSum = dbRecoveries.filter(r => r.status === 'Pending').reduce((acc, r) => acc + r.amount, 0);
+
+        dbInvoices.forEach(inv => {
+            totalMarketBalance += inv.balance;
+            totalDiscountSum += (inv.discount || 0);
+        });
+
+        document.getElementById('dashTotalUdhaar').innerText = `Rs. ${totalMarketBalance.toLocaleString()}`;
+        document.getElementById('dashTotalDiscount').innerText = `Rs. ${totalDiscountSum.toLocaleString()}`;
+        document.getElementById('dashPendingRecoveries').innerText = `Rs. ${pendingSum.toLocaleString()}`;
+
+        const tbody = document.getElementById('dashBookerSummaryTable');
+        let html = '', sno = 1;
+        
+        dbUsers.forEach(u => {
+            const b = u.username;
+            const assignedShops = dbShops.filter(s => s.booker === b).length;
+            const bInvoices = dbInvoices.filter(i => i.booker === b);
+            const punchedShops = new Set(bInvoices.map(i => i.shop)).size;
+
+            const totalCredit = bInvoices.reduce((acc, i) => acc + i.grandTotal, 0);
+            const approvedRecovery = dbRecoveries.filter(r => r.booker === b && r.status === 'Approved').reduce((acc, r) => acc + r.amount, 0) + bInvoices.reduce((acc, i) => acc + i.paid, 0);
+            const pendingRecovery = dbRecoveries.filter(r => r.booker === b && r.status === 'Pending').reduce((acc, r) => acc + r.amount, 0);
+            const net = totalCredit - approvedRecovery;
+
+            html += `
+                <tr>
+                    <td>${sno++}</td>
+                    <td><strong>${b}</strong></td>
+                    <td>${assignedShops}</td>
+                    <td><strong style="color:#0288d1;">${punchedShops} Shops</strong></td>
+                    <td>Rs. ${totalCredit.toLocaleString()}</td>
+                    <td>Rs. ${approvedRecovery.toLocaleString()}</td>
+                    <td style="color:#ffc107; font-weight:bold;">Rs. ${pendingRecovery.toLocaleString()}</td>
+                    <td style="color:${net > 0 ? '#ff5252':'#00e676'}; font-weight:bold;">Rs. ${net.toLocaleString()}</td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function submitRecoveryEntry() {
+        const date = document.getElementById('recDate').value;
+        const booker = document.getElementById('recBookerSelect').value;
+        const shop = document.getElementById('recShopSelect').value;
+        const amount = parseFloat(document.getElementById('recAmount').value) || 0;
+        const notes = document.getElementById('recNotes').value.trim();
+
+        if(!shop || amount <= 0) return alert('معلومات درج کریں!');
+
+        playEntrySound();
+        dbRecoveries.push({ id: `REC_${Date.now()}`, date, booker, shop, amount, notes, status: 'Pending' });
+        localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
+        document.getElementById('recAmount').value = '';
+        alert('واصولی منظور کے لیے جمع کر دی گئی!');
+        renderRecoveryTables();
+        renderDashboard();
+    }
+
+    function approveRecovery(id) {
+        const rec = dbRecoveries.find(r => r.id === id);
+        if(rec) {
+            playEntrySound();
+            rec.status = 'Approved';
+            localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
+            renderRecoveryTables();
+            renderDashboard();
+            renderLedger();
+            renderShops();
+        }
+    }
+
+    function deleteRecovery(id) {
+        dbRecoveries = dbRecoveries.filter(r => r.id !== id);
+        localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
+        renderRecoveryTables();
+        renderDashboard();
+    }
+
+    function renderRecoveryTables() {
+        const userTbody = document.getElementById('userRecoveryTable');
+        userTbody.innerHTML = dbRecoveries.slice().reverse().map((r, i) => `
+            <tr>
+                <td>${i+1}</td><td>${r.date}</td><td><strong>${r.shop}</strong></td><td>${r.booker}</td><td>Rs. ${r.amount.toLocaleString()}</td>
+                <td><span class="badge-${r.status.toLowerCase()}">${r.status}</span></td>
+                <td>${r.status === 'Pending' ? `<button class="btn-delete" onclick="deleteRecovery('${r.id}')">Cancel</button>` : 'Locked'}</td>
+            </tr>
+        `).join('');
+
+        const adminTbody = document.getElementById('adminApprovalTable');
+        adminTbody.innerHTML = dbRecoveries.filter(r => r.status === 'Pending').reverse().map((r, i) => `
+            <tr>
+                <td>${i+1}</td><td>${r.date}</td><td>${r.booker}</td><td><strong>${r.shop}</strong></td><td>Rs. ${r.amount.toLocaleString()}</td>
+                <td><span class="badge-pending">Pending</span></td>
+                <td><button class="btn-add" style="padding:4px 8px;" onclick="approveRecovery('${r.id}')">Approve ✅</button> <button class="btn-delete" onclick="deleteRecovery('${r.id}')">Reject ❌</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function renderInvoicesList() {
+        const tbody = document.getElementById('invoicesTable');
+        tbody.innerHTML = dbInvoices.slice().reverse().map((inv, i) => `
+            <tr>
+                <td>${i+1}</td><td><strong>${inv.invNum}</strong></td><td>${inv.date}</td><td>${inv.deliveryDate}</td><td>${inv.booker}</td><td>${inv.shop}</td>
+                <td>Rs. ${inv.grandTotal.toLocaleString()}</td><td style="color:${inv.balance > 0 ? '#ff5252':'#00e676'}; font-weight:bold;">Rs. ${inv.balance.toLocaleString()}</td>
+                <td class="no-print">
+                    <button class="btn-edit" onclick="editInvoice('${inv.id}')">Edit ✏️</button>
+                    <button class="btn-print" onclick="openAndPrintInvoice('${inv.id}')">Print 🖨️</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function openAndPrintInvoice(id) {
+        const inv = dbInvoices.find(i => i.id === id);
+        if(!inv) return;
+        currentPosItems = [...inv.items];
+        document.getElementById('posInvNum').value = inv.invNum;
+        document.getElementById('posInvDate').value = inv.date;
+        document.getElementById('posDeliveryDate').value = inv.deliveryDate;
+        document.getElementById('posBookerSelect').value = inv.booker;
+        document.getElementById('posShopSelect').value = inv.shop;
+        updatePrevShopName();
+        document.getElementById('posDiscount').value = inv.discount;
+        document.getElementById('posPaid').value = inv.paid;
+        calculatePosTotals();
+        triggerDuplicateA5Print();
+    }
+
+    function renderLedger() {
+        const ledgerFilter = document.getElementById('ledgerShopFilter');
+        ledgerFilter.innerHTML = `<option value="ALL">All Shops</option>` + dbShops.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+
+        const selectedShop = ledgerFilter.value;
+        const tbody = document.getElementById('ledgerTable');
+        let html = '', sno = 1;
+
+        dbInvoices.forEach(inv => {
+            if(selectedShop === 'ALL' || inv.shop === selectedShop) {
+                html += `<tr><td>${sno++}</td><td>${inv.date}</td><td><strong>${inv.shop}</strong></td><td>${inv.booker}</td><td>${inv.invNum}</td><td>Rs. ${inv.grandTotal.toLocaleString()}</td><td>Rs. ${inv.paid.toLocaleString()}</td><td>Approved</td></tr>`;
+            }
+        });
+
+        tbody.innerHTML = html || '<tr><td colspan="8" style="text-align:center;">No Ledger Entries Found</td></tr>';
+    }
+
+    function renderStockReport() {
+        const tbody = document.getElementById('stockReportTable');
+        tbody.innerHTML = dbStock.map((stk, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><strong>${stk.name}</strong></td>
+                <td>Rs. ${stk.costPrice || 0}</td>
+                <td>Rs. ${stk.salePrice}</td>
+                <td>${stk.qty}</td>
+                <td class="no-print"><button class="btn-delete" onclick="dbStock.splice(${i},1);localStorage.setItem('ht_stock',JSON.stringify(dbStock));renderStockReport();">Delete</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function addStockItem() {
+        const name = document.getElementById('stockItemName').value.trim().toUpperCase();
+        const costPrice = parseFloat(document.getElementById('stockCostPrice').value) || 0;
+        const qty = parseFloat(document.getElementById('stockQty').value) || 0;
+        const salePrice = parseFloat(document.getElementById('stockSalePrice').value) || 0;
+
+        if(name && qty > 0) {
+            playEntrySound();
+            dbStock.push({ id: `STK_${Date.now()}`, name, costPrice, qty, salePrice });
+            localStorage.setItem('ht_stock', JSON.stringify(dbStock));
+            document.getElementById('stockItemName').value = '';
+            document.getElementById('stockCostPrice').value = '';
+            document.getElementById('stockQty').value = '';
+            document.getElementById('stockSalePrice').value = '';
+            renderStockReport();
+            populateStockDatalist();
+        }
+    }
+
+    function renderPicklist() {
+        const date = document.getElementById('picklistDate').value;
+        const tbody = document.getElementById('picklistTbody');
+        let stockTotals = {};
+
+        dbInvoices.filter(i => i.date === date).forEach(inv => {
+            inv.items.forEach(it => stockTotals[it.desc] = (stockTotals[it.desc] || 0) + it.qty);
+        });
+
+        let html = '', idx = 1;
+        for(let prod in stockTotals) {
+            html += `<tr><td>${idx++}</td><td><strong>${prod}</strong></td><td style="text-align:center;">${stockTotals[prod]}</td></tr>`;
+        }
+        tbody.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">کوئی آئٹم نہیں</td></tr>';
+    }
+
+    function renderShopWiseReport() {
+        const selectedDate = document.getElementById('shopReportDate').value;
+        const tbody = document.getElementById('shopWiseReportTbody');
+        let html = '', sno = 1;
+
+        dbShops.forEach(shop => {
+            const shopInvoices = dbInvoices.filter(i => i.shop.toUpperCase() === shop.name.toUpperCase() && i.date === selectedDate);
+            let saleTotal = shopInvoices.reduce((acc, i) => acc + i.grandTotal, 0);
+            let itemsText = shopInvoices.flatMap(i => i.items.map(it => `${it.desc} (x${it.qty})`)).join(', ');
+
+            if(shopInvoices.length > 0) {
+                html += `<tr><td>${sno++}</td><td><strong>${shop.name}</strong></td><td>${shop.booker}</td><td>${itemsText}</td><td>Rs. ${saleTotal.toLocaleString()}</td><td>Rs. 0</td></tr>`;
+            }
+        });
+        tbody.innerHTML = html || '<tr><td colspan="6" style="text-align:center;">کوئی انوائس پنش نہیں ہوئی</td></tr>';
+    }
+
+    function downloadBackup() {
+        const data = { dbInvoices, dbShops, dbStock, dbRecoveries, dbDeliveryMen, dbUsers };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `Hussain_Traders_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function restoreBackup() {
+        const file = document.getElementById('restoreFileInput').files[0];
+        if(!file) return alert('فائل سلیکٹ کریں!');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const d = JSON.parse(e.target.result);
+            if(d.dbInvoices) localStorage.setItem('ht_invoices', JSON.stringify(d.dbInvoices));
+            if(d.dbShops) localStorage.setItem('ht_shops', JSON.stringify(d.dbShops));
+            if(d.dbStock) localStorage.setItem('ht_stock', JSON.stringify(d.dbStock));
+            if(d.dbRecoveries) localStorage.setItem('ht_recoveries', JSON.stringify(d.dbRecoveries));
+            if(d.dbUsers) localStorage.setItem('ht_users', JSON.stringify(d.dbUsers));
+            alert('ڈیٹا بحال ہو گیا ہے!');
+            location.reload();
+        };
+        reader.readAsText(file);
     }
 </script>
 </body>
