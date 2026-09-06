@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,30 +19,70 @@
             --warning: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: #f1f5f9; color: var(--text-dark); min-height: 100vh; }
 
-        /* Login Screen */
-        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-primary); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        .login-card { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
-        .login-card h2 { color: var(--bg-primary); margin-bottom: 5px; }
-        .login-card p { font-size: 0.85rem; color: #64748b; margin-bottom: 20px; }
-        .login-card input { width: 100%; padding: 12px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 6px; }
-        .login-card button { width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        /* Animated Login Screen */
+        .login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0ea5e9, #0284c7); 
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            display: flex; justify-content: center; align-items: center; z-index: 9999; 
+        }
 
-        /* Dashboard Layout */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 35px 30px; border-radius: 16px; width: 90%; max-width: 420px; 
+            text-align: center; box-shadow: 0 20px 30px rgba(0,0,0,0.3); 
+            transform: translateY(30px); opacity: 0;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .login-card .icon-box {
+            width: 70px; height: 70px; background: var(--accent-color); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px auto; font-size: 30px;
+            box-shadow: 0 10px 15px rgba(14, 165, 233, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .login-card h2 { color: var(--bg-primary); font-weight: 700; letter-spacing: 0.5px; }
+        .login-card p.urdu-sub { font-family: 'Noto Nastaliq Urdu', serif; font-size: 1rem; color: #64748b; margin-bottom: 20px; }
+        .login-card input { width: 100%; padding: 12px 15px; margin-bottom: 12px; border: 1px solid #cbd5e1; border-radius: 8px; text-align: left; }
+        .login-card button { width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .login-card button:hover { background: #0284c7; }
+
+        /* Dashboard Layout (English LTR) */
         .app-container { display: none; min-height: 100vh; flex-direction: row; }
         .sidebar { width: 260px; background: var(--bg-primary); color: var(--text-light); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        .brand-header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
+        .brand-header { text-align: left; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
         .brand-header h2 { font-size: 1.3rem; color: var(--accent-color); font-weight: 700; }
-        .brand-header p { font-size: 1.1rem; color: #cbd5e1; font-family: 'Noto Nastaliq Urdu', serif; }
+        .brand-header p { font-size: 0.9rem; color: #cbd5e1; font-family: 'Noto Nastaliq Urdu', serif; }
 
         .nav-menu { list-style: none; }
         .nav-item { margin-bottom: 8px; }
-        .nav-link { display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: 0.3s; cursor: pointer; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #cbd5e1; text-decoration: none; border-radius: 8px; transition: 0.3s; cursor: pointer; }
         .nav-link:hover, .nav-link.active { background: var(--accent-color); color: white; }
 
-        .main-content { flex: 1; padding: 20px; overflow-y: auto; }
+        .main-content { flex: 1; padding: 20px; overflow-y: auto; text-align: left; }
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--card-bg); padding: 12px 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
         .section-view { display: none; }
@@ -52,14 +92,14 @@
         .card-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--bg-primary); display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
 
         form { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 15px; }
-        input, select, button { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; }
+        input, select, button { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.88rem; text-align: left; }
         button { background: var(--accent-color); color: white; border: none; font-weight: 600; cursor: pointer; }
         .btn-danger { background: var(--danger); }
         .btn-success { background: var(--success); }
         .btn-warning { background: var(--warning); color: #000; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: right; font-size: 0.85rem; }
+        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 0.85rem; }
         th { background: #f8fafc; color: #475569; font-weight: 600; }
 
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; display: inline-block; }
@@ -67,13 +107,11 @@
         .badge-approved { background: #d1fae5; color: #059669; }
         .badge-printed { background: #e0f2fe; color: #0369a1; }
 
-        /* Mobile Layout Modifications */
-        @media (max-width: 768px) {
-            .app-container { flex-direction: column; }
-            .sidebar { width: 100%; padding: 15px; }
-            .top-bar { flex-direction: column; gap: 10px; text-align: center; }
-            form { grid-template-columns: 1fr; }
-        }
+        .urdu-text { font-family: 'Noto Nastaliq Urdu', serif; font-weight: normal; margin-left: 5px; color: #64748b; font-size: 0.85rem; }
+
+        /* SND Classic Style Quick Sales Bar */
+        .snd-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .snd-layout { grid-template-columns: 1fr; } }
 
         /* A4 LANDSCAPE DUAL INVOICE PRINT STYLING */
         @media print {
@@ -101,15 +139,18 @@
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
+    <!-- ANIMATED LOGIN SCREEN -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
+            <div class="icon-box">
+                <i class="fa-solid fa-cart-flatbed-suitcases"></i>
+            </div>
             <h2>HUSSAIN TRADERS</h2>
-            <p>حُسَیْن ٹْرَیْڈَرْزْ - لاگ ان کریں</p>
+            <p class="urdu-sub">حُسَیْن ٹْرَیْڈَرْزْ - لاگ ان کریں</p>
             <form onsubmit="event.preventDefault(); doLogin();" style="grid-template-columns: 1fr;">
-                <input type="text" id="loginUsername" placeholder="یوزر نام (admin / booker1)" required>
-                <input type="password" id="loginPassword" placeholder="پاسورڈ" required>
-                <button type="submit">سسٹم لاگ ان</button>
+                <input type="text" id="loginUsername" placeholder="Username (admin / booker1)" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Login System</button>
             </form>
         </div>
     </div>
@@ -125,27 +166,28 @@
                     <p>حُسَیْن ٹْرَیْڈَرْزْ</p>
                 </div>
                 <ul class="nav-menu">
-                    <li class="nav-item admin-only"><a class="nav-link active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-chart-line"></i> ڈیش بورڈ</a></li>
-                    <li class="nav-item admin-only"><a class="nav-link" onclick="showSection('inventory', this)"><i class="fa-solid fa-boxes-stacked"></i> اسٹاک و پرچیزنگ</a></li>
-                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('shops', this)"><i class="fa-solid fa-store"></i> دکانیں اور روٹس</a></li>
-                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('booking', this)"><i class="fa-solid fa-cart-shopping"></i> آرڈر بکنگ</a></li>
-                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('invoices', this)"><i class="fa-solid fa-file-invoice"></i> انوائسز مینجمنٹ</a></li>
-                    <li class="nav-item admin-only"><a class="nav-link" onclick="showSection('reports', this)"><i class="fa-solid fa-print"></i> لیجر اور پک لسٹ</a></li>
+                    <li class="nav-item admin-only"><a class="nav-link active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-chart-line"></i> Dashboard <span class="urdu-text">(ڈیش بورڈ)</span></a></li>
+                    <li class="nav-item admin-only"><a class="nav-link" onclick="showSection('inventory', this)"><i class="fa-solid fa-boxes-stacked"></i> Inventory & Purchase <span class="urdu-text">(اسٹاک)</span></a></li>
+                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('shops', this)"><i class="fa-solid fa-store"></i> Shops Directory <span class="urdu-text">(دکانیں)</span></a></li>
+                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('sales', this)"><i class="fa-solid fa-cash-register"></i> Sales Terminal <span class="urdu-text">(سیل)</span></a></li>
+                    <li class="nav-item admin-only booker-only"><a class="nav-link" onclick="showSection('invoices', this)"><i class="fa-solid fa-file-invoice"></i> Invoices Log <span class="urdu-text">(انوائسز)</span></a></li>
+                    <li class="nav-item admin-only"><a class="nav-link" onclick="showSection('picklistSection', this)"><i class="fa-solid fa-truck-ramp-box"></i> Picklist & Delivery <span class="urdu-text">(پک لسٹ)</span></a></li>
+                    <li class="nav-item admin-only"><a class="nav-link" onclick="showSection('reportsSection', this)"><i class="fa-solid fa-chart-pie"></i> System Reports <span class="urdu-text">(رپورٹس)</span></a></li>
                 </ul>
             </div>
             <div>
-                <button onclick="doLogout()" class="btn-danger" style="width: 100%; padding: 10px;"><i class="fa-solid fa-right-from-bracket"></i> لاگ آؤٹ</button>
+                <button onclick="doLogout()" class="btn-danger" style="width: 100%; padding: 10px;"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN CONTENT AREA -->
         <div class="main-content">
             <div class="top-bar">
-                <div><strong>یوزر: </strong><span id="currentUserDisplay">-</span></div>
-                <div><strong>تاریخ: </strong><span id="currentDate"></span></div>
+                <div><strong>User: </strong><span id="currentUserDisplay">-</span></div>
+                <div><strong>Date: </strong><span id="currentDate"></span></div>
                 <div class="admin-only">
-                    <button onclick="exportData()" class="btn-success" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fa-solid fa-download"></i> بیک اپ لیں</button>
-                    <button onclick="document.getElementById('importFile').click()" class="btn-warning" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fa-solid fa-upload"></i> ریستور کریں</button>
+                    <button onclick="exportData()" class="btn-success" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fa-solid fa-download"></i> Backup</button>
+                    <button onclick="document.getElementById('importFile').click()" class="btn-warning" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fa-solid fa-upload"></i> Restore</button>
                     <input type="file" id="importFile" style="display:none;" onchange="importData(event)">
                 </div>
             </div>
@@ -153,41 +195,42 @@
             <!-- 1. DASHBOARD -->
             <div id="dashboard" class="section-view active">
                 <div class="card">
-                    <div class="card-header">سسٹم خلاصہ (System Overview)</div>
+                    <div class="card-header">Dashboard Overview <span class="urdu-text">(سسٹم خلاصہ)</span></div>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                         <div style="background:#e0f2fe; padding:15px; border-radius:8px;">
-                            <h4>کل سیلز</h4><h2 id="dashSales">Rs. 0</h2>
+                            <h4>Total Sales</h4><h2 id="dashSales">Rs. 0</h2>
                         </div>
                         <div style="background:#d1fae5; padding:15px; border-radius:8px;">
-                            <h4>مارکیٹ ادھار</h4><h2 id="dashCredit">Rs. 0</h2>
+                            <h4>Returned Stock Amount</h4><h2 id="dashReturns">Rs. 0</h2>
                         </div>
                         <div style="background:#fef3c7; padding:15px; border-radius:8px;">
-                            <h4>زیر التواء انوائسز</h4><h2 id="dashPending">0</h2>
+                            <h4>Pending Invoices</h4><h2 id="dashPending">0</h2>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. INVENTORY & PURCHASING (Admin) -->
+            <!-- 2. INVENTORY & PURCHASE (Stock Purchase using List Price) -->
             <div id="inventory" class="section-view">
                 <div class="card admin-only">
-                    <div class="card-header">نیا اسٹاک / پرچیز شامل کریں</div>
+                    <div class="card-header">Add Stock / Purchase <span class="urdu-text">(اسٹاک خریداریاں)</span></div>
                     <form id="stockForm">
-                        <input type="text" id="pBrand" placeholder="برانڈ نام" required>
-                        <input type="text" id="pName" placeholder="پروڈکٹ نام" required>
-                        <input type="number" id="pCost" placeholder="پرچیز ریٹ (Cost)" required>
-                        <input type="number" id="pList" placeholder="لسٹ پرائس (LP)" required>
-                        <input type="number" id="pTrade" placeholder="ٹریڈ پرائس (TP)" required>
-                        <input type="number" id="pRetail" placeholder="ریٹیل پرائس (RP)" required>
-                        <input type="number" id="pStock" placeholder="اسٹاک تعداد" required>
-                        <button type="submit">محفوظ کریں</button>
+                        <input type="text" id="pBrand" placeholder="Brand Name" required>
+                        <input type="text" id="pName" placeholder="Product Name" required>
+                        <input type="number" id="pPcsPerCtn" placeholder="Pcs per Carton" required>
+                        <input type="number" id="pList" placeholder="List Price (Purchase Rate)" required>
+                        <input type="number" id="pTrade" placeholder="Trade Price (TP for Sales)" required>
+                        <input type="number" id="pRetail" placeholder="Retail Price (Display Only)" required>
+                        <input type="number" id="pCtns" placeholder="Cartons Stock" value="0">
+                        <input type="number" id="pLoosePcs" placeholder="Loose Pieces Stock" value="0">
+                        <button type="submit">+ Add Stock</button>
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header">موجودہ اسٹاک لسٹ</div>
+                    <div class="card-header">Stock Inventory List</div>
                     <table>
                         <thead>
-                            <tr><th>برانڈ</th><th>پروڈکٹ</th><th>پرچیز</th><th>LP</th><th>TP</th><th>RP</th><th>اسٹاک</th></tr>
+                            <tr><th>Brand</th><th>Product</th><th>Pcs/Ctn</th><th>List Price (Purch)</th><th>Trade Price (TP)</th><th>Retail Price</th><th>Total Pcs</th><th>Cartons / Loose</th></tr>
                         </thead>
                         <tbody id="inventoryTable"></tbody>
                     </table>
@@ -197,78 +240,113 @@
             <!-- 3. SHOPS DIRECTORY -->
             <div id="shops" class="section-view">
                 <div class="card">
-                    <div class="card-header">نئی دکان رجسٹر کریں</div>
+                    <div class="card-header">Register Shop <span class="urdu-text">(دکان کی رجسٹریشن)</span></div>
                     <form id="shopForm">
-                        <input type="text" id="sName" placeholder="دکان کا نام" required>
-                        <input type="text" id="sOwner" placeholder="مالک کا نام" required>
-                        <input type="text" id="sRoute" placeholder="روٹ / علاقہ" required>
-                        <input type="text" id="sAddress" placeholder="مکمل پتہ" required>
-                        <input type="tel" id="sPhone" placeholder="فون نمبر" required>
-                        <button type="submit">+ دکان شامل کریں</button>
+                        <input type="text" id="sName" placeholder="Shop Name" required>
+                        <input type="text" id="sOwner" placeholder="Owner Name" required>
+                        <input type="text" id="sRoute" placeholder="Route / Sector" required>
+                        <input type="text" id="sAddress" placeholder="Address" required>
+                        <input type="tel" id="sPhone" placeholder="Phone Number" required>
+                        <button type="submit">+ Add Shop</button>
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header">رجسٹرڈ دکانیں</div>
+                    <div class="card-header">Registered Shops</div>
                     <table>
                         <thead>
-                            <tr><th>دکان</th><th>مالک</th><th>روٹ</th><th>پتہ</th><th>فون</th><th>بکنگ گروپ</th><th>ایکشن</th></tr>
+                            <tr><th>Shop</th><th>Owner</th><th>Route</th><th>Address</th><th>Phone</th><th>Booker</th></tr>
                         </thead>
                         <tbody id="shopsTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 4. ORDER BOOKING -->
-            <div id="booking" class="section-view">
-                <div class="card">
-                    <div class="card-header">مارکیٹ آرڈر بکنگ (Mobile Panel)</div>
-                    <form id="bookingForm" style="grid-template-columns: 1fr;">
-                        <select id="bShop" required><option value="">دکان منتخب کریں</option></select>
-                        <select id="bSupplyMan" required>
-                            <option value="">سپلائی مین منتخب کریں</option>
-                            <option value="Supply Man A">سپلائی مین A</option>
-                            <option value="Supply Man B">سپلائی مین B</option>
-                        </select>
-                        <div id="bookingItems">
-                            <div style="display:flex; gap:10px; margin-bottom:10px;">
-                                <select class="bProd" style="flex:2;" required><option value="">پروڈکٹ</option></select>
-                                <input type="number" class="bQty" placeholder="تعداد" style="flex:1;" required>
-                            </div>
-                        </div>
-                        <div style="display:flex; gap:10px;">
-                            <input type="number" id="bDiscVal" placeholder="ڈسکاؤنٹ مقدار" value="0">
-                            <select id="bDiscType">
-                                <option value="rs">روپے (Rs)</option>
-                                <option value="percent">فیصد (%)</option>
+            <!-- 4. SALES TERMINAL (SND Classic Layout) -->
+            <div id="sales" class="section-view">
+                <div class="snd-layout">
+                    <div class="card">
+                        <div class="card-header">SND Classic Sales Entry <span class="urdu-text">(سیل آرڈر اینٹری)</span></div>
+                        <form id="saleOrderForm" style="grid-template-columns: 1fr 1fr;">
+                            <select id="sShopSelect" required><option value="">Select Shop</option></select>
+                            <select id="sSupplyManSelect" required>
+                                <option value="">Select Delivery Supply Man</option>
+                                <option value="Supply Man A">Supply Man A</option>
+                                <option value="Supply Man B">Supply Man B</option>
                             </select>
+                            <div style="grid-column: span 2; border-top: 1px dashed #ccc; padding-top: 10px;">
+                                <h4>Add Product Line</h4>
+                                <div style="display:flex; gap:10px; margin-top:10px;">
+                                    <select id="sProductSelect" style="flex:2;" onchange="updateProductPriceInfo()"><option value="">Select Product</option></select>
+                                    <input type="number" id="sCtnQty" placeholder="Cartons" style="flex:1;" value="0">
+                                    <input type="number" id="sPcsQty" placeholder="Loose Pcs" style="flex:1;" value="0">
+                                    <button type="button" onclick="addItemToCart()" class="btn-success">Add Line</button>
+                                </div>
+                                <p id="priceInfoNote" style="font-size:0.8rem; color:#64748b; margin-top:5px;"></p>
+                            </div>
+                        </form>
+
+                        <table style="margin-top:15px;">
+                            <thead>
+                                <tr><th>Product</th><th>TP Rate</th><th>Cartons</th><th>Pieces</th><th>Total Pcs</th><th>Subtotal</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="cartTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">Order Summary & Discount</div>
+                        <div style="font-size:0.9rem; line-height:2;">
+                            <p><strong>Gross Amount (TP):</strong> Rs. <span id="cartGross">0.00</span></p>
+                            <div style="display:flex; gap:5px; margin: 10px 0;">
+                                <input type="number" id="cartDiscVal" placeholder="Discount" value="0" style="width:60%;">
+                                <select id="cartDiscType" style="width:40%;">
+                                    <option value="rs">Rs.</option>
+                                    <option value="percent">%</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="calculateCartTotals()" style="width:100%; margin-bottom:10px;">Apply Discount</button>
+                            <p style="font-size:1.1rem; color:var(--success);"><strong>Net Amount:</strong> Rs. <span id="cartNet">0.00</span></p>
+                            <button type="button" onclick="submitFinalOrder()" class="btn-success" style="width:100%; margin-top:15px; padding:12px;"><i class="fa-solid fa-check"></i> Complete Sale Order</button>
                         </div>
-                        <button type="submit" class="btn-success" style="margin-top:10px;">فائنل انوائس جنریٹ کریں</button>
-                    </form>
+                    </div>
                 </div>
             </div>
 
-            <!-- 5. INVOICES MANAGEMENT -->
+            <!-- 5. INVOICES LOG -->
             <div id="invoices" class="section-view">
                 <div class="card">
-                    <div class="card-header">تمام انوائسز لسٹ</div>
+                    <div class="card-header">Invoices Log</div>
                     <table>
                         <thead>
-                            <tr><th>انوائس #</th><th>تاریخ</th><th>دکان</th><th>بوکر</th><th>کل رقم</th><th>ڈسکاؤنٹ</th><th>اسٹیٹس</th><th>ایکشن</th></tr>
+                            <tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Booker</th><th>Supply Man</th><th>Amount (TP)</th><th>Status</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="invoicesTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 6. REPORTS (Ledger & Pick List) -->
-            <div id="reports" class="section-view admin-only">
+            <!-- 6. PICKLIST & DELIVERY DATE MANAGEMENT -->
+            <div id="picklistSection" class="section-view admin-only">
                 <div class="card">
-                    <div class="card-header">ڈیلی ڈلیوری لیجر اور پک لسٹ</div>
+                    <div class="card-header">Warehouse Picklist & Delivery Date Settings</div>
+                    <form onsubmit="event.preventDefault(); renderPicklist();">
+                        <select id="pickBookerSelect"><option value="">All Bookers</option></select>
+                        <button type="submit" class="btn-success">Generate Picklist</button>
+                    </form>
+                    <div id="picklistContainer"></div>
+                </div>
+            </div>
+
+            <!-- 7. SEPARATED REPORTS (Sale, Stock, Return Stock) -->
+            <div id="reportsSection" class="section-view admin-only">
+                <div class="card">
+                    <div class="card-header">Reports Center</div>
                     <div style="display:flex; gap:10px; margin-bottom:15px;">
-                        <select id="reportBookerSelect"><option value="">تمام بوکرز</option></select>
-                        <button onclick="generateReports()" class="btn-success">رپورٹ جنریٹ کریں</button>
+                        <button onclick="showReportType('sale')" class="btn-warning">Sale Report</button>
+                        <button onclick="showReportType('stock')" class="btn-warning">Stock Report</button>
+                        <button onclick="showReportType('return')" class="btn-warning">Return Stock Report</button>
                     </div>
-                    <div id="reportOutput"></div>
+                    <div id="reportDisplayArea"></div>
                 </div>
             </div>
 
@@ -279,26 +357,28 @@
     <div id="printable-area"></div>
 
     <script>
-        // DB Schema
+        // System Database Structure
         let db = {
             currentUser: null,
-            inventory: JSON.parse(localStorage.getItem('ht_inv')) || [],
-            shops: JSON.parse(localStorage.getItem('ht_shops')) || [],
-            invoices: JSON.parse(localStorage.getItem('ht_invoices')) || [],
-            invoiceCounter: parseInt(localStorage.getItem('ht_inv_counter')) || 1001
+            inventory: JSON.parse(localStorage.getItem('ht_v2_inv')) || [],
+            shops: JSON.parse(localStorage.getItem('ht_v2_shops')) || [],
+            invoices: JSON.parse(localStorage.getItem('ht_v2_invoices')) || [],
+            invoiceCounter: parseInt(localStorage.getItem('ht_v2_inv_counter')) || 1001
         };
 
+        let currentCart = [];
+
         function saveDB() {
-            localStorage.setItem('ht_inv', JSON.stringify(db.inventory));
-            localStorage.setItem('ht_shops', JSON.stringify(db.shops));
-            localStorage.setItem('ht_invoices', JSON.stringify(db.invoices));
-            localStorage.setItem('ht_inv_counter', db.invoiceCounter);
+            localStorage.setItem('ht_v2_inv', JSON.stringify(db.inventory));
+            localStorage.setItem('ht_v2_shops', JSON.stringify(db.shops));
+            localStorage.setItem('ht_v2_invoices', JSON.stringify(db.invoices));
+            localStorage.setItem('ht_v2_inv_counter', db.invoiceCounter);
             renderAll();
         }
 
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB');
 
-        // Authentication
+        // Auth
         function doLogin() {
             const u = document.getElementById('loginUsername').value;
             const p = document.getElementById('loginPassword').value;
@@ -308,7 +388,7 @@
             } else if ((u === 'booker1' || u === 'booker2') && p === '1234') {
                 db.currentUser = { name: u, role: 'booker' };
             } else {
-                alert('غلط یوزر نام یا پاسورڈ!');
+                alert('Invalid Credentials!');
                 return;
             }
 
@@ -330,7 +410,7 @@
             const role = db.currentUser.role;
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = role === 'admin' ? '' : 'none');
             document.querySelectorAll('.booker-only').forEach(el => el.style.display = (role === 'admin' || role === 'booker') ? '' : 'none');
-            showSection(role === 'admin' ? 'dashboard' : 'booking');
+            showSection(role === 'admin' ? 'dashboard' : 'sales');
         }
 
         function showSection(id, el) {
@@ -340,51 +420,30 @@
             if (el) el.classList.add('active');
         }
 
-        // Backup & Restore
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `HussainTraders_Backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importData(e) {
-            const fileReader = new FileReader();
-            fileReader.onload = function (event) {
-                try {
-                    const importedDB = JSON.parse(event.target.result);
-                    db.inventory = importedDB.inventory || [];
-                    db.shops = importedDB.shops || [];
-                    db.invoices = importedDB.invoices || [];
-                    db.invoiceCounter = importedDB.invoiceCounter || 1001;
-                    saveDB();
-                    alert('ڈیٹا کامیابی سے ریسٹور ہو گیا!');
-                } catch (err) { alert('فائل پڑھنے میں غلطی!'); }
-            };
-            fileReader.readAsText(e.target.files[0]);
-        }
-
-        // Inventory Adding
+        // Add Stock (Purchase based on List Price)
         document.getElementById('stockForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            const pcsPerCtn = parseInt(document.getElementById('pPcsPerCtn').value);
+            const ctns = parseInt(document.getElementById('pCtns').value) || 0;
+            const loosePcs = parseInt(document.getElementById('pLoosePcs').value) || 0;
+            const totalPcs = (ctns * pcsPerCtn) + loosePcs;
+
             db.inventory.push({
                 id: Date.now(),
                 brand: document.getElementById('pBrand').value,
                 name: document.getElementById('pName').value,
-                cost: parseFloat(document.getElementById('pCost').value),
-                list: parseFloat(document.getElementById('pList').value),
-                trade: parseFloat(document.getElementById('pTrade').value),
-                retail: parseFloat(document.getElementById('pRetail').value),
-                stock: parseInt(document.getElementById('pStock').value)
+                pcsPerCtn: pcsPerCtn,
+                listPrice: parseFloat(document.getElementById('pList').value),
+                tradePrice: parseFloat(document.getElementById('pTrade').value),
+                retailPrice: parseFloat(document.getElementById('pRetail').value),
+                totalPcs: totalPcs
             });
+
             saveDB();
             this.reset();
         });
 
-        // Shop Adding
+        // Register Shop
         document.getElementById('shopForm').addEventListener('submit', function(e) {
             e.preventDefault();
             db.shops.push({
@@ -394,64 +453,130 @@
                 route: document.getElementById('sRoute').value,
                 address: document.getElementById('sAddress').value,
                 phone: document.getElementById('sPhone').value,
-                bookerGroup: db.currentUser.name
+                booker: db.currentUser.name
             });
             saveDB();
             this.reset();
         });
 
-        // Order Booking & Auto Stock Deduct
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const shopId = parseInt(document.getElementById('bShop').value);
-            const shop = db.shops.find(s => s.id === shopId);
-            const supplyMan = document.getElementById('bSupplyMan').value;
+        // Cart & Sales Logic
+        function updateProductPriceInfo() {
+            const pId = parseInt(document.getElementById('sProductSelect').value);
+            const prod = db.inventory.find(p => p.id === pId);
+            if(prod) {
+                document.getElementById('priceInfoNote').innerText = `Trade Price (TP): Rs. ${prod.tradePrice} | Retail Price (Display): Rs. ${prod.retailPrice} | Available: ${Math.floor(prod.totalPcs / prod.pcsPerCtn)} Ctn, ${prod.totalPcs % prod.pcsPerCtn} Pcs`;
+            } else {
+                document.getElementById('priceInfoNote').innerText = '';
+            }
+        }
 
-            const prodId = parseInt(document.querySelector('.bProd').value);
-            const qty = parseInt(document.querySelector('.bQty').value);
-            const product = db.inventory.find(p => p.id === prodId);
+        function addItemToCart() {
+            const pId = parseInt(document.getElementById('sProductSelect').value);
+            const ctns = parseInt(document.getElementById('sCtnQty').value) || 0;
+            const pcs = parseInt(document.getElementById('sPcsQty').value) || 0;
+            const prod = db.inventory.find(p => p.id === pId);
 
-            if (!product || product.stock < qty) return alert('اسٹاک میں اتنی مقدار موجود نہیں!');
+            if (!prod) return alert('Select Product!');
+            const reqTotalPcs = (ctns * prod.pcsPerCtn) + pcs;
+            if (reqTotalPcs <= 0) return alert('Enter valid quantity!');
+            if (prod.totalPcs < reqTotalPcs) return alert('Stock insufficient!');
 
-            // Auto deduct stock
-            product.stock -= qty;
+            const subtotal = reqTotalPcs * prod.tradePrice;
 
-            const discVal = parseFloat(document.getElementById('bDiscVal').value) || 0;
-            const discType = document.getElementById('bDiscType').value;
+            currentCart.push({
+                productId: prod.id,
+                name: `${prod.brand} ${prod.name}`,
+                tradePrice: prod.tradePrice,
+                retailPrice: prod.retailPrice,
+                pcsPerCtn: prod.pcsPerCtn,
+                ctns: ctns,
+                pcs: pcs,
+                totalPcs: reqTotalPcs,
+                subtotal: subtotal
+            });
+
+            renderCart();
+        }
+
+        function renderCart() {
+            const tbody = document.getElementById('cartTableBody');
+            tbody.innerHTML = currentCart.map((item, idx) => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.tradePrice}</td>
+                    <td>${item.ctns}</td>
+                    <td>${item.pcs}</td>
+                    <td>${item.totalPcs}</td>
+                    <td>Rs. ${item.subtotal.toFixed(2)}</td>
+                    <td><button onclick="removeCartItem(${idx})" class="btn-danger" style="padding:2px 6px;">X</button></td>
+                </tr>
+            `).join('');
+
+            calculateCartTotals();
+        }
+
+        function removeCartItem(idx) {
+            currentCart.splice(idx, 1);
+            renderCart();
+        }
+
+        function calculateCartTotals() {
+            const gross = currentCart.reduce((sum, item) => sum + item.subtotal, 0);
+            const discVal = parseFloat(document.getElementById('cartDiscVal').value) || 0;
+            const discType = document.getElementById('cartDiscType').value;
             
-            let total = product.trade * qty;
-            let discountAmount = discType === 'percent' ? (total * discVal / 100) : discVal;
-            let netTotal = total - discountAmount;
+            let discAmt = discType === 'percent' ? (gross * discVal / 100) : discVal;
+            let net = gross - discAmt;
+
+            document.getElementById('cartGross').innerText = gross.toFixed(2);
+            document.getElementById('cartNet').innerText = net.toFixed(2);
+        }
+
+        function submitFinalOrder() {
+            const shopId = parseInt(document.getElementById('sShopSelect').value);
+            const supplyMan = document.getElementById('sSupplyManSelect').value;
+
+            if(!shopId || !supplyMan || currentCart.length === 0) {
+                return alert('Please select Shop, Supply Man and add Products!');
+            }
+
+            const shop = db.shops.find(s => s.id === shopId);
+            const gross = parseFloat(document.getElementById('cartGross').innerText);
+            const net = parseFloat(document.getElementById('cartNet').innerText);
+            const discVal = parseFloat(document.getElementById('cartDiscVal').value) || 0;
+
+            // Deduct Stock
+            currentCart.forEach(item => {
+                const prod = db.inventory.find(p => p.id === item.productId);
+                if(prod) prod.totalPcs -= item.totalPcs;
+            });
 
             const newInv = {
                 id: db.invoiceCounter++,
                 invNo: `HT-INV-${db.invoiceCounter}`,
                 date: new Date().toLocaleDateString('en-GB'),
+                deliveryDate: new Date().toLocaleDateString('en-GB'),
                 shop: shop,
                 booker: db.currentUser.name,
                 supplyMan: supplyMan,
-                items: [{ name: `${product.brand} ${product.name}`, qty, price: product.trade, total }],
-                grossTotal: total,
-                discount: discountAmount,
-                netTotal: netTotal,
+                items: [...currentCart],
+                grossTotal: gross,
+                discount: gross - net,
+                netTotal: net,
                 status: discVal > 0 ? 'Pending Approval' : 'Approved',
                 printed: false
             };
 
             db.invoices.push(newInv);
+            currentCart = [];
+            renderCart();
             saveDB();
-            alert(`انوائس #${newInv.invNo} کامیابی سے جنریٹ ہو گئی!`);
-            this.reset();
-        });
+            alert(`Order #${newInv.invNo} successfully submitted!`);
+        }
 
-        // Print Dual Invoice (A4 Landscape)
+        // Print Invoice A4 Landscape
         function printInvoice(invId) {
             const inv = db.invoices.find(i => i.id === invId);
-            
-            if (db.currentUser.role !== 'admin' && inv.printed) {
-                return alert('یہ انوائس پرنٹ ہو چکی ہے اور لاک ہے۔ صرف ایڈمن تبدیلی کر سکتا ہے!');
-            }
-
             inv.printed = true;
             saveDB();
 
@@ -459,29 +584,29 @@
                 <div class="single-invoice">
                     <div>
                         <div class="inv-header">
-                            <div class="eng">HUSSAIN TRADERS<br><span style="font-size:9px;">FMCG Distribution</span></div>
-                            <div class="urdu">حُسَیْن ٹْرَیْڈَرْزْ<br><span style="font-size:9px;">ہول سیل اینڈ ڈسٹری بیوشن</span></div>
+                            <div class="eng">HUSSAIN TRADERS<br><span style="font-size:9px;">Distribution Terminal</span></div>
+                            <div class="urdu">حُسَیْن ٹْرَیْڈَرْزْ<br><span style="font-size:9px;">ڈسٹری بیوشن آرڈر</span></div>
                         </div>
                         <div class="inv-meta">
-                            <div><strong>انوائس #:</strong> ${inv.invNo}</div>
-                            <div><strong>تاریخ:</strong> ${inv.date}</div>
-                            <div><strong>دکان:</strong> ${inv.shop.name}</div>
-                            <div><strong>پتہ:</strong> ${inv.shop.address}</div>
-                            <div><strong>بوکر:</strong> ${inv.booker}</div>
-                            <div><strong>سپلائی مین:</strong> ${inv.supplyMan}</div>
+                            <div><strong>Inv #:</strong> ${inv.invNo}</div>
+                            <div><strong>Date:</strong> ${inv.date}</div>
+                            <div><strong>Delivery Date:</strong> ${inv.deliveryDate || inv.date}</div>
+                            <div><strong>Shop:</strong> ${inv.shop.name}</div>
+                            <div><strong>Booker:</strong> ${inv.booker}</div>
+                            <div><strong>Supply Man:</strong> ${inv.supplyMan}</div>
                         </div>
                         <table class="inv-table">
-                            <thead><tr><th>پروڈکٹ</th><th>تعداد</th><th>ریٹ</th><th>کل رقم</th></tr></thead>
+                            <thead><tr><th>Item</th><th>Carton/Pcs</th><th>RP</th><th>TP Rate</th><th>Subtotal</th></tr></thead>
                             <tbody>
-                                ${inv.items.map(it => `<tr><td>${it.name}</td><td>${it.qty}</td><td>${it.price}</td><td>${it.total}</td></tr>`).join('')}
+                                ${inv.items.map(it => `<tr><td>${it.name}</td><td>${it.ctns}C / ${it.pcs}P</td><td>${it.retailPrice}</td><td>${it.tradePrice}</td><td>${it.subtotal}</td></tr>`).join('')}
                             </tbody>
                         </table>
                     </div>
                     <div class="inv-footer">
-                        <div style="display:flex; justify-shadow:space-between; font-weight:bold;">
-                            <span>کل رقم: Rs. ${inv.grossTotal}</span>
-                            <span>ڈسکاؤنٹ: Rs. ${inv.discount}</span>
-                            <span>صافی رقم: Rs. ${inv.netTotal}</span>
+                        <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                            <span>Gross (TP): Rs. ${inv.grossTotal}</span>
+                            <span>Discount: Rs. ${inv.discount}</span>
+                            <span>Net Payable: Rs. ${inv.netTotal}</span>
                         </div>
                         <div class="checkbox-group">
                             <label>CASH [ &nbsp; ]</label>
@@ -502,76 +627,144 @@
                     ${invHTML}
                 </div>
             `;
-
             window.print();
         }
 
-        // Cancel / Return Invoice (Admin Only)
+        // Return / Cancel Order
         function cancelInvoice(invId) {
-            if (confirm('کیا آپ اس انوائس کو کینسل کر کے اسٹاک واپس کرنا چاہتے ہیں؟')) {
+            if(confirm('Return this stock back to inventory and cancel order?')) {
                 const inv = db.invoices.find(i => i.id === invId);
                 inv.items.forEach(it => {
-                    const prod = db.inventory.find(p => `${p.brand} ${p.name}` === it.name);
-                    if (prod) prod.stock += it.qty;
+                    const prod = db.inventory.find(p => p.id === it.productId);
+                    if(prod) prod.totalPcs += it.totalPcs;
                 });
-                inv.status = 'Cancelled';
+                inv.status = 'Returned / Cancelled';
                 saveDB();
             }
         }
 
-        // Reports: Ledger & Pick List
-        function generateReports() {
-            const selectedBooker = document.getElementById('reportBookerSelect').value;
-            const filteredInvoices = db.invoices.filter(i => (!selectedBooker || i.booker === selectedBooker) && i.status !== 'Cancelled');
+        // Delivery Date Change
+        function updateDeliveryDate(invId, newDate) {
+            const inv = db.invoices.find(i => i.id === invId);
+            if(inv) {
+                inv.deliveryDate = newDate;
+                saveDB();
+                alert('Delivery date updated!');
+            }
+        }
 
-            // Pick List Data
-            let pickList = {};
-            filteredInvoices.forEach(inv => {
+        // Picklist Generation
+        function renderPicklist() {
+            const selectedBooker = document.getElementById('pickBookerSelect').value;
+            const activeInvoices = db.invoices.filter(i => (!selectedBooker || i.booker === selectedBooker) && i.status !== 'Returned / Cancelled');
+
+            let summary = {};
+            activeInvoices.forEach(inv => {
                 inv.items.forEach(it => {
-                    pickList[it.name] = (pickList[it.name] || 0) + it.qty;
+                    if(!summary[it.name]) summary[it.name] = { totalPcs: 0, pcsPerCtn: it.pcsPerCtn };
+                    summary[it.name].totalPcs += it.totalPcs;
                 });
             });
 
             let html = `
-                <h3 style="margin-bottom:10px;">ڈلیوری لیجر (Delivery Ledger)</h3>
+                <h4 style="margin:15px 0 10px 0;">Warehouse Consolidated Picklist</h4>
                 <table>
-                    <thead><tr><th>انوائس #</th><th>تاریخ</th><th>دکان</th><th>پتہ</th><th>فون</th><th>رقم</th></tr></thead>
+                    <thead><tr><th>Product Name</th><th>Cartons</th><th>Loose Pcs</th><th>Total Pieces</th></tr></thead>
                     <tbody>
-                        ${filteredInvoices.map(i => `<tr><td>${i.invNo}</td><td>${i.date}</td><td>${i.shop.name}</td><td>${i.shop.address}</td><td>${i.shop.phone}</td><td>Rs. ${i.netTotal}</td></tr>`).join('')}
-                    </tbody>
-                </table>
-
-                <h3 style="margin:20px 0 10px 0;">گودام پک لسٹ (Stock Keeper Pick List)</h3>
-                <table>
-                    <thead><tr><th>پروڈکٹ کا نام</th><th>کل آرڈر تعداد</th></tr></thead>
-                    <tbody>
-                        ${Object.keys(pickList).map(k => `<tr><td>${k}</td><td><strong>${pickList[k]}</strong></td></tr>`).join('')}
+                        ${Object.keys(summary).map(k => {
+                            const ctn = Math.floor(summary[k].totalPcs / summary[k].pcsPerCtn);
+                            const loose = summary[k].totalPcs % summary[k].pcsPerCtn;
+                            return `<tr><td>${k}</td><td><strong>${ctn}</strong></td><td>${loose}</td><td>${summary[k].totalPcs}</td></tr>`;
+                        }).join('')}
                     </tbody>
                 </table>
             `;
-
-            document.getElementById('reportOutput').innerHTML = html;
+            document.getElementById('picklistContainer').innerHTML = html;
         }
 
-        // Render Tables & Selects
+        // Reports Renderer
+        function showReportType(type) {
+            const container = document.getElementById('reportDisplayArea');
+            if(type === 'sale') {
+                const sales = db.invoices.filter(i => i.status !== 'Returned / Cancelled');
+                container.innerHTML = `
+                    <h3>Sales Report</h3>
+                    <table>
+                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Net TP Total</th></tr></thead>
+                        <tbody>${sales.map(s => `<tr><td>${s.invNo}</td><td>${s.date}</td><td>${s.shop.name}</td><td>Rs. ${s.netTotal}</td></tr>`).join('')}</tbody>
+                    </table>
+                `;
+            } else if(type === 'stock') {
+                container.innerHTML = `
+                    <h3>Stock Report</h3>
+                    <table>
+                        <thead><tr><th>Product</th><th>List Price (Cost)</th><th>Trade Price</th><th>Available Stock</th></tr></thead>
+                        <tbody>${db.inventory.map(p => `<tr><td>${p.brand} ${p.name}</td><td>Rs. ${p.listPrice}</td><td>Rs. ${p.tradePrice}</td><td>${Math.floor(p.totalPcs/p.pcsPerCtn)} Ctn, ${p.totalPcs%p.pcsPerCtn} Pcs</td></tr>`).join('')}</tbody>
+                    </table>
+                `;
+            } else if(type === 'return') {
+                const returns = db.invoices.filter(i => i.status === 'Returned / Cancelled');
+                container.innerHTML = `
+                    <h3>Stock Return Report</h3>
+                    <table>
+                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Returned Amount</th></tr></thead>
+                        <tbody>${returns.map(r => `<tr><td>${r.invNo}</td><td>${r.date}</td><td>${r.shop.name}</td><td>Rs. ${r.netTotal}</td></tr>`).join('')}</tbody>
+                    </table>
+                `;
+            }
+        }
+
+        // Backup & Restore
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `HussainTraders_ERP_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(e) {
+            const fileReader = new FileReader();
+            fileReader.onload = function (event) {
+                try {
+                    const importedDB = JSON.parse(event.target.result);
+                    db.inventory = importedDB.inventory || [];
+                    db.shops = importedDB.shops || [];
+                    db.invoices = importedDB.invoices || [];
+                    db.invoiceCounter = importedDB.invoiceCounter || 1001;
+                    saveDB();
+                    alert('Data restored successfully!');
+                } catch (err) { alert('Error reading backup file!'); }
+            };
+            fileReader.readAsText(e.target.files[0]);
+        }
+
+        // Render Tables & Interface
         function renderAll() {
-            // Inventory
-            document.getElementById('inventoryTable').innerHTML = db.inventory.map(p => 
-                `<tr><td>${p.brand}</td><td>${p.name}</td><td>${p.cost}</td><td>${p.list}</td><td>${p.trade}</td><td>${p.retail}</td><td>${p.stock}</td></tr>`
-            ).join('');
+            // Inventory Table
+            document.getElementById('inventoryTable').innerHTML = db.inventory.map(p => {
+                const ctns = Math.floor(p.totalPcs / p.pcsPerCtn);
+                const loose = p.totalPcs % p.pcsPerCtn;
+                return `<tr>
+                    <td>${p.brand}</td>
+                    <td>${p.name}</td>
+                    <td>${p.pcsPerCtn}</td>
+                    <td>Rs. ${p.listPrice}</td>
+                    <td>Rs. ${p.tradePrice}</td>
+                    <td>Rs. ${p.retailPrice}</td>
+                    <td>${p.totalPcs} Pcs</td>
+                    <td><strong>${ctns} Ctn, ${loose} Pcs</strong></td>
+                </tr>`;
+            }).join('');
 
-            // Booking Product Options
-            document.querySelectorAll('.bProd').forEach(select => {
-                select.innerHTML = '<option value="">پروڈکٹ</option>' + db.inventory.map(p => `<option value="${p.id}">${p.brand} ${p.name} (اسٹاک: ${p.stock})</option>`).join('');
-            });
+            // Sales Product Options
+            document.getElementById('sProductSelect').innerHTML = '<option value="">Select Product</option>' + db.inventory.map(p => `<option value="${p.id}">${p.brand} ${p.name}</option>`).join('');
 
-            // Shops Table
-            const visibleShops = db.currentUser?.role === 'admin' ? db.shops : db.shops.filter(s => s.bookerGroup === db.currentUser.name);
-            document.getElementById('shopsTable').innerHTML = visibleShops.map(s => 
-                `<tr><td>${s.name}</td><td>${s.owner}</td><td>${s.route}</td><td>${s.address}</td><td>${s.phone}</td><td>${s.bookerGroup}</td><td>${db.currentUser?.role === 'admin' ? '<button class="btn-warning">Ed</button>' : '-'}</td></tr>`
-            ).join('');
-
-            document.getElementById('bShop').innerHTML = '<option value="">دکان منتخب کریں</option>' + visibleShops.map(s => `<option value="${s.id}">${s.name} (${s.route})</option>`).join('');
+            // Shops Table & Select Options
+            document.getElementById('shopsTable').innerHTML = db.shops.map(s => `<tr><td>${s.name}</td><td>${s.owner}</td><td>${s.route}</td><td>${s.address}</td><td>${s.phone}</td><td>${s.booker}</td></tr>`).join('');
+            document.getElementById('sShopSelect').innerHTML = '<option value="">Select Shop</option>' + db.shops.map(s => `<option value="${s.id}">${s.name} (${s.route})</option>`).join('');
 
             // Invoices Table
             document.getElementById('invoicesTable').innerHTML = db.invoices.map(i => `
@@ -580,23 +773,27 @@
                     <td>${i.date}</td>
                     <td>${i.shop.name}</td>
                     <td>${i.booker}</td>
-                    <td>Rs. ${i.netTotal}</td>
-                    <td>Rs. ${i.discount}</td>
-                    <td><span class="status-badge ${i.printed ? 'badge-printed' : 'badge-pending'}">${i.status} ${i.printed ? '(Printed)' : ''}</span></td>
+                    <td>${i.supplyMan}</td>
+                    <td>Rs. ${i.netTotal.toFixed(2)}</td>
+                    <td><span class="status-badge ${i.printed ? 'badge-printed' : 'badge-pending'}">${i.status}</span></td>
                     <td>
-                        <button onclick="printInvoice(${i.id})">پرنٹ</button>
-                        ${db.currentUser?.role === 'admin' ? `<button onclick="cancelInvoice(${i.id})" class="btn-danger">منسوخ</button>` : ''}
+                        <button onclick="printInvoice(${i.id})">Print</button>
+                        ${db.currentUser?.role === 'admin' && i.status !== 'Returned / Cancelled' ? `<button onclick="cancelInvoice(${i.id})" class="btn-danger">Return</button>` : ''}
+                        ${db.currentUser?.role === 'admin' ? `<input type="date" onchange="updateDeliveryDate(${i.id}, this.value)" style="padding:2px; font-size:0.75rem;">` : ''}
                     </td>
                 </tr>
             `).join('');
 
-            // Stats
-            document.getElementById('dashSales').innerText = "Rs. " + db.invoices.filter(i => i.status !== 'Cancelled').reduce((a, b) => a + b.netTotal, 0);
-            document.getElementById('dashPending').innerText = db.invoices.filter(i => !i.printed).length;
+            // Dashboard Totals
+            const totalSales = db.invoices.filter(i => i.status !== 'Returned / Cancelled').reduce((a, b) => a + b.netTotal, 0);
+            const totalReturns = db.invoices.filter(i => i.status === 'Returned / Cancelled').reduce((a, b) => a + b.netTotal, 0);
+            document.getElementById('dashSales').innerText = "Rs. " + totalSales.toFixed(2);
+            document.getElementById('dashReturns').innerText = "Rs. " + totalReturns.toFixed(2);
+            document.getElementById('dashPending').innerText = db.invoices.filter(i => !i.printed && i.status !== 'Returned / Cancelled').length;
 
-            // Booker Filter for Reports
+            // Picklist Select Booker
             const bookers = [...new Set(db.invoices.map(i => i.booker))];
-            document.getElementById('reportBookerSelect').innerHTML = '<option value="">تمام بوکرز</option>' + bookers.map(b => `<option value="${b}">${b}</option>`).join('');
+            document.getElementById('pickBookerSelect').innerHTML = '<option value="">All Bookers</option>' + bookers.map(b => `<option value="${b}">${b}</option>`).join('');
         }
     </script>
 </body>
