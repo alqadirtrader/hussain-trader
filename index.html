@@ -6,6 +6,12 @@
     <title>Hussain Traders - Enterprise ERP System</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS CDN for Excel Bulk Import/Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- jsPDF & AutoTable for Dynamic PDF Reports -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root {
             --bg-primary: #0f172a;
@@ -22,7 +28,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
         body { background: #f1f5f9; color: var(--text-dark); min-height: 100vh; }
 
-        /* Animated Login Screen */
         .login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(-45deg, #0f172a, #1e293b, #0ea5e9, #0284c7); 
@@ -46,9 +51,7 @@
             backdrop-filter: blur(10px);
         }
 
-        @keyframes slideUp {
-            to { transform: translateY(0); opacity: 1; }
-        }
+        @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
 
         .login-card .icon-box {
             width: 70px; height: 70px; background: var(--accent-color); color: white;
@@ -58,11 +61,7 @@
             animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         .login-card h2 { color: var(--bg-primary); font-weight: 700; letter-spacing: 0.5px; }
         .login-card p.urdu-sub { font-family: 'Noto Nastaliq Urdu', serif; font-size: 1rem; color: #64748b; margin-bottom: 20px; }
@@ -70,7 +69,6 @@
         .login-card button { width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .login-card button:hover { background: #0284c7; }
 
-        /* Dashboard Layout (English LTR) */
         .app-container { display: none; min-height: 100vh; flex-direction: row; }
         .sidebar { width: 260px; background: var(--bg-primary); color: var(--text-light); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .brand-header { text-align: left; margin-bottom: 25px; border-bottom: 1px solid #334155; padding-bottom: 15px; }
@@ -97,6 +95,7 @@
         .btn-danger { background: var(--danger); }
         .btn-success { background: var(--success); }
         .btn-warning { background: var(--warning); color: #000; }
+        .btn-sm { padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 0.85rem; }
@@ -109,11 +108,11 @@
 
         .urdu-text { font-family: 'Noto Nastaliq Urdu', serif; font-weight: normal; margin-left: 5px; color: #64748b; font-size: 0.85rem; }
 
-        /* SND Classic Style Quick Sales Bar */
         .snd-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         @media (max-width: 900px) { .snd-layout { grid-template-columns: 1fr; } }
 
-        /* A4 LANDSCAPE DUAL INVOICE PRINT STYLING */
+        .bulk-bar { display: flex; gap: 10px; margin-bottom: 15px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1; align-items: center; }
+
         @media print {
             body * { visibility: hidden; }
             #printable-area, #printable-area * { visibility: visible; }
@@ -139,7 +138,6 @@
 </head>
 <body>
 
-    <!-- ANIMATED LOGIN SCREEN -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
             <div class="icon-box">
@@ -155,10 +153,8 @@
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
     <div id="appContainer" class="app-container">
         
-        <!-- SIDEBAR -->
         <div class="sidebar">
             <div>
                 <div class="brand-header">
@@ -180,7 +176,6 @@
             </div>
         </div>
 
-        <!-- MAIN CONTENT AREA -->
         <div class="main-content">
             <div class="top-bar">
                 <div><strong>User: </strong><span id="currentUserDisplay">-</span></div>
@@ -192,7 +187,6 @@
                 </div>
             </div>
 
-            <!-- 1. DASHBOARD -->
             <div id="dashboard" class="section-view active">
                 <div class="card">
                     <div class="card-header">Dashboard Overview <span class="urdu-text">(سسٹم خلاصہ)</span></div>
@@ -210,58 +204,92 @@
                 </div>
             </div>
 
-            <!-- 2. INVENTORY & PURCHASE (Stock Purchase using List Price) -->
             <div id="inventory" class="section-view">
                 <div class="card admin-only">
-                    <div class="card-header">Add Stock / Purchase <span class="urdu-text">(اسٹاک خریداریاں)</span></div>
+                    <div class="card-header">
+                        <span id="stockFormTitle">Add Stock / Purchase Entry <span class="urdu-text">(اسٹاک اینڈ پرچیز اینٹری)</span></span>
+                        <button type="button" id="cancelStockEditBtn" class="btn-warning btn-sm" style="display:none;" onclick="resetStockForm()">Cancel Edit</button>
+                    </div>
+                    
+                    <div class="bulk-bar">
+                        <i class="fa-solid fa-file-excel" style="font-size:1.5rem; color:#10b981;"></i>
+                        <div>
+                            <strong>Bulk Import Stock (Excel):</strong>
+                            <p style="font-size:0.75rem; color:#64748b;">Columns needed: Brand, Name, PcsPerCtn, ListPrice, TradePrice, RetailPrice, Ctns, LoosePcs, Supplier, PayStatus</p>
+                        </div>
+                        <input type="file" id="excelStockFile" accept=".xlsx, .xls" style="display:none;" onchange="importBulkStock(event)">
+                        <button onclick="document.getElementById('excelStockFile').click()" class="btn-success btn-sm"><i class="fa-solid fa-upload"></i> Upload Stock Excel</button>
+                    </div>
+
                     <form id="stockForm">
+                        <input type="hidden" id="pEditId">
                         <input type="text" id="pBrand" placeholder="Brand Name" required>
                         <input type="text" id="pName" placeholder="Product Name" required>
                         <input type="number" id="pPcsPerCtn" placeholder="Pcs per Carton" required>
-                        <input type="number" id="pList" placeholder="List Price (Purchase Rate)" required>
-                        <input type="number" id="pTrade" placeholder="Trade Price (TP for Sales)" required>
-                        <input type="number" id="pRetail" placeholder="Retail Price (Display Only)" required>
+                        <input type="number" id="pList" placeholder="Purchase Rate (List Price)" required>
+                        <input type="number" id="pTrade" placeholder="Trade Price (TP Sale)" required>
+                        <input type="number" id="pRetail" placeholder="Retail Price" required>
                         <input type="number" id="pCtns" placeholder="Cartons Stock" value="0">
                         <input type="number" id="pLoosePcs" placeholder="Loose Pieces Stock" value="0">
-                        <button type="submit">+ Add Stock</button>
+                        
+                        <input type="text" id="pSupplier" placeholder="Purchased From (Vendor/Supplier)" required>
+                        <select id="pPayStatus" required>
+                            <option value="Cash">Cash Purchase</option>
+                            <option value="Credit">Credit (Udhaar) Purchase</option>
+                        </select>
+
+                        <button type="submit" id="saveStockBtn">+ Add / Update Purchase</button>
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header">Stock Inventory List</div>
+                    <div class="card-header">Stock Inventory & Purchase Records Log</div>
                     <table>
                         <thead>
-                            <tr><th>Brand</th><th>Product</th><th>Pcs/Ctn</th><th>List Price (Purch)</th><th>Trade Price (TP)</th><th>Retail Price</th><th>Total Pcs</th><th>Cartons / Loose</th></tr>
+                            <tr><th>Brand</th><th>Product</th><th>Pcs/Ctn</th><th>Purch. Rate</th><th>TP Rate</th><th>Supplier</th><th>Pay Type</th><th>Total Pcs</th><th>Cartons / Loose</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="inventoryTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 3. SHOPS DIRECTORY -->
             <div id="shops" class="section-view">
                 <div class="card">
-                    <div class="card-header">Register Shop <span class="urdu-text">(دکان کی رجسٹریشن)</span></div>
+                    <div class="card-header">
+                        <span id="shopFormTitle">Register Shop <span class="urdu-text">(دکان کی رجسٹریشن)</span></span>
+                        <button type="button" id="cancelShopEditBtn" class="btn-warning btn-sm" style="display:none;" onclick="resetShopForm()">Cancel Edit</button>
+                    </div>
+
+                    <div class="bulk-bar">
+                        <i class="fa-solid fa-file-excel" style="font-size:1.5rem; color:#10b981;"></i>
+                        <div>
+                            <strong>Bulk Import Shops (Excel):</strong>
+                            <p style="font-size:0.75rem; color:#64748b;">Columns needed: Name, Owner, Route, Address, Phone</p>
+                        </div>
+                        <input type="file" id="excelShopFile" accept=".xlsx, .xls" style="display:none;" onchange="importBulkShops(event)">
+                        <button onclick="document.getElementById('excelShopFile').click()" class="btn-success btn-sm"><i class="fa-solid fa-upload"></i> Upload Shops Excel</button>
+                    </div>
+
                     <form id="shopForm">
+                        <input type="hidden" id="sEditId">
                         <input type="text" id="sName" placeholder="Shop Name" required>
                         <input type="text" id="sOwner" placeholder="Owner Name" required>
                         <input type="text" id="sRoute" placeholder="Route / Sector" required>
                         <input type="text" id="sAddress" placeholder="Address" required>
                         <input type="tel" id="sPhone" placeholder="Phone Number" required>
-                        <button type="submit">+ Add Shop</button>
+                        <button type="submit" id="saveShopBtn">+ Register Shop</button>
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header">Registered Shops</div>
+                    <div class="card-header">Registered Shops Directory</div>
                     <table>
                         <thead>
-                            <tr><th>Shop</th><th>Owner</th><th>Route</th><th>Address</th><th>Phone</th><th>Booker</th></tr>
+                            <tr><th>Shop</th><th>Owner</th><th>Route</th><th>Address</th><th>Phone</th><th>Booker</th><th>Actions</th></tr>
                         </thead>
                         <tbody id="shopsTable"></tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- 4. SALES TERMINAL (SND Classic Layout) -->
             <div id="sales" class="section-view">
                 <div class="snd-layout">
                     <div class="card">
@@ -312,7 +340,6 @@
                 </div>
             </div>
 
-            <!-- 5. INVOICES LOG -->
             <div id="invoices" class="section-view">
                 <div class="card">
                     <div class="card-header">Invoices Log</div>
@@ -325,7 +352,6 @@
                 </div>
             </div>
 
-            <!-- 6. PICKLIST & DELIVERY DATE MANAGEMENT -->
             <div id="picklistSection" class="section-view admin-only">
                 <div class="card">
                     <div class="card-header">Warehouse Picklist & Delivery Date Settings</div>
@@ -337,7 +363,6 @@
                 </div>
             </div>
 
-            <!-- 7. SEPARATED REPORTS (Sale, Stock, Return Stock) -->
             <div id="reportsSection" class="section-view admin-only">
                 <div class="card">
                     <div class="card-header">Reports Center</div>
@@ -353,11 +378,9 @@
         </div>
     </div>
 
-    <!-- PRINT AREA FOR A4 LANDSCAPE INVOICE -->
     <div id="printable-area"></div>
 
     <script>
-        // System Database Structure
         let db = {
             currentUser: null,
             inventory: JSON.parse(localStorage.getItem('ht_v2_inv')) || [],
@@ -367,6 +390,7 @@
         };
 
         let currentCart = [];
+        let activeReportData = null;
 
         function saveDB() {
             localStorage.setItem('ht_v2_inv', JSON.stringify(db.inventory));
@@ -378,7 +402,6 @@
 
         document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB');
 
-        // Auth
         function doLogin() {
             const u = document.getElementById('loginUsername').value;
             const p = document.getElementById('loginPassword').value;
@@ -420,51 +443,213 @@
             if (el) el.classList.add('active');
         }
 
-        // Add Stock (Purchase based on List Price)
+        // ================= STOCK & PURCHASE SYSTEM =================
         document.getElementById('stockForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            const editId = document.getElementById('pEditId').value;
             const pcsPerCtn = parseInt(document.getElementById('pPcsPerCtn').value);
             const ctns = parseInt(document.getElementById('pCtns').value) || 0;
             const loosePcs = parseInt(document.getElementById('pLoosePcs').value) || 0;
             const totalPcs = (ctns * pcsPerCtn) + loosePcs;
 
-            db.inventory.push({
-                id: Date.now(),
+            const stockObj = {
+                id: editId ? parseInt(editId) : Date.now(),
                 brand: document.getElementById('pBrand').value,
                 name: document.getElementById('pName').value,
                 pcsPerCtn: pcsPerCtn,
                 listPrice: parseFloat(document.getElementById('pList').value),
                 tradePrice: parseFloat(document.getElementById('pTrade').value),
                 retailPrice: parseFloat(document.getElementById('pRetail').value),
-                totalPcs: totalPcs
-            });
+                totalPcs: totalPcs,
+                supplier: document.getElementById('pSupplier').value || 'N/A',
+                payStatus: document.getElementById('pPayStatus').value
+            };
+
+            if (editId) {
+                const idx = db.inventory.findIndex(p => p.id === parseInt(editId));
+                if (idx !== -1) db.inventory[idx] = stockObj;
+            } else {
+                db.inventory.push(stockObj);
+            }
 
             saveDB();
-            this.reset();
+            resetStockForm();
         });
 
-        // Register Shop
+        function editStock(id) {
+            const item = db.inventory.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('pEditId').value = item.id;
+            document.getElementById('pBrand').value = item.brand;
+            document.getElementById('pName').value = item.name;
+            document.getElementById('pPcsPerCtn').value = item.pcsPerCtn;
+            document.getElementById('pList').value = item.listPrice;
+            document.getElementById('pTrade').value = item.tradePrice;
+            document.getElementById('pRetail').value = item.retailPrice;
+            document.getElementById('pCtns').value = Math.floor(item.totalPcs / item.pcsPerCtn);
+            document.getElementById('pLoosePcs').value = item.totalPcs % item.pcsPerCtn;
+            document.getElementById('pSupplier').value = item.supplier || '';
+            document.getElementById('pPayStatus').value = item.payStatus || 'Cash';
+
+            document.getElementById('stockFormTitle').innerText = 'Edit Stock / Purchase Entry';
+            document.getElementById('saveStockBtn').innerText = 'Update Stock Entry';
+            document.getElementById('cancelStockEditBtn').style.display = 'inline-block';
+        }
+
+        function deleteStock(id) {
+            if (confirm('Are you sure you want to delete this stock item?')) {
+                db.inventory = db.inventory.filter(p => p.id !== id);
+                saveDB();
+            }
+        }
+
+        function resetStockForm() {
+            document.getElementById('stockForm').reset();
+            document.getElementById('pEditId').value = '';
+            document.getElementById('stockFormTitle').innerHTML = 'Add Stock / Purchase Entry <span class="urdu-text">(اسٹاک اینڈ پرچیز اینٹری)</span>';
+            document.getElementById('saveStockBtn').innerText = '+ Add / Update Purchase';
+            document.getElementById('cancelStockEditBtn').style.display = 'none';
+        }
+
+        // BULK STOCK IMPORT VIA EXCEL
+        function importBulkStock(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet);
+
+                    let count = 0;
+                    json.forEach(row => {
+                        const pcsPerCtn = parseInt(row.PcsPerCtn) || 1;
+                        const ctns = parseInt(row.Ctns) || 0;
+                        const loose = parseInt(row.LoosePcs) || 0;
+                        const totalPcs = (ctns * pcsPerCtn) + loose;
+
+                        db.inventory.push({
+                            id: Date.now() + Math.floor(Math.random() * 1000),
+                            brand: row.Brand || 'Generic',
+                            name: row.Name || 'Product',
+                            pcsPerCtn: pcsPerCtn,
+                            listPrice: parseFloat(row.ListPrice) || 0,
+                            tradePrice: parseFloat(row.TradePrice) || 0,
+                            retailPrice: parseFloat(row.RetailPrice) || 0,
+                            totalPcs: totalPcs,
+                            supplier: row.Supplier || 'Bulk Vendor',
+                            payStatus: row.PayStatus || 'Cash'
+                        });
+                        count++;
+                    });
+                    saveDB();
+                    alert(`Successfully imported ${count} Stock Items from Excel!`);
+                } catch(err) {
+                    alert('Error parsing Excel File! Check columns schema.');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ================= SHOPS DIRECTORY SYSTEM =================
         document.getElementById('shopForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            db.shops.push({
-                id: Date.now(),
+            const editId = document.getElementById('sEditId').value;
+            const shopObj = {
+                id: editId ? parseInt(editId) : Date.now(),
                 name: document.getElementById('sName').value,
                 owner: document.getElementById('sOwner').value,
                 route: document.getElementById('sRoute').value,
                 address: document.getElementById('sAddress').value,
                 phone: document.getElementById('sPhone').value,
                 booker: db.currentUser.name
-            });
+            };
+
+            if (editId) {
+                const idx = db.shops.findIndex(s => s.id === parseInt(editId));
+                if (idx !== -1) db.shops[idx] = shopObj;
+            } else {
+                db.shops.push(shopObj);
+            }
+
             saveDB();
-            this.reset();
+            resetShopForm();
         });
 
-        // Cart & Sales Logic
+        function editShop(id) {
+            const shop = db.shops.find(s => s.id === id);
+            if (!shop) return;
+
+            document.getElementById('sEditId').value = shop.id;
+            document.getElementById('sName').value = shop.name;
+            document.getElementById('sOwner').value = shop.owner;
+            document.getElementById('sRoute').value = shop.route;
+            document.getElementById('sAddress').value = shop.address;
+            document.getElementById('sPhone').value = shop.phone;
+
+            document.getElementById('shopFormTitle').innerText = 'Edit Shop Info';
+            document.getElementById('saveShopBtn').innerText = 'Update Shop';
+            document.getElementById('cancelShopEditBtn').style.display = 'inline-block';
+        }
+
+        function deleteShop(id) {
+            if (confirm('Are you sure you want to delete this shop?')) {
+                db.shops = db.shops.filter(s => s.id !== id);
+                saveDB();
+            }
+        }
+
+        function resetShopForm() {
+            document.getElementById('shopForm').reset();
+            document.getElementById('sEditId').value = '';
+            document.getElementById('shopFormTitle').innerHTML = 'Register Shop <span class="urdu-text">(دکان کی رجسٹریشن)</span>';
+            document.getElementById('saveShopBtn').innerText = '+ Register Shop';
+            document.getElementById('cancelShopEditBtn').style.display = 'none';
+        }
+
+        // BULK SHOPS IMPORT VIA EXCEL
+        function importBulkShops(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet);
+
+                    let count = 0;
+                    json.forEach(row => {
+                        db.shops.push({
+                            id: Date.now() + Math.floor(Math.random() * 1000),
+                            name: row.Name || 'Shop',
+                            owner: row.Owner || 'Owner',
+                            route: row.Route || 'Main Route',
+                            address: row.Address || 'City',
+                            phone: row.Phone || '00000000000',
+                            booker: db.currentUser.name
+                        });
+                        count++;
+                    });
+                    saveDB();
+                    alert(`Successfully imported ${count} Shops from Excel!`);
+                } catch(err) {
+                    alert('Error parsing Excel File!');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ================= CART & SALES LOGIC =================
         function updateProductPriceInfo() {
             const pId = parseInt(document.getElementById('sProductSelect').value);
             const prod = db.inventory.find(p => p.id === pId);
             if(prod) {
-                document.getElementById('priceInfoNote').innerText = `Trade Price (TP): Rs. ${prod.tradePrice} | Retail Price (Display): Rs. ${prod.retailPrice} | Available: ${Math.floor(prod.totalPcs / prod.pcsPerCtn)} Ctn, ${prod.totalPcs % prod.pcsPerCtn} Pcs`;
+                document.getElementById('priceInfoNote').innerText = `Trade Price (TP): Rs. ${prod.tradePrice} | Retail Price: Rs. ${prod.retailPrice} | Available: ${Math.floor(prod.totalPcs / prod.pcsPerCtn)} Ctn, ${prod.totalPcs % prod.pcsPerCtn} Pcs`;
             } else {
                 document.getElementById('priceInfoNote').innerText = '';
             }
@@ -508,7 +693,7 @@
                     <td>${item.pcs}</td>
                     <td>${item.totalPcs}</td>
                     <td>Rs. ${item.subtotal.toFixed(2)}</td>
-                    <td><button onclick="removeCartItem(${idx})" class="btn-danger" style="padding:2px 6px;">X</button></td>
+                    <td><button onclick="removeCartItem(${idx})" class="btn-danger btn-sm">X</button></td>
                 </tr>
             `).join('');
 
@@ -545,7 +730,6 @@
             const net = parseFloat(document.getElementById('cartNet').innerText);
             const discVal = parseFloat(document.getElementById('cartDiscVal').value) || 0;
 
-            // Deduct Stock
             currentCart.forEach(item => {
                 const prod = db.inventory.find(p => p.id === item.productId);
                 if(prod) prod.totalPcs -= item.totalPcs;
@@ -574,7 +758,6 @@
             alert(`Order #${newInv.invNo} successfully submitted!`);
         }
 
-        // Print Invoice A4 Landscape
         function printInvoice(invId) {
             const inv = db.invoices.find(i => i.id === invId);
             inv.printed = true;
@@ -630,7 +813,6 @@
             window.print();
         }
 
-        // Return / Cancel Order
         function cancelInvoice(invId) {
             if(confirm('Return this stock back to inventory and cancel order?')) {
                 const inv = db.invoices.find(i => i.id === invId);
@@ -643,7 +825,6 @@
             }
         }
 
-        // Delivery Date Change
         function updateDeliveryDate(invId, newDate) {
             const inv = db.invoices.find(i => i.id === invId);
             if(inv) {
@@ -653,7 +834,6 @@
             }
         }
 
-        // Picklist Generation
         function renderPicklist() {
             const selectedBooker = document.getElementById('pickBookerSelect').value;
             const activeInvoices = db.invoices.filter(i => (!selectedBooker || i.booker === selectedBooker) && i.status !== 'Returned / Cancelled');
@@ -682,39 +862,95 @@
             document.getElementById('picklistContainer').innerHTML = html;
         }
 
-        // Reports Renderer
+        // ================= REPORTS, EXCEL & PDF SYSTEM =================
         function showReportType(type) {
             const container = document.getElementById('reportDisplayArea');
+            let columns = [];
+            let dataRows = [];
+            let reportTitle = "";
+
             if(type === 'sale') {
+                reportTitle = "Sales Report";
+                columns = ["Inv #", "Date", "Shop Name", "Booker", "Supply Man", "Net Amount (TP)"];
                 const sales = db.invoices.filter(i => i.status !== 'Returned / Cancelled');
-                container.innerHTML = `
-                    <h3>Sales Report</h3>
-                    <table>
-                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Net TP Total</th></tr></thead>
-                        <tbody>${sales.map(s => `<tr><td>${s.invNo}</td><td>${s.date}</td><td>${s.shop.name}</td><td>Rs. ${s.netTotal}</td></tr>`).join('')}</tbody>
-                    </table>
-                `;
+                dataRows = sales.map(s => [s.invNo, s.date, s.shop.name, s.booker, s.supplyMan, `Rs. ${s.netTotal}`]);
             } else if(type === 'stock') {
-                container.innerHTML = `
-                    <h3>Stock Report</h3>
-                    <table>
-                        <thead><tr><th>Product</th><th>List Price (Cost)</th><th>Trade Price</th><th>Available Stock</th></tr></thead>
-                        <tbody>${db.inventory.map(p => `<tr><td>${p.brand} ${p.name}</td><td>Rs. ${p.listPrice}</td><td>Rs. ${p.tradePrice}</td><td>${Math.floor(p.totalPcs/p.pcsPerCtn)} Ctn, ${p.totalPcs%p.pcsPerCtn} Pcs</td></tr>`).join('')}</tbody>
-                    </table>
-                `;
+                reportTitle = "Stock & Purchase Report";
+                columns = ["Brand", "Product", "Supplier", "Pay Type", "Purch Rate", "TP Rate", "RP Rate", "Available Stock"];
+                dataRows = db.inventory.map(p => [
+                    p.brand, p.name, p.supplier || 'N/A', p.payStatus || 'Cash',
+                    `Rs. ${p.listPrice}`, `Rs. ${p.tradePrice}`, `Rs. ${p.retailPrice}`,
+                    `${Math.floor(p.totalPcs/p.pcsPerCtn)} Ctn, ${p.totalPcs%p.pcsPerCtn} Pcs`
+                ]);
             } else if(type === 'return') {
+                reportTitle = "Stock Return Report";
+                columns = ["Inv #", "Date", "Shop Name", "Booker", "Returned Amount"];
                 const returns = db.invoices.filter(i => i.status === 'Returned / Cancelled');
-                container.innerHTML = `
-                    <h3>Stock Return Report</h3>
-                    <table>
-                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Returned Amount</th></tr></thead>
-                        <tbody>${returns.map(r => `<tr><td>${r.invNo}</td><td>${r.date}</td><td>${r.shop.name}</td><td>Rs. ${r.netTotal}</td></tr>`).join('')}</tbody>
-                    </table>
-                `;
+                dataRows = returns.map(r => [r.invNo, r.date, r.shop.name, r.booker, `Rs. ${r.netTotal}`]);
             }
+
+            activeReportData = { title: reportTitle, columns: columns, rows: dataRows };
+
+            let tableHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3>${reportTitle}</h3>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="exportReportToExcel()" class="btn-success btn-sm"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+                        <button onclick="exportReportToPDF()" class="btn-danger btn-sm"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+                    </div>
+                </div>
+                <table>
+                    <thead><tr>${columns.map(c => `<th>${c}</th>`).join('')}</tr></thead>
+                    <tbody>${dataRows.map(r => `<tr>${r.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody>
+                </table>
+            `;
+
+            container.innerHTML = tableHTML;
         }
 
-        // Backup & Restore
+        // Export Active Report to Excel
+        function exportReportToExcel() {
+            if(!activeReportData) return;
+            const ws = XLSX.utils.json_to_sheet(activeReportData.rows.map(row => {
+                let obj = {};
+                activeReportData.columns.forEach((col, idx) => obj[col] = row[idx]);
+                return obj;
+            }));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Report");
+            XLSX.writeFile(wb, `${activeReportData.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        // Export Active Report to PDF with Dynamic Orientation (Portrait / Landscape)
+        function exportReportToPDF() {
+            if(!activeReportData) return;
+            const { jsPDF } = window.jspdf;
+            
+            // Dynamic Auto Page Setup: Landscape if columns > 5, else Portrait
+            const isLandscape = activeReportData.columns.length > 5;
+            const doc = new jsPDF({
+                orientation: isLandscape ? 'landscape' : 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            doc.setFontSize(16);
+            doc.text(`HUSSAIN TRADERS - ${activeReportData.title}`, 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Generated Date: ${new Date().toLocaleDateString('en-GB')}`, 14, 22);
+
+            doc.autoTable({
+                head: [activeReportData.columns],
+                body: activeReportData.rows,
+                startY: 28,
+                theme: 'grid',
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [15, 23, 42] }
+            });
+
+            doc.save(`${activeReportData.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+        }
+
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
             const downloadAnchor = document.createElement('a');
@@ -741,9 +977,8 @@
             fileReader.readAsText(e.target.files[0]);
         }
 
-        // Render Tables & Interface
         function renderAll() {
-            // Inventory Table
+            // Render Stock Table
             document.getElementById('inventoryTable').innerHTML = db.inventory.map(p => {
                 const ctns = Math.floor(p.totalPcs / p.pcsPerCtn);
                 const loose = p.totalPcs % p.pcsPerCtn;
@@ -753,20 +988,36 @@
                     <td>${p.pcsPerCtn}</td>
                     <td>Rs. ${p.listPrice}</td>
                     <td>Rs. ${p.tradePrice}</td>
-                    <td>Rs. ${p.retailPrice}</td>
+                    <td>${p.supplier || 'N/A'}</td>
+                    <td><span class="status-badge ${p.payStatus === 'Cash' ? 'badge-approved' : 'badge-pending'}">${p.payStatus || 'Cash'}</span></td>
                     <td>${p.totalPcs} Pcs</td>
                     <td><strong>${ctns} Ctn, ${loose} Pcs</strong></td>
+                    <td>
+                        <button onclick="editStock(${p.id})" class="btn-warning btn-sm"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteStock(${p.id})" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                    </td>
                 </tr>`;
             }).join('');
 
-            // Sales Product Options
             document.getElementById('sProductSelect').innerHTML = '<option value="">Select Product</option>' + db.inventory.map(p => `<option value="${p.id}">${p.brand} ${p.name}</option>`).join('');
 
-            // Shops Table & Select Options
-            document.getElementById('shopsTable').innerHTML = db.shops.map(s => `<tr><td>${s.name}</td><td>${s.owner}</td><td>${s.route}</td><td>${s.address}</td><td>${s.phone}</td><td>${s.booker}</td></tr>`).join('');
+            // Render Shops Table
+            document.getElementById('shopsTable').innerHTML = db.shops.map(s => `<tr>
+                <td>${s.name}</td>
+                <td>${s.owner}</td>
+                <td>${s.route}</td>
+                <td>${s.address}</td>
+                <td>${s.phone}</td>
+                <td>${s.booker}</td>
+                <td>
+                    <button onclick="editShop(${s.id})" class="btn-warning btn-sm"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteShop(${s.id})" class="btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>`).join('');
+            
             document.getElementById('sShopSelect').innerHTML = '<option value="">Select Shop</option>' + db.shops.map(s => `<option value="${s.id}">${s.name} (${s.route})</option>`).join('');
 
-            // Invoices Table
+            // Render Invoices Table
             document.getElementById('invoicesTable').innerHTML = db.invoices.map(i => `
                 <tr>
                     <td>${i.invNo}</td>
@@ -777,21 +1028,19 @@
                     <td>Rs. ${i.netTotal.toFixed(2)}</td>
                     <td><span class="status-badge ${i.printed ? 'badge-printed' : 'badge-pending'}">${i.status}</span></td>
                     <td>
-                        <button onclick="printInvoice(${i.id})">Print</button>
-                        ${db.currentUser?.role === 'admin' && i.status !== 'Returned / Cancelled' ? `<button onclick="cancelInvoice(${i.id})" class="btn-danger">Return</button>` : ''}
+                        <button onclick="printInvoice(${i.id})" class="btn-sm">Print</button>
+                        ${db.currentUser?.role === 'admin' && i.status !== 'Returned / Cancelled' ? `<button onclick="cancelInvoice(${i.id})" class="btn-danger btn-sm">Return</button>` : ''}
                         ${db.currentUser?.role === 'admin' ? `<input type="date" onchange="updateDeliveryDate(${i.id}, this.value)" style="padding:2px; font-size:0.75rem;">` : ''}
                     </td>
                 </tr>
             `).join('');
 
-            // Dashboard Totals
             const totalSales = db.invoices.filter(i => i.status !== 'Returned / Cancelled').reduce((a, b) => a + b.netTotal, 0);
             const totalReturns = db.invoices.filter(i => i.status === 'Returned / Cancelled').reduce((a, b) => a + b.netTotal, 0);
             document.getElementById('dashSales').innerText = "Rs. " + totalSales.toFixed(2);
             document.getElementById('dashReturns').innerText = "Rs. " + totalReturns.toFixed(2);
             document.getElementById('dashPending').innerText = db.invoices.filter(i => !i.printed && i.status !== 'Returned / Cancelled').length;
 
-            // Picklist Select Booker
             const bookers = [...new Set(db.invoices.map(i => i.booker))];
             document.getElementById('pickBookerSelect').innerHTML = '<option value="">All Bookers</option>' + bookers.map(b => `<option value="${b}">${b}</option>`).join('');
         }
