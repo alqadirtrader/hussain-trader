@@ -57,6 +57,15 @@
         .login-card h2 { color: #0b132b; font-weight: 800; margin-bottom: 5px; font-size: 1.6rem; }
         .login-card p { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
         .login-card select, .login-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; }
+        
+        /* Password wrapper with eye icon */
+        .password-wrapper { position: relative; width: 100%; }
+        .password-wrapper input { padding-right: 40px; }
+        .password-wrapper .toggle-eye {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--text-muted); font-size: 1rem;
+        }
+
         .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; }
         .login-card button:hover { background: #1d4ed8; transform: translateY(-2px); }
 
@@ -127,11 +136,39 @@
         .btn-danger { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
         .btn-secondary { background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 
-        /* Print Specific CSS */
+        /* Print Specific CSS for Landscape Dual Copy Layout */
         @media print {
+            @page {
+                size: A4 landscape;
+                margin: 5mm;
+            }
             body * { visibility: hidden; }
-            .printable-area, .printable-area * { visibility: visible; }
-            .printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            #invoicePrintSection, #invoicePrintSection * { visibility: visible; }
+            #invoicePrintSection {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+            }
+            .print-page {
+                page-break-after: always;
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+                width: 100%;
+                height: 100vh;
+                box-sizing: border-box;
+            }
+            .invoice-copy {
+                width: 48.5%;
+                border: 1px dashed #333;
+                padding: 15px;
+                font-size: 11px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
             .no-print { display: none !important; }
         }
     </style>
@@ -148,7 +185,13 @@
                 <select id="loginUsername" required style="font-weight:600;">
                     <option value="">Select User Profile...</option>
                 </select>
-                <input type="password" id="loginPassword" placeholder="Enter Password" value="1234" required>
+                
+                <!-- Password Field with Toggle Eye -->
+                <div class="password-wrapper">
+                    <input type="password" id="loginPassword" placeholder="Enter Password" value="1234" required>
+                    <i class="fa-solid fa-eye toggle-eye" id="togglePasswordBtn" onclick="togglePasswordVisibility()"></i>
+                </div>
+                
                 <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Login System</button>
             </form>
         </div>
@@ -205,16 +248,6 @@
                     <button class="btn-secondary" onclick="printDashboardReport()">
                         <i class="fa-solid fa-print"></i> Print / Save PDF Report
                     </button>
-                    <button class="btn-secondary" style="background:#0284c7;" onclick="triggerDayEndProcess()">
-                        <i class="fa-solid fa-moon"></i> Day End Process
-                    </button>
-                    <button class="btn-secondary" style="background:#16a34a;" onclick="exportBackupData()">
-                        <i class="fa-solid fa-download"></i> Backup Data
-                    </button>
-                    <button class="btn-secondary" style="background:#d97706;" onclick="document.getElementById('importFile').click()">
-                        <i class="fa-solid fa-upload"></i> Restore Backup
-                    </button>
-                    <input type="file" id="importFile" style="display:none;" onchange="importBackupData(event)">
                 </div>
 
                 <div id="dashboardPrintArea" class="printable-area">
@@ -285,7 +318,7 @@
 
             </div>
 
-            <!-- APPROVALS SECTION (Separate Page) -->
+            <!-- APPROVALS SECTION -->
             <div id="approvals" class="section-view">
                 <div class="card">
                     <div class="card-header">
@@ -310,21 +343,30 @@
                 </div>
             </div>
 
-            <!-- INVENTORY SECTION -->
+            <!-- INVENTORY SECTION WITH CSV BULK & PURCHASE INVOICE -->
             <div id="inventory" class="section-view">
                 <div class="card">
-                    <div class="card-header">Add Stock Entry</div>
+                    <div class="card-header">
+                        <span><i class="fa-solid fa-cart-plus"></i> Purchase Entry / Add Stock</span>
+                        <div>
+                            <button class="btn-secondary" style="background:#16a34a; font-size:0.8rem;" onclick="document.getElementById('csvStockInput').click()">
+                                <i class="fa-solid fa-file-csv"></i> Bulk CSV Import
+                            </button>
+                            <input type="file" id="csvStockInput" accept=".csv" style="display:none;" onchange="importStockCSV(event)">
+                        </div>
+                    </div>
                     <form onsubmit="event.preventDefault(); saveStockItem();" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
                         <input type="text" id="pBrand" placeholder="Brand Name" required>
                         <input type="text" id="pName" placeholder="Product Name" required>
                         <input type="number" id="pPcsPerCtn" placeholder="Pcs Per Ctn" required>
-                        <input type="number" id="pPurchasePrice" placeholder="Purchase Price" required>
+                        <input type="number" id="pPurchasePrice" placeholder="Purchase Rate (Ctn)" required>
                         <input type="number" id="pTradePrice" placeholder="Trade Price (TP)" required>
                         <input type="number" id="pAddCtns" placeholder="Add Cartons" value="0">
                         <input type="number" id="pAddPcs" placeholder="Add Loose Pcs" value="0">
-                        <button type="submit" class="btn-primary">+ Add Stock</button>
+                        <button type="submit" class="btn-primary">+ Add / Purchase Stock</button>
                     </form>
                 </div>
+
                 <div class="card">
                     <div class="card-header">Inventory Stock Ledger</div>
                     <table>
@@ -351,7 +393,7 @@
                     </form>
                 </div>
 
-                <!-- Delivery Date Change Form -->
+                <!-- Modify Delivery Date -->
                 <div class="card" style="border:1px solid #3b82f6;">
                     <div class="card-header">Modify Delivery Date (Max 3 Days Extension)</div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
@@ -418,7 +460,7 @@
                 </div>
             </div>
 
-            <!-- USER MANAGEMENT SECTION (ADMIN ONLY) -->
+            <!-- USER MANAGEMENT SECTION -->
             <div id="userManagement" class="section-view">
                 <div class="card">
                     <div class="card-header">Admin User Management & Role Access Control</div>
@@ -447,7 +489,7 @@
                 </div>
             </div>
 
-            <!-- REPORTS SECTION -->
+            <!-- REPORTS SECTION WITH BACKUP & DAY END BELOW FINANCIAL REPORTS -->
             <div id="reportsSection" class="section-view">
                 <div class="card">
                     <div class="card-header">System Financial Reports</div>
@@ -456,6 +498,28 @@
                         <button onclick="openReportModal('return')" class="btn-primary">Returns Report</button>
                         <button onclick="openReportModal('discount')" class="btn-primary">Discount Report</button>
                         <button onclick="openReportModal('profit')" class="btn-primary">Profit & Loss Report</button>
+                    </div>
+                </div>
+
+                <!-- Backup & Day End Control Panel Moved Here -->
+                <div class="card" style="border: 1px solid #0284c7;">
+                    <div class="card-header" style="color: #0284c7;">
+                        <span><i class="fa-solid fa-gears"></i> System Backup & Day End Operations</span>
+                    </div>
+                    <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:15px;">
+                        یہاں سے آپ ڈے اینڈ پروسیس چلا سکتے ہیں اور سسٹم ڈیٹا کا بیک اپ ڈاؤن لوڈ یا ریسٹور کر سکتے ہیں۔
+                    </p>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn-secondary" style="background:#0284c7;" onclick="triggerDayEndProcess()">
+                            <i class="fa-solid fa-moon"></i> Trigger Day End Process
+                        </button>
+                        <button class="btn-secondary" style="background:#16a34a;" onclick="exportBackupData()">
+                            <i class="fa-solid fa-download"></i> Backup System Data
+                        </button>
+                        <button class="btn-secondary" style="background:#d97706;" onclick="document.getElementById('importFile').click()">
+                            <i class="fa-solid fa-upload"></i> Restore Backup
+                        </button>
+                        <input type="file" id="importFile" style="display:none;" onchange="importBackupData(event)">
                     </div>
                 </div>
             </div>
@@ -499,26 +563,20 @@
         </div>
     </div>
 
-    <!-- PRINT CONTAINER FOR INVOICES -->
-    <div id="invoicePrintSection" class="printable-area" style="display:none;"></div>
+    <!-- PRINT CONTAINER FOR INVOICES (Landscape - 1 Page 2 Copies) -->
+    <div id="invoicePrintSection"></div>
 
     <script>
         let currentUser = null;
 
-        // Base Data Structure
+        // Clean Base Data Structure - Dummy Data Removed
         let db = {
             users: JSON.parse(localStorage.getItem('ht_users')) || [
                 { id: 1, name: 'admin', pass: 'admin', role: 'Admin', access: ['dashboard', 'approvals', 'inventory', 'sales', 'picklist', 'duesSection', 'userManagement', 'reportsSection'] },
-                { id: 2, name: 'Booker Ali', pass: '1234', role: 'Order Booker', access: ['dashboard', 'sales'] },
-                { id: 3, name: 'Booker Usman', pass: '1234', role: 'Order Booker', access: ['dashboard', 'sales'] }
+                { id: 2, name: 'Booker Ali', pass: '1234', role: 'Order Booker', access: ['dashboard', 'sales'] }
             ],
-            inventory: JSON.parse(localStorage.getItem('ht_inv')) || [
-                { id: 1, brand: 'Shahi Foods', name: 'Snack Pack', pcsPerCtn: 48, purchasePrice: 1000, tradePrice: 1200, totalPcs: 480 },
-                { id: 2, brand: 'Hussain Traders', name: 'Juice 250ml', pcsPerCtn: 24, purchasePrice: 800, tradePrice: 960, totalPcs: 240 }
-            ],
-            invoices: JSON.parse(localStorage.getItem('ht_invs')) || [
-                { id: 101, date: new Date().toISOString().slice(0,10), delivDate: new Date().toISOString().slice(0,10), shop: 'Madina Market', booker: 'Booker Ali', grossSales: 15000, discount: 500, returnAmount: 0, netTotal: 14500, paid: 10000, dues: 4500, items: [{pName:'Snack Pack', ctns:10, pcs:0, price:1200}] }
-            ],
+            inventory: JSON.parse(localStorage.getItem('ht_inv')) || [],
+            invoices: JSON.parse(localStorage.getItem('ht_invs')) || [],
             payments: JSON.parse(localStorage.getItem('ht_payments')) || [],
             picklists: JSON.parse(localStorage.getItem('ht_picklists')) || []
         };
@@ -536,6 +594,20 @@
             populateUserLoginDropdown();
             setupMinMaxDeliveryDate();
         };
+
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('loginPassword');
+            const toggleBtn = document.getElementById('togglePasswordBtn');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                toggleBtn.classList.remove('fa-eye');
+                toggleBtn.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                toggleBtn.classList.remove('fa-eye-slash');
+                toggleBtn.classList.add('fa-eye');
+            }
+        }
 
         function populateUserLoginDropdown() {
             const sel = document.getElementById('loginUsername');
@@ -677,7 +749,96 @@
             });
         }
 
-        /* Delivery Date Update (Max 3 Days Extension) */
+        /* Stock Purchase & CSV Bulk Import System */
+        function saveStockItem() {
+            const brand = document.getElementById('pBrand').value;
+            const name = document.getElementById('pName').value;
+            const pcsPerCtn = parseInt(document.getElementById('pPcsPerCtn').value);
+            const purchasePrice = parseFloat(document.getElementById('pPurchasePrice').value);
+            const tradePrice = parseFloat(document.getElementById('pTradePrice').value);
+            const addCtns = parseInt(document.getElementById('pAddCtns').value) || 0;
+            const addPcs = parseInt(document.getElementById('pAddPcs').value) || 0;
+
+            const addPcsTotal = (addCtns * pcsPerCtn) + addPcs;
+
+            let existing = db.inventory.find(i => i.brand.toLowerCase() === brand.toLowerCase() && i.name.toLowerCase() === name.toLowerCase());
+            if(existing) {
+                existing.pcsPerCtn = pcsPerCtn;
+                existing.purchasePrice = purchasePrice;
+                existing.tradePrice = tradePrice;
+                existing.totalPcs += addPcsTotal;
+            } else {
+                db.inventory.push({
+                    id: Date.now(),
+                    brand: brand,
+                    name: name,
+                    pcsPerCtn: pcsPerCtn,
+                    purchasePrice: purchasePrice,
+                    tradePrice: tradePrice,
+                    totalPcs: addPcsTotal
+                });
+            }
+
+            saveDB();
+            populateDropdowns();
+            alert('Stock Item Saved Successfully!');
+        }
+
+        function importStockCSV(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const lines = evt.target.result.split('\n');
+                let count = 0;
+                // Expected Format: Brand, Name, PcsPerCtn, PurchasePrice, TradePrice, TotalCartons
+                for(let i=1; i<lines.length; i++) {
+                    const col = lines[i].split(',');
+                    if(col.length >= 6) {
+                        const brand = col[0].trim();
+                        const name = col[1].trim();
+                        const pcsPerCtn = parseInt(col[2].trim()) || 1;
+                        const purchasePrice = parseFloat(col[3].trim()) || 0;
+                        const tradePrice = parseFloat(col[4].trim()) || 0;
+                        const ctns = parseInt(col[5].trim()) || 0;
+
+                        db.inventory.push({
+                            id: Date.now() + i,
+                            brand: brand,
+                            name: name,
+                            pcsPerCtn: pcsPerCtn,
+                            purchasePrice: purchasePrice,
+                            tradePrice: tradePrice,
+                            totalPcs: ctns * pcsPerCtn
+                        });
+                        count++;
+                    }
+                }
+                saveDB();
+                populateDropdowns();
+                alert(`Successfully imported ${count} stock items from CSV!`);
+            };
+            reader.readAsText(file);
+        }
+
+        function renderInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = db.inventory.map(i => `
+                <tr>
+                    <td><strong>${i.brand}</strong></td>
+                    <td>${i.name}</td>
+                    <td>${i.pcsPerCtn}</td>
+                    <td>Rs ${i.purchasePrice}</td>
+                    <td>Rs ${i.tradePrice}</td>
+                    <td><strong>${i.totalPcs} Pcs</strong> (${Math.floor(i.totalPcs/i.pcsPerCtn)} Ctn)</td>
+                    <td>Rs ${(i.totalPcs * (i.tradePrice / i.pcsPerCtn)).toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+
+        /* Delivery Date Update */
         function updateDeliveryDate() {
             const booker = document.getElementById('delivBookerSelect').value;
             const newDate = document.getElementById('delivNewDate').value;
@@ -697,7 +858,7 @@
             alert(`Updated Delivery Date to ${newDate} for ${count} invoices of ${booker}!`);
         }
 
-        /* Invoice Functions & Printing */
+        /* Invoice Functions */
         function createInvoice() {
             const shop = document.getElementById('invShop').value;
             const booker = document.getElementById('invBooker').value;
@@ -707,7 +868,7 @@
             const discount = parseFloat(document.getElementById('invDiscount').value) || 0;
 
             const prod = db.inventory.find(i => i.id === pId);
-            if(!prod) return;
+            if(!prod) { alert('Select valid product'); return; }
 
             const totalPcs = (ctns * prod.pcsPerCtn) + pcs;
             const gross = totalPcs * (prod.tradePrice / prod.pcsPerCtn);
@@ -725,16 +886,17 @@
                 netTotal: net,
                 paid: 0,
                 dues: net,
-                items: [{ pName: prod.name, ctns: ctns, pcs: pcs, price: prod.tradePrice }]
+                items: [{ pName: prod.brand + ' ' + prod.name, ctns: ctns, pcs: pcs, unitPrice: (prod.tradePrice / prod.pcsPerCtn), total: gross }]
             });
 
             saveDB();
             renderInvoiceLedgerTable();
-            alert('Invoice Generated!');
+            alert('Invoice Generated Successfully!');
         }
 
         function renderInvoiceLedgerTable() {
             const tbody = document.getElementById('invoiceLedgerTableBody');
+            if(!tbody) return;
             tbody.innerHTML = db.invoices.map(inv => `
                 <tr>
                     <td><input type="checkbox" class="inv-select-chk" value="${inv.id}"></td>
@@ -745,7 +907,7 @@
                     <td>${inv.booker}</td>
                     <td>Rs ${inv.netTotal}</td>
                     <td style="color:#ef4444; font-weight:700;">Rs ${inv.dues}</td>
-                    <td><button onclick="printSingleInvoice(${inv.id})" class="btn-primary" style="padding:4px 8px; font-size:0.75rem;"><i class="fa-solid fa-print"></i> Print</button></td>
+                    <td><button onclick="printSingleInvoice(${inv.id})" class="btn-primary" style="padding:4px 8px; font-size:0.75rem;"><i class="fa-solid fa-print"></i> Print (2 Copies)</button></td>
                 </tr>
             `).join('');
         }
@@ -768,30 +930,92 @@
             renderPrintInvoices(invs);
         }
 
+        /* Render Print Invoices (Image Template - 1 Page Landscape 2 Copies) */
         function renderPrintInvoices(invList) {
             const printSec = document.getElementById('invoicePrintSection');
-            printSec.innerHTML = invList.map(inv => `
-                <div style="page-break-after: always; padding: 20px; border:1px dashed #ccc; margin-bottom:20px;">
-                    <h2>HUSSAIN TRADERS - INVOICE</h2>
-                    <p>Invoice #: ${inv.id} | Date: ${inv.date} | Delivery Date: ${inv.delivDate || inv.date}</p>
-                    <p>Shop: <strong>${inv.shop}</strong> | Order Booker: ${inv.booker}</p>
-                    <hr style="margin:10px 0;">
-                    <table style="width:100%; border-collapse:collapse;">
-                        <thead><tr><th style="border:1px solid #000;">Item</th><th style="border:1px solid #000;">Qty</th><th style="border:1px solid #000;">Amount</th></tr></thead>
-                        <tbody>
-                            ${inv.items ? inv.items.map(it => `<tr><td style="border:1px solid #000;">${it.pName}</td><td style="border:1px solid #000;">${it.ctns} Ctn ${it.pcs} Pcs</td><td style="border:1px solid #000;">Rs ${inv.netTotal}</td></tr>`).join('') : ''}
-                        </tbody>
-                    </table>
-                    <h3 style="text-align:right; margin-top:15px;">Net Total: Rs ${inv.netTotal}</h3>
-                </div>
-            `).join('');
+            printSec.innerHTML = invList.map(inv => {
+                const singleCopyHTML = (copyType) => `
+                    <div class="invoice-copy">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+                                <div>
+                                    <h2 style="font-size:1.4rem; color:#0b132b; font-weight:800;">HUSSAIN TRADERS</h2>
+                                    <p style="font-size:0.75rem; color:#64748b;">Distribution & Trade Enterprise</p>
+                                    <p style="font-size:0.75rem;">Phone: 0300-XXXXXXX | Tax ID: HT-9982</p>
+                                </div>
+                                <div style="text-align:right;">
+                                    <h3 style="color:#2563eb; font-size:1rem; text-transform:uppercase;">INVOICE</h3>
+                                    <span style="background:#e0f2fe; color:#0369a1; padding:2px 6px; border-radius:4px; font-weight:700; font-size:0.7rem;">${copyType}</span>
+                                </div>
+                            </div>
+                            
+                            <hr style="border:0.5px solid #e2e8f0; margin:8px 0;">
 
-            printSec.style.display = 'block';
+                            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.8rem;">
+                                <div>
+                                    <strong>Bill To (Customer):</strong><br>
+                                    Shop: <b>${inv.shop}</b><br>
+                                    Booker: ${inv.booker}
+                                </div>
+                                <div style="text-align:right;">
+                                    Invoice #: <b>INV-${inv.id}</b><br>
+                                    Issue Date: ${inv.date}<br>
+                                    Delivery Date: <b>${inv.delivDate || inv.date}</b>
+                                </div>
+                            </div>
+
+                            <table style="width:100%; border-collapse:collapse; margin-bottom:10px; font-size:0.75rem;">
+                                <thead>
+                                    <tr style="background:#f1f5f9; text-align:left;">
+                                        <th style="border:1px solid #cbd5e1; padding:4px;">Description</th>
+                                        <th style="border:1px solid #cbd5e1; padding:4px;">Qty</th>
+                                        <th style="border:1px solid #cbd5e1; padding:4px;">Unit Price</th>
+                                        <th style="border:1px solid #cbd5e1; padding:4px; text-align:right;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${inv.items ? inv.items.map(it => `
+                                        <tr>
+                                            <td style="border:1px solid #cbd5e1; padding:4px;">${it.pName}</td>
+                                            <td style="border:1px solid #cbd5e1; padding:4px;">${it.ctns} Ctn ${it.pcs} Pcs</td>
+                                            <td style="border:1px solid #cbd5e1; padding:4px;">Rs ${it.unitPrice ? it.unitPrice.toFixed(2) : ''}</td>
+                                            <td style="border:1px solid #cbd5e1; padding:4px; text-align:right;">Rs ${it.total ? it.total.toFixed(2) : inv.netTotal}</td>
+                                        </tr>
+                                    `).join('') : ''}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <div style="float:right; width:50%; font-size:0.8rem; text-align:right; margin-bottom:10px;">
+                                <p>Gross Total: Rs ${(inv.grossSales || inv.netTotal).toFixed(2)}</p>
+                                <p style="color:#dc2626;">Discount: - Rs ${(inv.discount || 0).toFixed(2)}</p>
+                                <hr style="margin:4px 0;">
+                                <h4>Net Total: Rs ${inv.netTotal.toFixed(2)}</h4>
+                                <p style="color:#ef4444; font-weight:700;">Dues: Rs ${inv.dues.toFixed(2)}</p>
+                            </div>
+                            <div style="clear:both;"></div>
+                            
+                            <div style="margin-top:15px; border-top:1px dashed #cbd5e1; padding-top:8px; display:flex; justify-content:space-between; font-size:0.7rem;">
+                                <div><b>Customer Sign:</b> ______________</div>
+                                <div><b>Supplyman Sign:</b> ______________</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                return `
+                    <div class="print-page">
+                        ${singleCopyHTML('Customer Copy')}
+                        ${singleCopyHTML('Supplyman Copy')}
+                    </div>
+                `;
+            }).join('');
+
             window.print();
-            printSec.style.display = 'none';
         }
 
-        /* Picklist & Auto Stock Deduction / Regeneration */
+        /* Picklist & Restores */
         function generatePicklist() {
             const booker = document.getElementById('pickBookerSelect').value;
             if(!booker) { alert('Select Booker'); return; }
@@ -799,45 +1023,39 @@
             const bookerInvs = db.invoices.filter(i => i.booker === booker);
             if(bookerInvs.length === 0) { alert('No invoices for this booker'); return; }
 
-            // Deduct Stock
-            db.inventory.forEach(item => {
-                item.totalPcs = Math.max(0, item.totalPcs - 50); // Deduct sample stock per picklist
-            });
-
             const plId = Date.now();
             db.picklists.push({ id: plId, booker: booker, date: new Date().toISOString().slice(0,10), status: 'Generated' });
 
             saveDB();
             renderPicklistTable();
-            alert(`Picklist generated! Stock deducted for ${booker}.`);
+            alert(`Picklist generated for ${booker}!`);
         }
 
         function renderPicklistTable() {
             const tbody = document.getElementById('picklistTableBody');
+            if(!tbody) return;
             tbody.innerHTML = db.picklists.map(pl => `
                 <tr>
                     <td>${pl.id}</td>
                     <td>${pl.booker}</td>
                     <td>${pl.date}</td>
                     <td><span class="badge-approved">${pl.status}</span></td>
-                    <td><button onclick="deleteAndRestorePicklist(${pl.id})" class="btn-danger"><i class="fa-solid fa-trash"></i> Delete & Restore Stock</button></td>
+                    <td><button onclick="deleteAndRestorePicklist(${pl.id})" class="btn-danger"><i class="fa-solid fa-trash"></i> Delete Picklist</button></td>
                 </tr>
             `).join('');
         }
 
         function deleteAndRestorePicklist(plId) {
             db.picklists = db.picklists.filter(p => p.id !== plId);
-            // Restore Stock
-            db.inventory.forEach(item => { item.totalPcs += 50; });
-
             saveDB();
             renderPicklistTable();
-            alert('Picklist deleted! Stock restored. You can now regenerate.');
+            alert('Picklist deleted!');
         }
 
         /* Approvals Desk */
         function renderPendingPaymentsTable() {
             const tbody = document.getElementById('pendingPaymentsTableBody');
+            if(!tbody) return;
             tbody.innerHTML = db.payments.map(p => `
                 <tr>
                     <td>${p.date}</td>
@@ -872,12 +1090,13 @@
             payment.approved = true;
             saveDB();
             renderPendingPaymentsTable();
-            alert('Payment approved and credited to Customer Ledger!');
+            alert('Payment approved!');
         }
 
-        /* User Management (Admin Only) */
+        /* User Control */
         function renderUserManagementTable() {
             const tbody = document.getElementById('userManagementTableBody');
+            if(!tbody) return;
             const modules = ['dashboard', 'approvals', 'inventory', 'sales', 'picklist', 'duesSection', 'reportsSection'];
 
             tbody.innerHTML = db.users.map(u => `
@@ -926,7 +1145,7 @@
             renderUserManagementTable();
         }
 
-        /* Day End & Backup */
+        /* Day End & Backup Systems */
         function triggerDayEndProcess() {
             if(confirm('Are you sure you want to run Day End Process? Day summary will be locked.')) {
                 alert('Day End Completed Successfully! Summary archived.');
