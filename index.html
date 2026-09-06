@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hussain Traders - POS & Inventory System</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f6f9; color: #333; padding: 20px; }
+        header { background: #1a252f; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+        header h1 { margin-bottom: 5px; }
+        
+        .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { border-bottom: 2px solid #3498db; padding-bottom: 8px; margin-bottom: 15px; font-size: 1.2rem; color: #2c3e50; }
+        
+        form { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        input, select, button { padding: 8px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 0.9rem; }
+        button { background: #27ae60; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #219150; }
+        .btn-danger { background: #e74c3c; }
+        .btn-danger:hover { background: #c0392b; }
+        .btn-primary { background: #3498db; }
+        .btn-primary:hover { background: #2980b9; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 0.85rem; }
+        th { background-color: #f8f9fa; color: #333; }
+
+        .invoice-box { background: #fff; border: 1px dashed #777; padding: 15px; border-radius: 5px; font-size: 0.85rem; }
+        .summary-box { display: flex; justify-content: space-between; background: #eef2f5; padding: 10px; border-radius: 5px; font-weight: bold; margin-top: 10px; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #printable-invoice, #printable-invoice * { visibility: visible; }
+            #printable-invoice { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>حسین ٹریڈرز (Hussain Traders)</h1>
+        <p>جوس، شربت اور مختلف برانڈز کا پوائنٹ آف سیل اینڈ انوینٹری سسٹم</p>
+    </header>
+
+    <div class="container">
+        
+        <div>
+            <div class="card">
+                <h2>1. نیا برانڈ / آئٹم اسٹاک میں شامل کریں</h2>
+                <form id="product-form">
+                    <input type="text" id="p-brand" placeholder="برانڈ نام (مثلاً Rooh Afza)" required>
+                    <input type="text" id="p-name" placeholder="آئٹم نام (مثلاً 800ml)" required>
+                    <input type="number" id="p-cost" placeholder="خرید قیمت (Cost)" required>
+                    <input type="number" id="p-price" placeholder="فروخت قیمت (Sale)" required>
+                    <input type="number" id="p-stock" placeholder="تعداد (Stock)" required>
+                    <button type="submit">آئٹم محفوظ کریں</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>2. موجودہ اسٹاک (Inventory)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>برانڈ</th>
+                            <th>آئٹم</th>
+                            <th>خرید</th>
+                            <th>فروخت</th>
+                            <th>اسٹاک</th>
+                            <th>ایکشن</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-list"></tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>3. کھاتہ / مارکیٹ کریڈٹ (Udhaar Ledger)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>کسٹمر نام</th>
+                            <th>کل بل</th>
+                            <th>وصول شدہ</th>
+                            <th>بقیہ (ادھار)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="credit-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h2>بل فروخت (Counter Sale)</h2>
+                <form id="sale-form" onsubmit="event.preventDefault(); addToCart();">
+                    <select id="sale-product" style="grid-column: span 2;" required>
+                        <option value="">آئٹم منتخب کریں</option>
+                    </select>
+                    <input type="number" id="sale-qty" placeholder="تعداد" min="1" value="1" required>
+                    <button type="submit" class="btn-primary">کارٹ میں شامل کریں</button>
+                </form>
+
+                <table style="margin-top: 15px;">
+                    <thead>
+                        <tr>
+                            <th>آئٹم</th>
+                            <th>تعداد</th>
+                            <th>قیمت</th>
+                            <th>کل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-list"></tbody>
+                </table>
+
+                <div style="margin-top: 15px;">
+                    <input type="text" id="customer-name" placeholder="کسٹمر / دکان کا نام" style="width: 100%; margin-bottom: 8px;">
+                    <input type="number" id="amount-paid" placeholder="وصول شدہ رقم" style="width: 100%; margin-bottom: 8px;" oninput="updateBalance()">
+                    <button class="btn-primary" style="width: 100%; padding: 10px;" onclick="checkout()">بل فائنل کریں اور پرنٹ کریں</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>4. نفع و نقصان (Profit / Loss)</h2>
+                <div class="summary-box">
+                    <span>کل فروخت:</span>
+                    <span id="total-sales">Rs. 0</span>
+                </div>
+                <div class="summary-box">
+                    <span>خالص نفع (Profit):</span>
+                    <span id="total-profit" style="color: green;">Rs. 0</span>
+                </div>
+                <div class="summary-box">
+                    <span>مارکیٹ میں ادھار:</span>
+                    <span id="total-credit" style="color: red;">Rs. 0</span>
+                </div>
+            </div>
+
+            <div class="card invoice-box" id="printable-invoice">
+                <h3 style="text-align: center;">حسین ٹریڈرز</h3>
+                <p style="text-align: center; font-size: 0.75rem;">سیل رسید / انوائس</p>
+                <hr style="margin: 8px 0;">
+                <p><strong>کسٹمر:</strong> <span id="inv-customer">-</span></p>
+                <p><strong>تاریخ:</strong> <span id="inv-date">-</span></p>
+                <table style="margin-top: 10px;">
+                    <thead>
+                        <tr><th>تفصیل</th><th>تعداد</th><th>ریٹ</th><th>ٹوٹل</th></tr>
+                    </thead>
+                    <tbody id="inv-items"></tbody>
+                </table>
+                <hr style="margin: 8px 0;">
+                <p><strong>کل رقم:</strong> <span id="inv-total">Rs. 0</span></p>
+                <p><strong>وصول شدہ:</strong> <span id="inv-paid">Rs. 0</span></p>
+                <p><strong>بقیہ (ادھار):</strong> <span id="inv-balance">Rs. 0</span></p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let inventory = JSON.parse(localStorage.getItem('ht_inventory')) || [];
+        let sales = JSON.parse(localStorage.getItem('ht_sales')) || [];
+        let cart = [];
+
+        // Save Data to Local Storage
+        function saveData() {
+            localStorage.setItem('ht_inventory', JSON.stringify(inventory));
+            localStorage.setItem('ht_sales', JSON.stringify(sales));
+            renderInventory();
+            renderSalesSummary();
+        }
+
+        // Add New Product
+        document.getElementById('product-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const brand = document.getElementById('p-brand').value;
+            const name = document.getElementById('p-name').value;
+            const cost = parseFloat(document.getElementById('p-cost').value);
+            const price = parseFloat(document.getElementById('p-price').value);
+            const stock = parseInt(document.getElementById('p-stock').value);
+
+            inventory.push({ id: Date.now(), brand, name, cost, price, stock });
+            saveData();
+            this.reset();
+        });
+
+        // Display Inventory
+        function renderInventory() {
+            const list = document.getElementById('inventory-list');
+            const select = document.getElementById('sale-product');
+            list.innerHTML = '';
+            select.innerHTML = '<option value="">آئٹم منتخب کریں</option>';
+
+            inventory.forEach((item, index) => {
+                list.innerHTML += `
+                    <tr>
+                        <td>${item.brand}</td>
+                        <td>${item.name}</td>
+                        <td>${item.cost}</td>
+                        <td>${item.price}</td>
+                        <td>${item.stock}</td>
+                        <td><button class="btn-danger" onclick="deleteProduct(${index})">X</button></td>
+                    </tr>
+                `;
+                select.innerHTML += `<option value="${item.id}">${item.brand} - ${item.name} (اسٹاک: ${item.stock})</option>`;
+            });
+        }
+
+        function deleteProduct(index) {
+            inventory.splice(index, 1);
+            saveData();
+        }
+
+        // Cart Operations
+        function addToCart() {
+            const pId = parseInt(document.getElementById('sale-product').value);
+            const qty = parseInt(document.getElementById('sale-qty').value);
+            const product = inventory.find(p => p.id === pId);
+
+            if (!product || product.stock < qty) {
+                alert("اسٹاک میں اتنی مقدار موجود نہیں ہے!");
+                return;
+            }
+
+            const existingCartItem = cart.find(c => c.id === pId);
+            if(existingCartItem) {
+                existingCartItem.qty += qty;
+            } else {
+                cart.push({ id: product.id, name: `${product.brand}${product.name}`, price: product.price, cost: product.cost, qty });
+            }
+
+            renderCart();
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cart-list');
+            list.innerHTML = '';
+            cart.forEach(item => {
+                list.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.qty}</td>
+                        <td>${item.price}</td>
+                        <td>${item.price * item.qty}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Checkout & Generate Invoice
+        function checkout() {
+            if(cart.length === 0) return alert("کارٹ خالی ہے!");
+            
+            const customer = document.getElementById('customer-name').value || "عام گاہک";
+            const paid = parseFloat(document.getElementById('amount-paid').value) || 0;
+            
+            let totalAmount = 0;
+            let totalCost = 0;
+
+            cart.forEach(item => {
+                totalAmount += item.price * item.qty;
+                totalCost += item.cost * item.qty;
+                
+                // Deduct Inventory Stock
+                const invItem = inventory.find(i => i.id === item.id);
+                if(invItem) invItem.stock -= item.qty;
+            });
+
+            const profit = totalAmount - totalCost;
+            const balance = totalAmount - paid;
+
+            const saleRecord = {
+                customer,
+                cart: [...cart],
+                totalAmount,
+                paid,
+                balance,
+                profit,
+                date: new Date().toLocaleDateString('ur-PK')
+            };
+
+            sales.push(saleRecord);
+            saveData();
+
+            // Print View Generation
+            document.getElementById('inv-customer').innerText = customer;
+            document.getElementById('inv-date').innerText = saleRecord.date;
+            document.getElementById('inv-total').innerText = "Rs. " + totalAmount;
+            document.getElementById('inv-paid').innerText = "Rs. " + paid;
+            document.getElementById('inv-balance').innerText = "Rs. " + balance;
+
+            const invItems = document.getElementById('inv-items');
+            invItems.innerHTML = '';
+            cart.forEach(i => {
+                invItems.innerHTML += `<tr><td>${i.name}</td><td>${i.qty}</td><td>${i.price
