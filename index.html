@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hussain Traders - Modern Enterprise ERP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         :root {
@@ -36,7 +33,7 @@
             text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
         }
         .login-card h2 { color: #0b132b; font-weight: 700; margin-bottom: 5px; }
-        .login-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 8px; }
+        .login-card select, .login-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 8px; }
         .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
 
         /* Main Layout */
@@ -61,12 +58,12 @@
         .filter-group { display: flex; align-items: center; gap: 10px; }
         .filter-group select, .filter-group input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; background: #ffffff; }
 
-        /* Quick Action Bar */
+        /* Quick Action Bar (Only Active on Dashboard) */
         .quick-bar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
         .btn-quick-pay { background: #00c853; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0, 200, 83, 0.25); transition: 0.2s; }
         .btn-quick-pay:hover { background: #00a843; }
 
-        /* Dashboard Metric Grid (Aqsa Cloud UI Replica) */
+        /* Dashboard Metric Grid */
         .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 25px; }
         @media (max-width: 1200px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .metrics-grid { grid-template-columns: 1fr; } }
@@ -80,9 +77,6 @@
         .stat-value { font-size: 1.4rem; font-weight: 700; color: #0f172a; }
         .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* Specific Status Indicator Cards */
-        .pulse-card { background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; }
-
         /* Tables & Cards */
         .card { background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
         .card-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; }
@@ -94,6 +88,11 @@
         .section-view { display: none; }
         .section-view.active { display: block; }
 
+        /* Status Badges & Buttons */
+        .badge-pending { background: #fef3c7; color: #d97706; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
+        .badge-approved { background: #d1fae5; color: #059669; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
+        .btn-approve { background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.8rem; }
+        
         /* Modal Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 10000; }
         .modal.active { display: flex; }
@@ -112,9 +111,13 @@
             <h2>HUSSAIN TRADERS</h2>
             <p style="color: #64748b; font-size:0.9rem; margin-bottom: 15px;">Enterprise Distribution ERP</p>
             <form onsubmit="event.preventDefault(); doLogin();">
+                <select id="loginRole" style="width:100%; padding:10px; margin-bottom:10px;" required>
+                    <option value="Admin">Admin / Office Role</option>
+                    <option value="Order Booker">Order Booker (Field Role)</option>
+                </select>
                 <input type="text" id="loginUsername" placeholder="Username (admin / booker1)" value="admin" required>
                 <input type="password" id="loginPassword" placeholder="Password" value="admin" required>
-                <button type="submit">Login Dashboard</button>
+                <button type="submit">Login System</button>
             </form>
         </div>
     </div>
@@ -130,12 +133,13 @@
                 <ul class="nav-menu">
                     <li><a class="nav-link active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a></li>
                     <li><a class="nav-link" onclick="showSection('inventory', this)"><i class="fa-solid fa-cubes"></i> Stock & Purchases</a></li>
-                    <li><a class="nav-link" onclick="showSection('sales', this)"><i class="fa-solid fa-cart-shopping"></i> Sales Terminal</a></li>
+                    <li><a class="nav-link" onclick="showSection('sales', this)"><i class="fa-solid fa-cart-shopping"></i> Sales & Invoices</a></li>
                     <li><a class="nav-link" onclick="showSection('duesSection', this)"><i class="fa-solid fa-receipt"></i> Dues & Recoveries</a></li>
                     <li><a class="nav-link" onclick="showSection('reportsSection', this)"><i class="fa-solid fa-chart-line"></i> Reports & Profit</a></li>
                 </ul>
             </div>
             <div style="padding: 10px;">
+                <div id="userDisplayRole" style="color:#94a3b8; font-size:0.8rem; margin-bottom:8px;">Logged in as: Admin</div>
                 <button onclick="doLogout()" class="btn-primary" style="width: 100%; background: #ef4444;"><i class="fa-solid fa-power-off"></i> Logout</button>
             </div>
         </div>
@@ -167,20 +171,18 @@
                 </div>
             </div>
 
-            <!-- Quick Action Bar -->
-            <div class="quick-bar">
-                <button class="btn-quick-pay" onclick="openQuickPaymentModal()">
-                    <i class="fa-solid fa-plus-circle"></i> Quick Payment Received
-                </button>
-            </div>
-
             <!-- DASHBOARD SECTION -->
             <div id="dashboard" class="section-view active">
                 
+                <!-- Quick Action Bar (STRICTLY ON DASHBOARD ONLY) -->
+                <div class="quick-bar">
+                    <button class="btn-quick-pay" onclick="openQuickPaymentModal()">
+                        <i class="fa-solid fa-plus-circle"></i> Quick Payment Received (Field Collection Entry)
+                    </button>
+                </div>
+
                 <!-- Metrics Grid (Top 4 Cards) -->
                 <div class="metrics-grid">
-                    
-                    <!-- Total Sales (Includes Discount + Return adjustment) -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Total Sales</span>
@@ -190,7 +192,6 @@
                         <div class="stat-sub" id="cardSalesDetail">Gross: Rs 0 | Disc: Rs 0</div>
                     </div>
 
-                    <!-- Net Sales / Profit Preview -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Net Revenue</span>
@@ -200,7 +201,6 @@
                         <div class="stat-sub" style="color:#10b981;">After Returns & Discounts</div>
                     </div>
 
-                    <!-- Invoice Dues -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Invoice Dues</span>
@@ -210,7 +210,6 @@
                         <div class="stat-sub" style="color:#ef4444;">Click icon for Booker-wise dues</div>
                     </div>
 
-                    <!-- Total Sell Return -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Total Sell Return</span>
@@ -219,13 +218,10 @@
                         <div class="stat-value" id="cardSellReturn">Rs 0.00</div>
                         <div class="stat-sub">Click icon for Return Report</div>
                     </div>
-
                 </div>
 
                 <!-- Metrics Grid (Bottom 4 Cards) -->
                 <div class="metrics-grid">
-                    
-                    <!-- Total Purchase -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Total Purchase</span>
@@ -235,7 +231,6 @@
                         <div class="stat-sub">Total stock acquired</div>
                     </div>
 
-                    <!-- Available Stock Value -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Available Stock Value</span>
@@ -245,7 +240,6 @@
                         <div class="stat-sub" id="cardStockUnits">0 Cartons / Loose</div>
                     </div>
 
-                    <!-- Total Profit -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Estimated Net Profit</span>
@@ -255,7 +249,6 @@
                         <div class="stat-sub">TP Rate vs Purchase Cost</div>
                     </div>
 
-                    <!-- Total Discounts Given -->
                     <div class="stat-card">
                         <div class="stat-head">
                             <span class="stat-title">Total Discount Given</span>
@@ -264,18 +257,31 @@
                         <div class="stat-value" id="cardTotalDiscount">Rs 0.00</div>
                         <div class="stat-sub">Click icon for Discount Report</div>
                     </div>
-
                 </div>
 
-                <!-- Executive Summary Health Bar -->
-                <div class="pulse-card">
-                    <div>
-                        <h4 style="font-size:0.95rem; font-weight:700; color:#0f172a;">Executive Summary & Dues Control</h4>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">Monitor collection pressure and order booker accounts in real-time.</p>
+                <!-- ADMIN APPROVAL WORKFLOW SECTION -->
+                <div class="card" style="border: 2px solid #3b82f6;">
+                    <div class="card-header">
+                        <span><i class="fa-solid fa-user-check"></i> Admin Approval - Pending Booker Field Collections</span>
                     </div>
-                    <div>
-                        <button class="btn-primary" onclick="openReportModal('dues')"><i class="fa-solid fa-users"></i> View Order Booker Dues Summary</button>
-                    </div>
+                    <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:12px;">
+                        آرڈر بکر موبائل سے جو بھی وصولی درج کریں گے وہ یہاں نظر آئے گی۔ دفتر آکر رقم جمع کرانے پر ایڈمن "Approve" کا بٹن دبائے گا تو رقم کسٹمر کے کھاتے (Ledger) میں خود بخود ایڈ ہو جائے گی۔
+                    </p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Booker Name</th>
+                                <th>Shop / Customer</th>
+                                <th>Collected Amount</th>
+                                <th>Status</th>
+                                <th>Action (Admin Only)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingPaymentsTableBody">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -306,7 +312,7 @@
                 </div>
             </div>
 
-            <!-- SALES SECTION -->
+            <!-- SALES & INVOICE SECTION -->
             <div id="sales" class="section-view">
                 <div class="card">
                     <div class="card-header">New Order Invoice Generator</div>
@@ -326,6 +332,16 @@
                         <input type="number" id="invDiscount" placeholder="Discount (Rs)" value="0">
                         <button type="submit" class="btn-primary">Generate Invoice</button>
                     </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">Customer Ledger & Invoice History</div>
+                    <table>
+                        <thead>
+                            <tr><th>Invoice #</th><th>Date</th><th>Shop Name</th><th>Booker</th><th>Gross</th><th>Paid</th><th>Dues (بقایا)</th></tr>
+                        </thead>
+                        <tbody id="invoiceLedgerTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -369,16 +385,16 @@
         </div>
     </div>
 
-    <!-- MODAL FOR QUICK PAYMENT RECEIVED -->
+    <!-- MODAL FOR QUICK PAYMENT RECEIVED (ORDER BOOKER WASOOLI) -->
     <div id="quickPayModal" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
-                <h3>Quick Payment Received</h3>
+                <h3>Record Field Wasooli (Collection)</h3>
                 <button class="close-btn" onclick="closeModal('quickPayModal')">&times;</button>
             </div>
             <form onsubmit="event.preventDefault(); submitQuickPayment();">
                 <div style="margin-bottom:12px;">
-                    <label style="font-size:0.85rem; font-weight:600;">Select Order Booker / Customer:</label>
+                    <label style="font-size:0.85rem; font-weight:600;">Order Booker:</label>
                     <select id="payBooker" style="width:100%; padding:10px; margin-top:5px;" required>
                         <option value="Booker Ali">Booker Ali</option>
                         <option value="Booker Usman">Booker Usman</option>
@@ -386,28 +402,29 @@
                     </select>
                 </div>
                 <div style="margin-bottom:12px;">
-                    <label style="font-size:0.85rem; font-weight:600;">Shop Name / Reference:</label>
+                    <label style="font-size:0.85rem; font-weight:600;">Shop Name / Customer Entry:</label>
                     <input type="text" id="payShop" placeholder="e.g. Al-Madina Store" style="width:100%; padding:10px; margin-top:5px;" required>
                 </div>
                 <div style="margin-bottom:15px;">
-                    <label style="font-size:0.85rem; font-weight:600;">Payment Amount Received (Rs):</label>
+                    <label style="font-size:0.85rem; font-weight:600;">Wasooli Amount Received (Rs):</label>
                     <input type="number" id="payAmount" placeholder="Amount" style="width:100%; padding:10px; margin-top:5px;" required>
                 </div>
-                <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Record Payment</button>
+                <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Submit Collection (Pending Admin Approval)</button>
             </form>
         </div>
     </div>
 
     <script>
-        // Database Initialization
+        let currentUserRole = 'Admin';
+
         let db = {
             inventory: JSON.parse(localStorage.getItem('ht_inv')) || [
                 { id: 1, brand: 'Shahi Foods', name: 'Snack Pack', pcsPerCtn: 48, purchasePrice: 1000, tradePrice: 1200, totalPcs: 480 },
                 { id: 2, brand: 'Hussain Traders', name: 'Juice 250ml', pcsPerCtn: 24, purchasePrice: 800, tradePrice: 960, totalPcs: 240 }
             ],
             invoices: JSON.parse(localStorage.getItem('ht_invs')) || [
-                { id: 101, date: new Date().toISOString().slice(0,10), shop: 'Madina Market', booker: 'Booker Ali', grossSales: 15000, discount: 500, returnAmount: 0, netTotal: 14500, paid: 10000, dues: 4500, items: [] },
-                { id: 102, date: new Date().toISOString().slice(0,10), shop: 'Bismillah Store', booker: 'Booker Usman', grossSales: 22000, discount: 1000, returnAmount: 2000, netTotal: 19000, paid: 19000, dues: 0, items: [] }
+                { id: 101, date: new Date().toISOString().slice(0,10), shop: 'Madina Market', booker: 'Booker Ali', grossSales: 15000, discount: 500, returnAmount: 0, netTotal: 14500, paid: 10000, dues: 4500 },
+                { id: 102, date: new Date().toISOString().slice(0,10), shop: 'Bismillah Store', booker: 'Booker Usman', grossSales: 22000, discount: 1000, returnAmount: 2000, netTotal: 19000, paid: 19000, dues: 0 }
             ],
             payments: JSON.parse(localStorage.getItem('ht_payments')) || []
         };
@@ -420,10 +437,13 @@
         }
 
         function doLogin() {
+            currentUserRole = document.getElementById('loginRole').value;
+            document.getElementById('userDisplayRole').innerText = `Logged in as: ${currentUserRole}`;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContainer').style.display = 'flex';
             renderDashboard();
             populateProductDropdown();
+            renderInvoiceLedgerTable();
         }
 
         function doLogout() {
@@ -437,6 +457,7 @@
             document.getElementById(id).classList.add('active');
             if(el) el.classList.add('active');
             if(id === 'duesSection') renderBookerDuesTable();
+            if(id === 'sales') renderInvoiceLedgerTable();
         }
 
         function handleDateFilterChange() {
@@ -445,7 +466,6 @@
             renderDashboard();
         }
 
-        // Main Calculation Engine for Date Filtering
         function getFilteredInvoices() {
             const filterType = document.getElementById('dateFilterType').value;
             const now = new Date();
@@ -471,33 +491,23 @@
             });
         }
 
-        // Render Dashboard Calculations
         function renderDashboard() {
             const filteredInvoices = getFilteredInvoices();
 
-            // 1. Total Sales (Gross Sales = Net Sales + Discount + Returns)
             let totalGrossSales = filteredInvoices.reduce((a, b) => a + (b.grossSales || b.netTotal), 0);
             let totalDiscounts = filteredInvoices.reduce((a, b) => a + (b.discount || 0), 0);
             let totalReturns = filteredInvoices.reduce((a, b) => a + (b.returnAmount || 0), 0);
-            
-            // Formula: Net Sales = Gross Sales - Discount - Return
             let netRevenue = totalGrossSales - totalDiscounts - totalReturns;
-            
-            // Dues Calculation
             let totalDues = filteredInvoices.reduce((a, b) => a + (b.dues || 0), 0);
 
-            // Purchase & Stock Calculations
             let totalPurchaseCost = db.inventory.reduce((a, b) => a + (b.totalPcs * (b.purchasePrice / b.pcsPerCtn)), 0);
             let currentStockValue = db.inventory.reduce((a, b) => a + (b.totalPcs * (b.tradePrice / b.pcsPerCtn)), 0);
             let totalCartons = db.inventory.reduce((a, b) => a + Math.floor(b.totalPcs / b.pcsPerCtn), 0);
 
-            // Estimated Net Profit Calculation
-            let estimatedProfit = netRevenue - (filteredInvoices.length * 500); // Simple cost deduction example
+            let estimatedProfit = netRevenue - (filteredInvoices.length * 500);
 
-            // Update DOM Cards
             document.getElementById('cardTotalSales').innerText = "Rs " + totalGrossSales.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardSalesDetail').innerText = `Disc: Rs ${totalDiscounts} | Ret: Rs ${totalReturns}`;
-            
             document.getElementById('cardNetSales').innerText = "Rs " + netRevenue.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardInvoiceDues').innerText = "Rs " + totalDues.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardSellReturn').innerText = "Rs " + totalReturns.toLocaleString('en-PK', {minimumFractionDigits:2});
@@ -510,9 +520,95 @@
             document.getElementById('cardTotalDiscount').innerText = "Rs " + totalDiscounts.toLocaleString('en-PK', {minimumFractionDigits:2});
 
             renderInventoryTable();
+            renderPendingPaymentsTable();
         }
 
-        // Inventory Management Functions
+        /* Order Booker Wasooli -> Pending Table Render */
+        function renderPendingPaymentsTable() {
+            const tbody = document.getElementById('pendingPaymentsTableBody');
+            tbody.innerHTML = db.payments.map(p => {
+                const statusBadge = p.approved 
+                    ? `<span class="badge-approved"><i class="fa-solid fa-check-circle"></i> Approved & Added to Ledger</span>` 
+                    : `<span class="badge-pending"><i class="fa-solid fa-clock"></i> Pending Approval</span>`;
+
+                const actionBtn = p.approved 
+                    ? `Completed` 
+                    : `<button onclick="approvePayment(${p.id})" class="btn-approve"><i class="fa-solid fa-check"></i> Approve & Add to Ledger</button>`;
+
+                return `<tr>
+                    <td>${p.date}</td>
+                    <td><strong>${p.booker}</strong></td>
+                    <td>${p.shop}</td>
+                    <td style="font-weight:700; color:#10b981;">Rs ${p.amount}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        /* Quick Payment Submit (Booker submits wasooli via mobile) */
+        function submitQuickPayment() {
+            const booker = document.getElementById('payBooker').value;
+            const shop = document.getElementById('payShop').value;
+            const amt = parseFloat(document.getElementById('payAmount').value);
+
+            db.payments.push({
+                id: Date.now(),
+                date: new Date().toISOString().slice(0,10),
+                booker: booker,
+                shop: shop,
+                amount: amt,
+                approved: false
+            });
+
+            saveDB();
+            closeModal('quickPayModal');
+            alert('Wasooli recorded! Pending Admin verification/approval when cash is submitted at office.');
+        }
+
+        /* Admin Approval Function -> Directly Updates Customer Ledger */
+        function approvePayment(payId) {
+            const payment = db.payments.find(p => p.id === payId);
+            if (!payment || payment.approved) return;
+
+            let remaining = payment.amount;
+
+            // Reduce dues from matching customer/shop invoices
+            db.invoices.filter(i => i.shop.toLowerCase() === payment.shop.toLowerCase() && i.dues > 0).forEach(inv => {
+                if(remaining > 0) {
+                    if(inv.dues <= remaining) {
+                        remaining -= inv.dues;
+                        inv.paid += inv.dues;
+                        inv.dues = 0;
+                    } else {
+                        inv.dues -= remaining;
+                        inv.paid += remaining;
+                        remaining = 0;
+                    }
+                }
+            });
+
+            payment.approved = true;
+            saveDB();
+            renderInvoiceLedgerTable();
+            alert(`Approved! Rs ${payment.amount} has been added to ${payment.shop}'s Customer Ledger and Dues updated.`);
+        }
+
+        function renderInvoiceLedgerTable() {
+            const tbody = document.getElementById('invoiceLedgerTableBody');
+            tbody.innerHTML = db.invoices.map(inv => `
+                <tr>
+                    <td>${inv.id}</td>
+                    <td>${inv.date}</td>
+                    <td><strong>${inv.shop}</strong></td>
+                    <td>${inv.booker}</td>
+                    <td>Rs ${inv.netTotal}</td>
+                    <td style="color:#10b981; font-weight:600;">Rs ${inv.paid}</td>
+                    <td style="color:#ef4444; font-weight:700;">Rs ${inv.dues}</td>
+                </tr>
+            `).join('');
+        }
+
         function saveStockItem() {
             const pcsPerCtn = parseInt(document.getElementById('pPcsPerCtn').value);
             const addCtns = parseInt(document.getElementById('pAddCtns').value) || 0;
@@ -554,7 +650,6 @@
             sel.innerHTML = '<option value="">Select Item</option>' + db.inventory.map(i => `<option value="${i.id}">${i.brand} ${i.name} (TP: ${i.tradePrice})</option>`).join('');
         }
 
-        // Invoice Generator
         function createInvoice() {
             const shop = document.getElementById('invShop').value;
             const booker = document.getElementById('invBooker').value;
@@ -583,14 +678,12 @@
                 dues: net
             });
 
-            // Reduce Stock
             prod.totalPcs -= totalPcs;
-
             saveDB();
+            renderInvoiceLedgerTable();
             alert('Invoice Generated Successfully!');
         }
 
-        // Booker-wise Dues Summary Report
         function renderBookerDuesTable() {
             const bookers = ['Booker Ali', 'Booker Usman', 'Booker Hamza'];
             const tbody = document.getElementById('bookerDuesTableBody');
@@ -611,39 +704,10 @@
             }).join('');
         }
 
-        // Quick Payment Modal Control
         function openQuickPaymentModal() {
             document.getElementById('quickPayModal').classList.add('active');
         }
 
-        function submitQuickPayment() {
-            const booker = document.getElementById('payBooker').value;
-            const shop = document.getElementById('payShop').value;
-            const amt = parseFloat(document.getElementById('payAmount').value);
-
-            // Deduct dues from booker's unpaid invoices
-            let remaining = amt;
-            db.invoices.filter(i => i.booker === booker && i.dues > 0).forEach(inv => {
-                if(remaining > 0) {
-                    if(inv.dues <= remaining) {
-                        remaining -= inv.dues;
-                        inv.paid += inv.dues;
-                        inv.dues = 0;
-                    } else {
-                        inv.dues -= remaining;
-                        inv.paid += remaining;
-                        remaining = 0;
-                    }
-                }
-            });
-
-            db.payments.push({ id: Date.now(), date: new Date().toISOString().slice(0,10), booker, shop, amount: amt });
-            saveDB();
-            closeModal('quickPayModal');
-            alert(`Payment of Rs ${amt} recorded successfully!`);
-        }
-
-        // Modal Reports Triggered by Card Icons
         function openReportModal(type) {
             const modal = document.getElementById('reportModal');
             const title = document.getElementById('modalTitle');
