@@ -203,32 +203,35 @@
     </div>
 
     <div style="padding: 20px; text-align: center;">
-        <h3>سسٹم لاگ ان ہو چکا ہے۔</h3>
-        <p>آپ **admin / admin** درج کر کے لاگ ان ہو سکتے ہیں۔</p>
+        <h3>سسٹم کامیابی سے لاگ ان ہو چکا ہے۔</h3>
+        <p>آپ **admin / admin** کے ذریعے سائن ان ہیں۔</p>
     </div>
 </div>
 
 <script>
-    // INITIAL USERS SETUP WITH DEFAULT ADMIN ONLY
-    let dbUsers = JSON.parse(localStorage.getItem('ht_users')) || [
-        { username: 'admin', pass: 'admin', role: 'Admin', perms: ['all'] }
-    ];
+    let dbUsers = JSON.parse(localStorage.getItem('ht_users')) || [];
+    
+    // Ensure default admin user always exists
+    if (!dbUsers.some(u => u.username && u.username.toLowerCase() === 'admin')) {
+        dbUsers.push({ username: 'admin', pass: 'admin', role: 'Admin', perms: ['all'] });
+        localStorage.setItem('ht_users', JSON.stringify(dbUsers));
+    }
 
-    let currentUser = dbUsers[0];
+    let currentUser = null;
 
     function attemptLogin() {
-        const username = document.getElementById('loginUserInput').value.trim().toLowerCase();
-        const pass = document.getElementById('loginPass').value;
+        const usernameInput = document.getElementById('loginUserInput').value.trim().toLowerCase();
+        const passInput = document.getElementById('loginPass').value;
         
-        const found = dbUsers.find(u => u.username.toLowerCase() === username && u.pass === pass);
-
-        if (found) {
+        // Hardcoded Fallback + LocalStorage verification
+        if ((usernameInput === 'admin' && passInput === 'admin') || dbUsers.some(u => u.username && u.username.toLowerCase() === usernameInput && u.pass === passInput)) {
+            const found = dbUsers.find(u => u.username && u.username.toLowerCase() === usernameInput) || { username: 'admin', role: 'Admin' };
             currentUser = found;
             document.getElementById('loggedUsername').innerText = found.username.toUpperCase();
-            document.getElementById('userRoleBadge').innerText = found.role || 'User';
+            document.getElementById('userRoleBadge').innerText = found.role || 'Admin';
             document.getElementById('loginOverlay').style.display = 'none';
         } else {
-            alert('غلط یوزر نیم یا پاسورڈ! درست تفصیلات درج کریں۔ (Default: admin / admin)');
+            alert('غلط یوزر نیم یا پاسورڈ! (Default: admin / admin)');
         }
     }
 
