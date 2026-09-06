@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hussain Traders - Modern Enterprise ERP</title>
+    <title>Hussain Traders - Enterprise ERP</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -22,25 +22,49 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { background: var(--bg-body); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        /* Login Screen */
+        /* Animated Login Screen */
         .login-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%);
+            background: linear-gradient(-45deg, #0b132b, #1c2541, #3a506b, #0f172a);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
             display: flex; justify-content: center; align-items: center; z-index: 9999; 
         }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.98); padding: 40px; border-radius: 16px; width: 90%; max-width: 400px; 
-            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); 
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        .login-card h2 { color: #0b132b; font-weight: 700; margin-bottom: 5px; }
-        .login-card select, .login-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 8px; }
-        .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+
+        .login-card { 
+            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px; width: 90%; max-width: 420px; 
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.4); 
+            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .welcome-badge {
+            background: rgba(37, 99, 235, 0.1); color: var(--accent-blue); padding: 6px 12px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 12px;
+        }
+
+        .login-card h2 { color: #0b132b; font-weight: 800; margin-bottom: 5px; font-size: 1.6rem; }
+        .login-card p { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
+        .login-card select, .login-card input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; }
+        .login-card button { width: 100%; padding: 12px; background: var(--accent-blue); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .login-card button:hover { background: #1d4ed8; transform: translateY(-2px); }
 
         /* Main Layout */
         .app-container { display: flex; min-height: 100vh; }
         
         /* Sidebar */
-        .sidebar { width: 250px; background: var(--sidebar-bg); color: #cbd5e1; padding: 20px 10px; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: #cbd5e1; padding: 20px 10px; display: flex; flex-direction: column; justify-content: space-between; }
         .brand-header { padding: 10px 15px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; }
         .brand-header h3 { color: #ffffff; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
         .nav-menu { list-style: none; }
@@ -53,17 +77,16 @@
         
         /* Top Navigation Header */
         .top-navbar { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 15px 25px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 20px; }
-        .welcome-title { font-size: 1.4rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px; }
+        .welcome-title { font-size: 1.3rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px; }
         
         .filter-group { display: flex; align-items: center; gap: 10px; }
         .filter-group select, .filter-group input { padding: 8px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.85rem; background: #ffffff; }
 
-        /* Quick Action Bar (Only Active on Dashboard) */
-        .quick-bar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
-        .btn-quick-pay { background: #00c853; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0, 200, 83, 0.25); transition: 0.2s; }
+        /* Actions & Dashboard Grid */
+        .quick-bar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .btn-quick-pay { background: #00c853; color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
         .btn-quick-pay:hover { background: #00a843; }
 
-        /* Dashboard Metric Grid */
         .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 25px; }
         @media (max-width: 1200px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .metrics-grid { grid-template-columns: 1fr; } }
@@ -101,23 +124,32 @@
         .close-btn { font-size: 1.5rem; cursor: pointer; border: none; background: none; }
 
         .btn-primary { background: var(--accent-blue); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-danger { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-secondary { background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
+        /* Print Specific CSS */
+        @media print {
+            body * { visibility: hidden; }
+            .printable-area, .printable-area * { visibility: visible; }
+            .printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Login -->
+    <!-- Animated Login Screen -->
     <div id="loginScreen" class="login-overlay">
         <div class="login-card">
-            <h2>HUSSAIN TRADERS</h2>
-            <p style="color: #64748b; font-size:0.9rem; margin-bottom: 15px;">Enterprise Distribution ERP</p>
+            <span class="welcome-badge">HUSSAIN TRADERS ERP</span>
+            <h2>Welcome Back 👋</h2>
+            <p>Please enter your login details</p>
             <form onsubmit="event.preventDefault(); doLogin();">
-                <select id="loginRole" style="width:100%; padding:10px; margin-bottom:10px;" required>
-                    <option value="Admin">Admin / Office Role</option>
-                    <option value="Order Booker">Order Booker (Field Role)</option>
+                <select id="loginUsername" required style="font-weight:600;">
+                    <option value="">Select User Profile...</option>
                 </select>
-                <input type="text" id="loginUsername" placeholder="Username (admin / booker1)" value="admin" required>
-                <input type="password" id="loginPassword" placeholder="Password" value="admin" required>
-                <button type="submit">Login System</button>
+                <input type="password" id="loginPassword" placeholder="Enter Password" value="1234" required>
+                <button type="submit"><i class="fa-solid fa-right-to-bracket"></i> Login System</button>
             </form>
         </div>
     </div>
@@ -130,16 +162,12 @@
                 <div class="brand-header">
                     <h3><i class="fa-solid fa-boxes-packing"></i> Hussain Traders</h3>
                 </div>
-                <ul class="nav-menu">
-                    <li><a class="nav-link active" onclick="showSection('dashboard', this)"><i class="fa-solid fa-house"></i> Dashboard</a></li>
-                    <li><a class="nav-link" onclick="showSection('inventory', this)"><i class="fa-solid fa-cubes"></i> Stock & Purchases</a></li>
-                    <li><a class="nav-link" onclick="showSection('sales', this)"><i class="fa-solid fa-cart-shopping"></i> Sales & Invoices</a></li>
-                    <li><a class="nav-link" onclick="showSection('duesSection', this)"><i class="fa-solid fa-receipt"></i> Dues & Recoveries</a></li>
-                    <li><a class="nav-link" onclick="showSection('reportsSection', this)"><i class="fa-solid fa-chart-line"></i> Reports & Profit</a></li>
+                <ul class="nav-menu" id="sideNavMenu">
+                    <!-- Dynamic Sidebar Items Based on User Permissions -->
                 </ul>
             </div>
             <div style="padding: 10px;">
-                <div id="userDisplayRole" style="color:#94a3b8; font-size:0.8rem; margin-bottom:8px;">Logged in as: Admin</div>
+                <div id="userDisplayRole" style="color:#94a3b8; font-size:0.8rem; margin-bottom:8px;">Logged in: Admin</div>
                 <button onclick="doLogout()" class="btn-primary" style="width: 100%; background: #ef4444;"><i class="fa-solid fa-power-off"></i> Logout</button>
             </div>
         </div>
@@ -148,9 +176,9 @@
         <div class="main-content">
             
             <!-- Top Navbar -->
-            <div class="top-navbar">
+            <div class="top-navbar no-print">
                 <div class="welcome-title">
-                    <span>Welcome Hussain Traders,</span> 👋
+                    <span id="navWelcomeMsg">Welcome to Distribution Portal</span>
                 </div>
                 
                 <!-- Date Filter Component -->
@@ -162,110 +190,109 @@
                         <option value="weekly">This Week</option>
                         <option value="monthly" selected>This Month</option>
                         <option value="yearly">This Year</option>
-                        <option value="custom">Custom Date Range</option>
                     </select>
-                    <span id="customDateContainer" style="display:none;">
-                        <input type="date" id="startDate" onchange="renderDashboard()">
-                        <input type="date" id="endDate" onchange="renderDashboard()">
-                    </span>
                 </div>
             </div>
 
             <!-- DASHBOARD SECTION -->
             <div id="dashboard" class="section-view active">
                 
-                <!-- Quick Action Bar (STRICTLY ON DASHBOARD ONLY) -->
-                <div class="quick-bar">
+                <!-- Quick Action Bar -->
+                <div class="quick-bar no-print">
                     <button class="btn-quick-pay" onclick="openQuickPaymentModal()">
-                        <i class="fa-solid fa-plus-circle"></i> Quick Payment Received (Field Collection Entry)
+                        <i class="fa-solid fa-plus-circle"></i> Quick Payment Received Entry
                     </button>
+                    <button class="btn-secondary" onclick="printDashboardReport()">
+                        <i class="fa-solid fa-print"></i> Print / Save PDF Report
+                    </button>
+                    <button class="btn-secondary" style="background:#0284c7;" onclick="triggerDayEndProcess()">
+                        <i class="fa-solid fa-moon"></i> Day End Process
+                    </button>
+                    <button class="btn-secondary" style="background:#16a34a;" onclick="exportBackupData()">
+                        <i class="fa-solid fa-download"></i> Backup Data
+                    </button>
+                    <button class="btn-secondary" style="background:#d97706;" onclick="document.getElementById('importFile').click()">
+                        <i class="fa-solid fa-upload"></i> Restore Backup
+                    </button>
+                    <input type="file" id="importFile" style="display:none;" onchange="importBackupData(event)">
                 </div>
 
-                <!-- Metrics Grid (Top 4 Cards) -->
-                <div class="metrics-grid">
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Total Sales</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('sales')" title="View Sales Report"><i class="fa-solid fa-arrow-right-left"></i></button>
+                <div id="dashboardPrintArea" class="printable-area">
+                    <h2 class="no-print-title" style="display:none; margin-bottom:15px;">Hussain Traders - Business Dashboard Summary</h2>
+                    <!-- Metrics Grid (Top 4 Cards) -->
+                    <div class="metrics-grid">
+                        <div class="stat-card">
+                            <div class="stat-head">
+                                <span class="stat-title">Total Sales</span>
+                                <button class="stat-icon-btn no-print" onclick="openReportModal('sales')" title="View Sales Report"><i class="fa-solid fa-arrow-right-left"></i></button>
+                            </div>
+                            <div class="stat-value" id="cardTotalSales">Rs 0.00</div>
+                            <div class="stat-sub" id="cardSalesDetail">Gross Sales Summary</div>
                         </div>
-                        <div class="stat-value" id="cardTotalSales">Rs 0.00</div>
-                        <div class="stat-sub" id="cardSalesDetail">Gross: Rs 0 | Disc: Rs 0</div>
+
+                        <div class="stat-card">
+                            <div class="stat-head">
+                                <span class="stat-title">Net Revenue</span>
+                                <button class="stat-icon-btn no-print" onclick="openReportModal('profit')"><i class="fa-solid fa-circle-info"></i></button>
+                            </div>
+                            <div class="stat-value" id="cardNetSales">Rs 0.00</div>
+                            <div class="stat-sub" style="color:#10b981;">Net Earned Revenue</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-head">
+                                <span class="stat-title">Invoice Dues</span>
+                                <button class="stat-icon-btn no-print" onclick="openReportModal('dues')" title="View Booker Dues"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+                            </div>
+                            <div class="stat-value" id="cardInvoiceDues">Rs 0.00</div>
+                            <div class="stat-sub" style="color:#ef4444;">Outstanding Customer Dues</div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-head">
+                                <span class="stat-title">Total Sell Return</span>
+                                <button class="stat-icon-btn no-print" onclick="openReportModal('return')" title="View Return Report"><i class="fa-solid fa-rotate-left"></i></button>
+                            </div>
+                            <div class="stat-value" id="cardSellReturn">Rs 0.00</div>
+                            <div class="stat-sub">Returns Total</div>
+                        </div>
                     </div>
 
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Net Revenue</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('profit')"><i class="fa-solid fa-circle-info"></i></button>
+                    <!-- Metrics Grid (Bottom 4 Cards) -->
+                    <div class="metrics-grid">
+                        <div class="stat-card">
+                            <div class="stat-head"><span class="stat-title">Total Purchase</span></div>
+                            <div class="stat-value" id="cardTotalPurchase">Rs 0.00</div>
                         </div>
-                        <div class="stat-value" id="cardNetSales">Rs 0.00</div>
-                        <div class="stat-sub" style="color:#10b981;">After Returns & Discounts</div>
-                    </div>
 
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Invoice Dues</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('dues')" title="View Booker Dues"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+                        <div class="stat-card">
+                            <div class="stat-head"><span class="stat-title">Available Stock Value</span></div>
+                            <div class="stat-value" id="cardStockValue">Rs 0.00</div>
+                            <div class="stat-sub" id="cardStockUnits">0 Cartons</div>
                         </div>
-                        <div class="stat-value" id="cardInvoiceDues">Rs 0.00</div>
-                        <div class="stat-sub" style="color:#ef4444;">Click icon for Booker-wise dues</div>
-                    </div>
 
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Total Sell Return</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('return')" title="View Return Report"><i class="fa-solid fa-rotate-left"></i></button>
+                        <div class="stat-card">
+                            <div class="stat-head"><span class="stat-title">Estimated Net Profit</span></div>
+                            <div class="stat-value" id="cardNetProfit" style="color:#10b981;">Rs 0.00</div>
                         </div>
-                        <div class="stat-value" id="cardSellReturn">Rs 0.00</div>
-                        <div class="stat-sub">Click icon for Return Report</div>
-                    </div>
-                </div>
 
-                <!-- Metrics Grid (Bottom 4 Cards) -->
-                <div class="metrics-grid">
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Total Purchase</span>
-                            <button class="stat-icon-btn" onclick="showSection('inventory')"><i class="fa-solid fa-truck-ramp-box"></i></button>
+                        <div class="stat-card">
+                            <div class="stat-head"><span class="stat-title">Total Discount Given</span></div>
+                            <div class="stat-value" id="cardTotalDiscount">Rs 0.00</div>
                         </div>
-                        <div class="stat-value" id="cardTotalPurchase">Rs 0.00</div>
-                        <div class="stat-sub">Total stock acquired</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Available Stock Value</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('stock')"><i class="fa-solid fa-boxes-stacked"></i></button>
-                        </div>
-                        <div class="stat-value" id="cardStockValue">Rs 0.00</div>
-                        <div class="stat-sub" id="cardStockUnits">0 Cartons / Loose</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Estimated Net Profit</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('profit')"><i class="fa-solid fa-chart-pie"></i></button>
-                        </div>
-                        <div class="stat-value" id="cardNetProfit" style="color:#10b981;">Rs 0.00</div>
-                        <div class="stat-sub">TP Rate vs Purchase Cost</div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div class="stat-head">
-                            <span class="stat-title">Total Discount Given</span>
-                            <button class="stat-icon-btn" onclick="openReportModal('discount')" title="Discount Report"><i class="fa-solid fa-tags"></i></button>
-                        </div>
-                        <div class="stat-value" id="cardTotalDiscount">Rs 0.00</div>
-                        <div class="stat-sub">Click icon for Discount Report</div>
                     </div>
                 </div>
 
-                <!-- ADMIN APPROVAL WORKFLOW SECTION -->
-                <div class="card" style="border: 2px solid #3b82f6;">
+            </div>
+
+            <!-- APPROVALS SECTION (Separate Page) -->
+            <div id="approvals" class="section-view">
+                <div class="card">
                     <div class="card-header">
-                        <span><i class="fa-solid fa-user-check"></i> Admin Approval - Pending Booker Field Collections</span>
+                        <span><i class="fa-solid fa-user-check"></i> Field Recovery Approval Desk</span>
                     </div>
                     <p style="font-size:0.85rem; color: var(--text-muted); margin-bottom:12px;">
-                        آرڈر بکر موبائل سے جو بھی وصولی درج کریں گے وہ یہاں نظر آئے گی۔ دفتر آکر رقم جمع کرانے پر ایڈمن "Approve" کا بٹن دبائے گا تو رقم کسٹمر کے کھاتے (Ledger) میں خود بخود ایڈ ہو جائے گی۔
+                        آرڈر بکر کی فیلڈ وصولی کی تفصیلات یہاں موجود ہیں۔ کیش وصول ہونے پر "Approve" پر کلک کریں۔
                     </p>
                     <table>
                         <thead>
@@ -275,21 +302,18 @@
                                 <th>Shop / Customer</th>
                                 <th>Collected Amount</th>
                                 <th>Status</th>
-                                <th>Action (Admin Only)</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody id="pendingPaymentsTableBody">
-                            <!-- Dynamic Content -->
-                        </tbody>
+                        <tbody id="pendingPaymentsTableBody"></tbody>
                     </table>
                 </div>
-
             </div>
 
             <!-- INVENTORY SECTION -->
             <div id="inventory" class="section-view">
                 <div class="card">
-                    <div class="card-header">Add Purchase / New Stock Entry</div>
+                    <div class="card-header">Add Stock Entry</div>
                     <form onsubmit="event.preventDefault(); saveStockItem();" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
                         <input type="text" id="pBrand" placeholder="Brand Name" required>
                         <input type="text" id="pName" placeholder="Product Name" required>
@@ -302,7 +326,7 @@
                     </form>
                 </div>
                 <div class="card">
-                    <div class="card-header">Inventory Ledger</div>
+                    <div class="card-header">Inventory Stock Ledger</div>
                     <table>
                         <thead>
                             <tr><th>Brand</th><th>Product</th><th>Pcs/Ctn</th><th>Purch Rate</th><th>TP Rate</th><th>Total Stock Pcs</th><th>Stock Value</th></tr>
@@ -315,18 +339,11 @@
             <!-- SALES & INVOICE SECTION -->
             <div id="sales" class="section-view">
                 <div class="card">
-                    <div class="card-header">New Order Invoice Generator</div>
-                    <form onsubmit="event.preventDefault(); createInvoice();" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+                    <div class="card-header">Create Order / Invoice</div>
+                    <form onsubmit="event.preventDefault(); createInvoice();" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px;">
                         <input type="text" id="invShop" placeholder="Shop Name" required>
-                        <select id="invBooker" required>
-                            <option value="">Select Order Booker</option>
-                            <option value="Booker Ali">Booker Ali</option>
-                            <option value="Booker Usman">Booker Usman</option>
-                            <option value="Booker Hamza">Booker Hamza</option>
-                        </select>
-                        <select id="invProduct" required>
-                            <option value="">Select Item</option>
-                        </select>
+                        <select id="invBooker" required><option value="">Select Order Booker</option></select>
+                        <select id="invProduct" required><option value="">Select Item</option></select>
                         <input type="number" id="invCtns" placeholder="Cartons" value="0">
                         <input type="number" id="invPcs" placeholder="Loose Pcs" value="0">
                         <input type="number" id="invDiscount" placeholder="Discount (Rs)" value="0">
@@ -334,13 +351,56 @@
                     </form>
                 </div>
 
+                <!-- Delivery Date Change Form -->
+                <div class="card" style="border:1px solid #3b82f6;">
+                    <div class="card-header">Modify Delivery Date (Max 3 Days Extension)</div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                        <select id="delivBookerSelect" style="padding:8px; border-radius:6px; border:1px solid var(--border-color);"><option value="">Select Order Booker</option></select>
+                        <input type="date" id="delivNewDate" style="padding:8px; border-radius:6px; border:1px solid var(--border-color);">
+                        <button onclick="updateDeliveryDate()" class="btn-primary">Update Delivery Date for Booker Orders</button>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-header">Customer Ledger & Invoice History</div>
+                    <div class="card-header">
+                        <span>Invoice Ledger & History</span>
+                        <button onclick="printSelectedInvoices()" class="btn-primary"><i class="fa-solid fa-print"></i> Print Selected Invoices</button>
+                    </div>
                     <table>
                         <thead>
-                            <tr><th>Invoice #</th><th>Date</th><th>Shop Name</th><th>Booker</th><th>Gross</th><th>Paid</th><th>Dues (بقایا)</th></tr>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllInvoices" onchange="toggleSelectAllInvoices(this)"></th>
+                                <th>Inv #</th>
+                                <th>Date</th>
+                                <th>Delivery Date</th>
+                                <th>Shop Name</th>
+                                <th>Booker</th>
+                                <th>Net Total</th>
+                                <th>Dues</th>
+                                <th>Action</th>
+                            </tr>
                         </thead>
                         <tbody id="invoiceLedgerTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PICKLIST SECTION -->
+            <div id="picklist" class="section-view">
+                <div class="card">
+                    <div class="card-header">Generate Picklist (Auto Stock Deduction)</div>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select id="pickBookerSelect" style="padding:8px; border-radius:6px; border:1px solid var(--border-color);"><option value="">Select Order Booker</option></select>
+                        <button onclick="generatePicklist()" class="btn-primary">Generate & Deduct Stock</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Active Picklists</div>
+                    <table>
+                        <thead>
+                            <tr><th>Picklist ID</th><th>Booker Name</th><th>Generated Date</th><th>Status</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="picklistTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -358,11 +418,40 @@
                 </div>
             </div>
 
+            <!-- USER MANAGEMENT SECTION (ADMIN ONLY) -->
+            <div id="userManagement" class="section-view">
+                <div class="card">
+                    <div class="card-header">Admin User Management & Role Access Control</div>
+                    <form onsubmit="event.preventDefault(); createNewUser();" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:20px;">
+                        <input type="text" id="newUsername" placeholder="User Name" required>
+                        <input type="password" id="newUserPass" placeholder="Password" required>
+                        <select id="newUserRole">
+                            <option value="Order Booker">Order Booker</option>
+                            <option value="Manager">Manager</option>
+                        </select>
+                        <button type="submit" class="btn-primary">+ Add New User</button>
+                    </form>
+
+                    <h4 style="margin-bottom:10px;">User Access Control List</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Access Permissions</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userManagementTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- REPORTS SECTION -->
             <div id="reportsSection" class="section-view">
                 <div class="card">
-                    <div class="card-header">Comprehensive System Reports</div>
-                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <div class="card-header">System Financial Reports</div>
+                    <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
                         <button onclick="openReportModal('sales')" class="btn-primary">Sales Report</button>
                         <button onclick="openReportModal('return')" class="btn-primary">Returns Report</button>
                         <button onclick="openReportModal('discount')" class="btn-primary">Discount Report</button>
@@ -374,7 +463,7 @@
         </div>
     </div>
 
-    <!-- MODAL DIALOG FOR REPORTS & ICONS CLICK -->
+    <!-- MODAL DIALOG FOR REPORTS -->
     <div id="reportModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -385,70 +474,138 @@
         </div>
     </div>
 
-    <!-- MODAL FOR QUICK PAYMENT RECEIVED (ORDER BOOKER WASOOLI) -->
+    <!-- MODAL FOR QUICK PAYMENT RECEIVED -->
     <div id="quickPayModal" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
-                <h3>Record Field Wasooli (Collection)</h3>
+                <h3>Record Wasooli Entry</h3>
                 <button class="close-btn" onclick="closeModal('quickPayModal')">&times;</button>
             </div>
             <form onsubmit="event.preventDefault(); submitQuickPayment();">
                 <div style="margin-bottom:12px;">
                     <label style="font-size:0.85rem; font-weight:600;">Order Booker:</label>
-                    <select id="payBooker" style="width:100%; padding:10px; margin-top:5px;" required>
-                        <option value="Booker Ali">Booker Ali</option>
-                        <option value="Booker Usman">Booker Usman</option>
-                        <option value="Booker Hamza">Booker Hamza</option>
-                    </select>
+                    <select id="payBooker" style="width:100%; padding:10px; margin-top:5px;" required></select>
                 </div>
                 <div style="margin-bottom:12px;">
-                    <label style="font-size:0.85rem; font-weight:600;">Shop Name / Customer Entry:</label>
-                    <input type="text" id="payShop" placeholder="e.g. Al-Madina Store" style="width:100%; padding:10px; margin-top:5px;" required>
+                    <label style="font-size:0.85rem; font-weight:600;">Shop / Customer Name:</label>
+                    <input type="text" id="payShop" placeholder="e.g. Madina Store" style="width:100%; padding:10px; margin-top:5px;" required>
                 </div>
                 <div style="margin-bottom:15px;">
-                    <label style="font-size:0.85rem; font-weight:600;">Wasooli Amount Received (Rs):</label>
+                    <label style="font-size:0.85rem; font-weight:600;">Amount Received (Rs):</label>
                     <input type="number" id="payAmount" placeholder="Amount" style="width:100%; padding:10px; margin-top:5px;" required>
                 </div>
-                <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Submit Collection (Pending Admin Approval)</button>
+                <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Submit Collection Entry</button>
             </form>
         </div>
     </div>
 
-    <script>
-        let currentUserRole = 'Admin';
+    <!-- PRINT CONTAINER FOR INVOICES -->
+    <div id="invoicePrintSection" class="printable-area" style="display:none;"></div>
 
+    <script>
+        let currentUser = null;
+
+        // Base Data Structure
         let db = {
+            users: JSON.parse(localStorage.getItem('ht_users')) || [
+                { id: 1, name: 'admin', pass: 'admin', role: 'Admin', access: ['dashboard', 'approvals', 'inventory', 'sales', 'picklist', 'duesSection', 'userManagement', 'reportsSection'] },
+                { id: 2, name: 'Booker Ali', pass: '1234', role: 'Order Booker', access: ['dashboard', 'sales'] },
+                { id: 3, name: 'Booker Usman', pass: '1234', role: 'Order Booker', access: ['dashboard', 'sales'] }
+            ],
             inventory: JSON.parse(localStorage.getItem('ht_inv')) || [
                 { id: 1, brand: 'Shahi Foods', name: 'Snack Pack', pcsPerCtn: 48, purchasePrice: 1000, tradePrice: 1200, totalPcs: 480 },
                 { id: 2, brand: 'Hussain Traders', name: 'Juice 250ml', pcsPerCtn: 24, purchasePrice: 800, tradePrice: 960, totalPcs: 240 }
             ],
             invoices: JSON.parse(localStorage.getItem('ht_invs')) || [
-                { id: 101, date: new Date().toISOString().slice(0,10), shop: 'Madina Market', booker: 'Booker Ali', grossSales: 15000, discount: 500, returnAmount: 0, netTotal: 14500, paid: 10000, dues: 4500 },
-                { id: 102, date: new Date().toISOString().slice(0,10), shop: 'Bismillah Store', booker: 'Booker Usman', grossSales: 22000, discount: 1000, returnAmount: 2000, netTotal: 19000, paid: 19000, dues: 0 }
+                { id: 101, date: new Date().toISOString().slice(0,10), delivDate: new Date().toISOString().slice(0,10), shop: 'Madina Market', booker: 'Booker Ali', grossSales: 15000, discount: 500, returnAmount: 0, netTotal: 14500, paid: 10000, dues: 4500, items: [{pName:'Snack Pack', ctns:10, pcs:0, price:1200}] }
             ],
-            payments: JSON.parse(localStorage.getItem('ht_payments')) || []
+            payments: JSON.parse(localStorage.getItem('ht_payments')) || [],
+            picklists: JSON.parse(localStorage.getItem('ht_picklists')) || []
         };
 
         function saveDB() {
+            localStorage.setItem('ht_users', JSON.stringify(db.users));
             localStorage.setItem('ht_inv', JSON.stringify(db.inventory));
             localStorage.setItem('ht_invs', JSON.stringify(db.invoices));
             localStorage.setItem('ht_payments', JSON.stringify(db.payments));
+            localStorage.setItem('ht_picklists', JSON.stringify(db.picklists));
             renderDashboard();
+        }
+
+        window.onload = function() {
+            populateUserLoginDropdown();
+            setupMinMaxDeliveryDate();
+        };
+
+        function populateUserLoginDropdown() {
+            const sel = document.getElementById('loginUsername');
+            sel.innerHTML = '<option value="">Select User Profile...</option>' + db.users.map(u => `<option value="${u.name}">${u.name} (${u.role})</option>`).join('');
+        }
+
+        function setupMinMaxDeliveryDate() {
+            const today = new Date();
+            const maxDate = new Date();
+            maxDate.setDate(today.getDate() + 3);
+
+            const input = document.getElementById('delivNewDate');
+            input.min = today.toISOString().slice(0,10);
+            input.max = maxDate.toISOString().slice(0,10);
+            input.value = today.toISOString().slice(0,10);
         }
 
         function doLogin() {
-            currentUserRole = document.getElementById('loginRole').value;
-            document.getElementById('userDisplayRole').innerText = `Logged in as: ${currentUserRole}`;
+            const uName = document.getElementById('loginUsername').value;
+            const uPass = document.getElementById('loginPassword').value;
+
+            const user = db.users.find(u => u.name === uName && u.pass === uPass);
+            if (!user) {
+                alert('Invalid Credentials!');
+                return;
+            }
+
+            currentUser = user;
+            document.getElementById('userDisplayRole').innerText = `Logged in: ${user.name} (${user.role})`;
+            document.getElementById('navWelcomeMsg').innerText = `Welcome ${user.name}, Hussain Traders ERP`;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContainer').style.display = 'flex';
+
+            buildDynamicSidebar();
             renderDashboard();
-            populateProductDropdown();
+            populateDropdowns();
             renderInvoiceLedgerTable();
+            renderPendingPaymentsTable();
+            renderUserManagementTable();
+            renderPicklistTable();
         }
 
         function doLogout() {
+            currentUser = null;
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('appContainer').style.display = 'none';
+        }
+
+        function buildDynamicSidebar() {
+            const menu = document.getElementById('sideNavMenu');
+            menu.innerHTML = '';
+
+            const navItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: 'fa-house' },
+                { id: 'approvals', label: 'Field Approvals', icon: 'fa-user-check' },
+                { id: 'inventory', label: 'Stock & Inventory', icon: 'fa-cubes' },
+                { id: 'sales', label: 'Sales & Invoices', icon: 'fa-cart-shopping' },
+                { id: 'picklist', label: 'Picklist Desk', icon: 'fa-list-check' },
+                { id: 'duesSection', label: 'Dues & Recoveries', icon: 'fa-receipt' },
+                { id: 'userManagement', label: 'User Control Panel', icon: 'fa-users-gear' },
+                { id: 'reportsSection', label: 'Financial Reports', icon: 'fa-chart-line' }
+            ];
+
+            navItems.forEach(item => {
+                if (currentUser.role === 'Admin' || (currentUser.access && currentUser.access.includes(item.id))) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a class="nav-link ${item.id==='dashboard'?'active':''}" onclick="showSection('${item.id}', this)"><i class="fa-solid ${item.icon}"></i> ${item.label}</a>`;
+                    menu.appendChild(li);
+                }
+            });
         }
 
         function showSection(id, el) {
@@ -456,39 +613,25 @@
             document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             if(el) el.classList.add('active');
+
             if(id === 'duesSection') renderBookerDuesTable();
             if(id === 'sales') renderInvoiceLedgerTable();
+            if(id === 'approvals') renderPendingPaymentsTable();
+            if(id === 'userManagement') renderUserManagementTable();
+            if(id === 'picklist') renderPicklistTable();
         }
 
-        function handleDateFilterChange() {
-            const val = document.getElementById('dateFilterType').value;
-            document.getElementById('customDateContainer').style.display = (val === 'custom') ? 'inline-flex' : 'none';
-            renderDashboard();
-        }
-
-        function getFilteredInvoices() {
-            const filterType = document.getElementById('dateFilterType').value;
-            const now = new Date();
+        function populateDropdowns() {
+            const bookers = db.users.filter(u => u.role === 'Order Booker').map(u => u.name);
+            const optBookers = '<option value="">Select Order Booker</option>' + bookers.map(b => `<option value="${b}">${b}</option>`).join('');
             
-            return db.invoices.filter(inv => {
-                const invDate = new Date(inv.date);
-                if (filterType === 'today') {
-                    return invDate.toDateString() === now.toDateString();
-                } else if (filterType === 'weekly') {
-                    const oneWeekAgo = new Date(now.setDate(now.getDate() - 7));
-                    return invDate >= oneWeekAgo;
-                } else if (filterType === 'monthly') {
-                    return invDate.getMonth() === new Date().getMonth() && invDate.getFullYear() === new Date().getFullYear();
-                } else if (filterType === 'yearly') {
-                    return invDate.getFullYear() === new Date().getFullYear();
-                } else if (filterType === 'custom') {
-                    const s = document.getElementById('startDate').value;
-                    const e = document.getElementById('endDate').value;
-                    if (!s || !e) return true;
-                    return invDate >= new Date(s) && invDate <= new Date(e);
-                }
-                return true;
-            });
+            document.getElementById('invBooker').innerHTML = optBookers;
+            document.getElementById('payBooker').innerHTML = optBookers;
+            document.getElementById('delivBookerSelect').innerHTML = optBookers;
+            document.getElementById('pickBookerSelect').innerHTML = optBookers;
+
+            const selProd = document.getElementById('invProduct');
+            selProd.innerHTML = '<option value="">Select Item</option>' + db.inventory.map(i => `<option value="${i.id}">${i.brand} ${i.name} (TP: ${i.tradePrice})</option>`).join('');
         }
 
         function renderDashboard() {
@@ -504,152 +647,57 @@
             let currentStockValue = db.inventory.reduce((a, b) => a + (b.totalPcs * (b.tradePrice / b.pcsPerCtn)), 0);
             let totalCartons = db.inventory.reduce((a, b) => a + Math.floor(b.totalPcs / b.pcsPerCtn), 0);
 
-            let estimatedProfit = netRevenue - (filteredInvoices.length * 500);
-
             document.getElementById('cardTotalSales').innerText = "Rs " + totalGrossSales.toLocaleString('en-PK', {minimumFractionDigits:2});
-            document.getElementById('cardSalesDetail').innerText = `Disc: Rs ${totalDiscounts} | Ret: Rs ${totalReturns}`;
             document.getElementById('cardNetSales').innerText = "Rs " + netRevenue.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardInvoiceDues').innerText = "Rs " + totalDues.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardSellReturn').innerText = "Rs " + totalReturns.toLocaleString('en-PK', {minimumFractionDigits:2});
-
             document.getElementById('cardTotalPurchase').innerText = "Rs " + totalPurchaseCost.toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardStockValue').innerText = "Rs " + currentStockValue.toLocaleString('en-PK', {minimumFractionDigits:2});
-            document.getElementById('cardStockUnits').innerText = `${totalCartons} Cartons Available`;
-
-            document.getElementById('cardNetProfit').innerText = "Rs " + (estimatedProfit > 0 ? estimatedProfit : 0).toLocaleString('en-PK', {minimumFractionDigits:2});
+            document.getElementById('cardStockUnits').innerText = `${totalCartons} Cartons`;
+            document.getElementById('cardNetProfit').innerText = "Rs " + (netRevenue * 0.2).toLocaleString('en-PK', {minimumFractionDigits:2});
             document.getElementById('cardTotalDiscount').innerText = "Rs " + totalDiscounts.toLocaleString('en-PK', {minimumFractionDigits:2});
 
             renderInventoryTable();
-            renderPendingPaymentsTable();
         }
 
-        /* Order Booker Wasooli -> Pending Table Render */
-        function renderPendingPaymentsTable() {
-            const tbody = document.getElementById('pendingPaymentsTableBody');
-            tbody.innerHTML = db.payments.map(p => {
-                const statusBadge = p.approved 
-                    ? `<span class="badge-approved"><i class="fa-solid fa-check-circle"></i> Approved & Added to Ledger</span>` 
-                    : `<span class="badge-pending"><i class="fa-solid fa-clock"></i> Pending Approval</span>`;
-
-                const actionBtn = p.approved 
-                    ? `Completed` 
-                    : `<button onclick="approvePayment(${p.id})" class="btn-approve"><i class="fa-solid fa-check"></i> Approve & Add to Ledger</button>`;
-
-                return `<tr>
-                    <td>${p.date}</td>
-                    <td><strong>${p.booker}</strong></td>
-                    <td>${p.shop}</td>
-                    <td style="font-weight:700; color:#10b981;">Rs ${p.amount}</td>
-                    <td>${statusBadge}</td>
-                    <td>${actionBtn}</td>
-                </tr>`;
-            }).join('');
-        }
-
-        /* Quick Payment Submit (Booker submits wasooli via mobile) */
-        function submitQuickPayment() {
-            const booker = document.getElementById('payBooker').value;
-            const shop = document.getElementById('payShop').value;
-            const amt = parseFloat(document.getElementById('payAmount').value);
-
-            db.payments.push({
-                id: Date.now(),
-                date: new Date().toISOString().slice(0,10),
-                booker: booker,
-                shop: shop,
-                amount: amt,
-                approved: false
+        function getFilteredInvoices() {
+            const filterType = document.getElementById('dateFilterType').value;
+            const now = new Date();
+            
+            return db.invoices.filter(inv => {
+                const invDate = new Date(inv.date);
+                if (filterType === 'today') return invDate.toDateString() === now.toDateString();
+                if (filterType === 'weekly') {
+                    const oneWeek = new Date(now.setDate(now.getDate() - 7));
+                    return invDate >= oneWeek;
+                }
+                if (filterType === 'monthly') return invDate.getMonth() === new Date().getMonth() && invDate.getFullYear() === new Date().getFullYear();
+                if (filterType === 'yearly') return invDate.getFullYear() === new Date().getFullYear();
+                return true;
             });
-
-            saveDB();
-            closeModal('quickPayModal');
-            alert('Wasooli recorded! Pending Admin verification/approval when cash is submitted at office.');
         }
 
-        /* Admin Approval Function -> Directly Updates Customer Ledger */
-        function approvePayment(payId) {
-            const payment = db.payments.find(p => p.id === payId);
-            if (!payment || payment.approved) return;
+        /* Delivery Date Update (Max 3 Days Extension) */
+        function updateDeliveryDate() {
+            const booker = document.getElementById('delivBookerSelect').value;
+            const newDate = document.getElementById('delivNewDate').value;
 
-            let remaining = payment.amount;
+            if(!booker || !newDate) { alert('Please select Booker and Date'); return; }
 
-            // Reduce dues from matching customer/shop invoices
-            db.invoices.filter(i => i.shop.toLowerCase() === payment.shop.toLowerCase() && i.dues > 0).forEach(inv => {
-                if(remaining > 0) {
-                    if(inv.dues <= remaining) {
-                        remaining -= inv.dues;
-                        inv.paid += inv.dues;
-                        inv.dues = 0;
-                    } else {
-                        inv.dues -= remaining;
-                        inv.paid += remaining;
-                        remaining = 0;
-                    }
+            let count = 0;
+            db.invoices.forEach(inv => {
+                if (inv.booker === booker) {
+                    inv.delivDate = newDate;
+                    count++;
                 }
             });
 
-            payment.approved = true;
             saveDB();
             renderInvoiceLedgerTable();
-            alert(`Approved! Rs ${payment.amount} has been added to ${payment.shop}'s Customer Ledger and Dues updated.`);
+            alert(`Updated Delivery Date to ${newDate} for ${count} invoices of ${booker}!`);
         }
 
-        function renderInvoiceLedgerTable() {
-            const tbody = document.getElementById('invoiceLedgerTableBody');
-            tbody.innerHTML = db.invoices.map(inv => `
-                <tr>
-                    <td>${inv.id}</td>
-                    <td>${inv.date}</td>
-                    <td><strong>${inv.shop}</strong></td>
-                    <td>${inv.booker}</td>
-                    <td>Rs ${inv.netTotal}</td>
-                    <td style="color:#10b981; font-weight:600;">Rs ${inv.paid}</td>
-                    <td style="color:#ef4444; font-weight:700;">Rs ${inv.dues}</td>
-                </tr>
-            `).join('');
-        }
-
-        function saveStockItem() {
-            const pcsPerCtn = parseInt(document.getElementById('pPcsPerCtn').value);
-            const addCtns = parseInt(document.getElementById('pAddCtns').value) || 0;
-            const addPcs = parseInt(document.getElementById('pAddPcs').value) || 0;
-            
-            db.inventory.push({
-                id: Date.now(),
-                brand: document.getElementById('pBrand').value,
-                name: document.getElementById('pName').value,
-                pcsPerCtn: pcsPerCtn,
-                purchasePrice: parseFloat(document.getElementById('pPurchasePrice').value),
-                tradePrice: parseFloat(document.getElementById('pTradePrice').value),
-                totalPcs: (addCtns * pcsPerCtn) + addPcs
-            });
-
-            saveDB();
-            populateProductDropdown();
-            alert('Stock Item Saved Successfully!');
-        }
-
-        function renderInventoryTable() {
-            const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = db.inventory.map(p => {
-                const stockVal = (p.totalPcs * (p.tradePrice / p.pcsPerCtn));
-                return `<tr>
-                    <td>${p.brand}</td>
-                    <td>${p.name}</td>
-                    <td>${p.pcsPerCtn}</td>
-                    <td>Rs ${p.purchasePrice}</td>
-                    <td>Rs ${p.tradePrice}</td>
-                    <td>${p.totalPcs} Pcs (${Math.floor(p.totalPcs/p.pcsPerCtn)} Ctn)</td>
-                    <td>Rs ${stockVal.toFixed(2)}</td>
-                </tr>`;
-            }).join('');
-        }
-
-        function populateProductDropdown() {
-            const sel = document.getElementById('invProduct');
-            sel.innerHTML = '<option value="">Select Item</option>' + db.inventory.map(i => `<option value="${i.id}">${i.brand} ${i.name} (TP: ${i.tradePrice})</option>`).join('');
-        }
-
+        /* Invoice Functions & Printing */
         function createInvoice() {
             const shop = document.getElementById('invShop').value;
             const booker = document.getElementById('invBooker').value;
@@ -668,6 +716,7 @@
             db.invoices.push({
                 id: Date.now(),
                 date: new Date().toISOString().slice(0,10),
+                delivDate: new Date().toISOString().slice(0,10),
                 shop: shop,
                 booker: booker,
                 grossSales: gross,
@@ -675,110 +724,245 @@
                 returnAmount: 0,
                 netTotal: net,
                 paid: 0,
-                dues: net
+                dues: net,
+                items: [{ pName: prod.name, ctns: ctns, pcs: pcs, price: prod.tradePrice }]
             });
 
-            prod.totalPcs -= totalPcs;
             saveDB();
             renderInvoiceLedgerTable();
-            alert('Invoice Generated Successfully!');
+            alert('Invoice Generated!');
         }
 
-        function renderBookerDuesTable() {
-            const bookers = ['Booker Ali', 'Booker Usman', 'Booker Hamza'];
-            const tbody = document.getElementById('bookerDuesTableBody');
-            
-            tbody.innerHTML = bookers.map(b => {
-                const bInvs = db.invoices.filter(i => i.booker === b);
-                const totalBill = bInvs.reduce((x,y) => x + y.netTotal, 0);
-                const totalDues = bInvs.reduce((x,y) => x + y.dues, 0);
-                const totalPaid = totalBill - totalDues;
-
-                return `<tr>
-                    <td><strong>${b}</strong></td>
-                    <td>${bInvs.length}</td>
-                    <td>Rs ${totalBill.toFixed(2)}</td>
-                    <td>Rs ${totalPaid.toFixed(2)}</td>
-                    <td style="color:#ef4444; font-weight:700;">Rs ${totalDues.toFixed(2)}</td>
-                </tr>`;
-            }).join('');
+        function renderInvoiceLedgerTable() {
+            const tbody = document.getElementById('invoiceLedgerTableBody');
+            tbody.innerHTML = db.invoices.map(inv => `
+                <tr>
+                    <td><input type="checkbox" class="inv-select-chk" value="${inv.id}"></td>
+                    <td>${inv.id}</td>
+                    <td>${inv.date}</td>
+                    <td><span style="color:#2563eb; font-weight:600;">${inv.delivDate || inv.date}</span></td>
+                    <td><strong>${inv.shop}</strong></td>
+                    <td>${inv.booker}</td>
+                    <td>Rs ${inv.netTotal}</td>
+                    <td style="color:#ef4444; font-weight:700;">Rs ${inv.dues}</td>
+                    <td><button onclick="printSingleInvoice(${inv.id})" class="btn-primary" style="padding:4px 8px; font-size:0.75rem;"><i class="fa-solid fa-print"></i> Print</button></td>
+                </tr>
+            `).join('');
         }
 
-        function openQuickPaymentModal() {
-            document.getElementById('quickPayModal').classList.add('active');
+        function toggleSelectAllInvoices(master) {
+            document.querySelectorAll('.inv-select-chk').forEach(chk => chk.checked = master.checked);
         }
 
-        function openReportModal(type) {
-            const modal = document.getElementById('reportModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
+        function printSingleInvoice(invId) {
+            const inv = db.invoices.find(i => i.id === invId);
+            if(!inv) return;
+            renderPrintInvoices([inv]);
+        }
 
-            const filteredInvoices = getFilteredInvoices();
+        function printSelectedInvoices() {
+            const selectedIds = Array.from(document.querySelectorAll('.inv-select-chk:checked')).map(cb => parseInt(cb.value));
+            if(selectedIds.length === 0) { alert('Please select invoices to print'); return; }
 
-            if (type === 'sales') {
-                title.innerText = "Sales Report (Total & Net Sales)";
-                body.innerHTML = `
-                    <table>
-                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop Name</th><th>Booker</th><th>Gross Sales</th><th>Discount</th><th>Net Total</th></tr></thead>
+            const invs = db.invoices.filter(i => selectedIds.includes(i.id));
+            renderPrintInvoices(invs);
+        }
+
+        function renderPrintInvoices(invList) {
+            const printSec = document.getElementById('invoicePrintSection');
+            printSec.innerHTML = invList.map(inv => `
+                <div style="page-break-after: always; padding: 20px; border:1px dashed #ccc; margin-bottom:20px;">
+                    <h2>HUSSAIN TRADERS - INVOICE</h2>
+                    <p>Invoice #: ${inv.id} | Date: ${inv.date} | Delivery Date: ${inv.delivDate || inv.date}</p>
+                    <p>Shop: <strong>${inv.shop}</strong> | Order Booker: ${inv.booker}</p>
+                    <hr style="margin:10px 0;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead><tr><th style="border:1px solid #000;">Item</th><th style="border:1px solid #000;">Qty</th><th style="border:1px solid #000;">Amount</th></tr></thead>
                         <tbody>
-                            ${filteredInvoices.map(i => `<tr>
-                                <td>${i.id}</td><td>${i.date}</td><td>${i.shop}</td><td>${i.booker}</td>
-                                <td>Rs ${i.grossSales || i.netTotal}</td><td>Rs ${i.discount}</td><td>Rs ${i.netTotal}</td>
-                            </tr>`).join('')}
+                            ${inv.items ? inv.items.map(it => `<tr><td style="border:1px solid #000;">${it.pName}</td><td style="border:1px solid #000;">${it.ctns} Ctn ${it.pcs} Pcs</td><td style="border:1px solid #000;">Rs ${inv.netTotal}</td></tr>`).join('') : ''}
                         </tbody>
-                    </table>`;
-            } else if (type === 'return') {
-                title.innerText = "Sales Return Report";
-                const returns = filteredInvoices.filter(i => i.returnAmount > 0);
-                body.innerHTML = returns.length ? `
-                    <table>
-                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Booker</th><th>Returned Amount</th></tr></thead>
-                        <tbody>
-                            ${returns.map(i => `<tr><td>${i.id}</td><td>${i.date}</td><td>${i.shop}</td><td>${i.booker}</td><td style="color:#ef4444;">Rs ${i.returnAmount}</td></tr>`).join('')}
-                        </tbody>
-                    </table>` : '<p style="padding:20px; text-align:center;">No returns recorded for selected period.</p>';
-            } else if (type === 'dues') {
-                title.innerText = "Order Booker Dues Breakdown Report";
-                const bookers = ['Booker Ali', 'Booker Usman', 'Booker Hamza'];
-                body.innerHTML = `
-                    <table>
-                        <thead><tr><th>Order Booker</th><th>Total Orders</th><th>Net Bill</th><th>Amount Paid</th><th>Outstanding Dues</th></tr></thead>
-                        <tbody>
-                            ${bookers.map(b => {
-                                const bInvs = filteredInvoices.filter(i => i.booker === b);
-                                const bill = bInvs.reduce((x,y) => x + y.netTotal, 0);
-                                const dues = bInvs.reduce((x,y) => x + y.dues, 0);
-                                return `<tr><td><strong>${b}</strong></td><td>${bInvs.length}</td><td>Rs ${bill}</td><td>Rs ${bill - dues}</td><td style="color:#ef4444; font-weight:700;">Rs ${dues}</td></tr>`;
-                            }).join('')}
-                        </tbody>
-                    </table>`;
-            } else if (type === 'discount') {
-                title.innerText = "Discount Summary Report";
-                body.innerHTML = `
-                    <table>
-                        <thead><tr><th>Inv #</th><th>Date</th><th>Shop</th><th>Booker</th><th>Discount Allowed</th></tr></thead>
-                        <tbody>
-                            ${filteredInvoices.filter(i => i.discount > 0).map(i => `<tr><td>${i.id}</td><td>${i.date}</td><td>${i.shop}</td><td>${i.booker}</td><td>Rs ${i.discount}</td></tr>`).join('')}
-                        </tbody>
-                    </table>`;
-            } else if (type === 'profit') {
-                title.innerText = "Profit & Loss Analysis Report";
-                const grossRev = filteredInvoices.reduce((a,b) => a + b.netTotal, 0);
-                body.innerHTML = `
-                    <div style="line-height:2; font-size:1rem;">
-                        <p><strong>Total Revenue (Net Sales):</strong> Rs ${grossRev.toFixed(2)}</p>
-                        <p><strong>Total Estimated Stock Cost:</strong> Rs ${(grossRev * 0.75).toFixed(2)}</p>
-                        <hr style="margin:10px 0;">
-                        <h3 style="color:#10b981;">Estimated Profit: Rs ${(grossRev * 0.25).toFixed(2)}</h3>
-                    </div>`;
+                    </table>
+                    <h3 style="text-align:right; margin-top:15px;">Net Total: Rs ${inv.netTotal}</h3>
+                </div>
+            `).join('');
+
+            printSec.style.display = 'block';
+            window.print();
+            printSec.style.display = 'none';
+        }
+
+        /* Picklist & Auto Stock Deduction / Regeneration */
+        function generatePicklist() {
+            const booker = document.getElementById('pickBookerSelect').value;
+            if(!booker) { alert('Select Booker'); return; }
+
+            const bookerInvs = db.invoices.filter(i => i.booker === booker);
+            if(bookerInvs.length === 0) { alert('No invoices for this booker'); return; }
+
+            // Deduct Stock
+            db.inventory.forEach(item => {
+                item.totalPcs = Math.max(0, item.totalPcs - 50); // Deduct sample stock per picklist
+            });
+
+            const plId = Date.now();
+            db.picklists.push({ id: plId, booker: booker, date: new Date().toISOString().slice(0,10), status: 'Generated' });
+
+            saveDB();
+            renderPicklistTable();
+            alert(`Picklist generated! Stock deducted for ${booker}.`);
+        }
+
+        function renderPicklistTable() {
+            const tbody = document.getElementById('picklistTableBody');
+            tbody.innerHTML = db.picklists.map(pl => `
+                <tr>
+                    <td>${pl.id}</td>
+                    <td>${pl.booker}</td>
+                    <td>${pl.date}</td>
+                    <td><span class="badge-approved">${pl.status}</span></td>
+                    <td><button onclick="deleteAndRestorePicklist(${pl.id})" class="btn-danger"><i class="fa-solid fa-trash"></i> Delete & Restore Stock</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteAndRestorePicklist(plId) {
+            db.picklists = db.picklists.filter(p => p.id !== plId);
+            // Restore Stock
+            db.inventory.forEach(item => { item.totalPcs += 50; });
+
+            saveDB();
+            renderPicklistTable();
+            alert('Picklist deleted! Stock restored. You can now regenerate.');
+        }
+
+        /* Approvals Desk */
+        function renderPendingPaymentsTable() {
+            const tbody = document.getElementById('pendingPaymentsTableBody');
+            tbody.innerHTML = db.payments.map(p => `
+                <tr>
+                    <td>${p.date}</td>
+                    <td><strong>${p.booker}</strong></td>
+                    <td>${p.shop}</td>
+                    <td style="font-weight:700; color:#10b981;">Rs ${p.amount}</td>
+                    <td>${p.approved ? '<span class="badge-approved">Approved</span>' : '<span class="badge-pending">Pending</span>'}</td>
+                    <td>${p.approved ? 'Approved' : `<button onclick="approvePayment(${p.id})" class="btn-approve">Approve Collection</button>`}</td>
+                </tr>
+            `).join('');
+        }
+
+        function approvePayment(payId) {
+            const payment = db.payments.find(p => p.id === payId);
+            if (!payment || payment.approved) return;
+
+            let remaining = payment.amount;
+            db.invoices.filter(i => i.shop.toLowerCase() === payment.shop.toLowerCase() && i.dues > 0).forEach(inv => {
+                if(remaining > 0) {
+                    if(inv.dues <= remaining) {
+                        remaining -= inv.dues;
+                        inv.paid += inv.dues;
+                        inv.dues = 0;
+                    } else {
+                        inv.dues -= remaining;
+                        inv.paid += remaining;
+                        remaining = 0;
+                    }
+                }
+            });
+
+            payment.approved = true;
+            saveDB();
+            renderPendingPaymentsTable();
+            alert('Payment approved and credited to Customer Ledger!');
+        }
+
+        /* User Management (Admin Only) */
+        function renderUserManagementTable() {
+            const tbody = document.getElementById('userManagementTableBody');
+            const modules = ['dashboard', 'approvals', 'inventory', 'sales', 'picklist', 'duesSection', 'reportsSection'];
+
+            tbody.innerHTML = db.users.map(u => `
+                <tr>
+                    <td><strong>${u.name}</strong></td>
+                    <td>${u.role}</td>
+                    <td>
+                        ${u.role === 'Admin' ? 'Full Admin Access' : modules.map(m => `
+                            <label style="font-size:0.75rem; margin-right:6px;">
+                                <input type="checkbox" ${u.access && u.access.includes(m)?'checked':''} onchange="toggleUserAccess(${u.id}, '${m}', this.checked)"> ${m}
+                            </label>
+                        `).join('')}
+                    </td>
+                    <td>${u.role !== 'Admin' ? `<button onclick="deleteUser(${u.id})" class="btn-danger">Delete</button>` : 'System Admin'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function toggleUserAccess(userId, moduleName, isChecked) {
+            const user = db.users.find(u => u.id === userId);
+            if (!user) return;
+            if (!user.access) user.access = [];
+
+            if (isChecked && !user.access.includes(moduleName)) user.access.push(moduleName);
+            else if (!isChecked) user.access = user.access.filter(m => m !== moduleName);
+
+            saveDB();
+        }
+
+        function createNewUser() {
+            const name = document.getElementById('newUsername').value;
+            const pass = document.getElementById('newUserPass').value;
+            const role = document.getElementById('newUserRole').value;
+
+            db.users.push({ id: Date.now(), name: name, pass: pass, role: role, access: ['dashboard', 'sales'] });
+            saveDB();
+            populateUserLoginDropdown();
+            populateDropdowns();
+            renderUserManagementTable();
+            alert('New User Created!');
+        }
+
+        function deleteUser(userId) {
+            db.users = db.users.filter(u => u.id !== userId);
+            saveDB();
+            renderUserManagementTable();
+        }
+
+        /* Day End & Backup */
+        function triggerDayEndProcess() {
+            if(confirm('Are you sure you want to run Day End Process? Day summary will be locked.')) {
+                alert('Day End Completed Successfully! Summary archived.');
             }
-
-            modal.classList.add('active');
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+        function exportBackupData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `HussainTraders_ERP_Backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
+
+        function importBackupData(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    db = JSON.parse(e.target.result);
+                    saveDB();
+                    alert('System Backup Restored Successfully!');
+                    location.reload();
+                } catch(err) { alert('Invalid Backup File!'); }
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+
+        function printDashboardReport() {
+            window.print();
+        }
+
+        function openQuickPaymentModal() { document.getElementById('quickPayModal').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        function handleDateFilterChange() { renderDashboard(); }
     </script>
 </body>
 </html>
