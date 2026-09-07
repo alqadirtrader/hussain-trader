@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🟢 Hussain Traders - Enterprise ERP & Distribution System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Noto+Nastaliq+Urdu:wght@700&display=swap" rel="stylesheet">
+    <title>🟢 Hussain Traders - FMCG Enterprise ERP & Sales Distribution System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
+            --bg-body: #090d16;
+            --card-bg: #121826;
+            --text-color: #e2e8f0;
+            --border-color: #1f293d;
+            --primary-blue: #38ef7d;
+            --primary-blue-hover: #11998e;
+            --urdu-red: #ff4d4d;
+            --urdu-red-bg: #1f0808;
+            --header-bg: #121826;
+            --input-bg: #0b0f19;
+            --sidebar-bg: #0d121d;
+            --sidebar-width: 240px;
+            --shadow-color: rgba(0,0,0,0.6);
+            --accent-glow: #00f2fe;
+            --accent-purple: #7f00ff;
+        }
+
+        body.light-theme {
             --bg-body: #f0f4f9;
             --card-bg: #ffffff;
             --text-color: #2c3e50;
@@ -21,21 +39,7 @@
             --header-bg: #ffffff;
             --input-bg: #ffffff;
             --sidebar-bg: #ffffff;
-            --sidebar-width: 240px;
             --shadow-color: rgba(0,0,0,0.08);
-        }
-
-        body.dark-theme {
-            --bg-body: #0b0f19;
-            --card-bg: #151c2c;
-            --text-color: #f1f1f1;
-            --border-color: #2a364f;
-            --primary-blue: #38ef7d;
-            --primary-blue-hover: #11998e;
-            --header-bg: #151c2c;
-            --input-bg: #0f1523;
-            --sidebar-bg: #111723;
-            --shadow-color: rgba(0,0,0,0.5);
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; transition: background 0.2s, color 0.2s; }
@@ -50,6 +54,25 @@
             font-size: 11px;
         }
 
+        /* DYNAMIC BG ANIMATION FOR INSIDE THE ERP THEME */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; left: -20%; width: 140%; height: 140%;
+            background: radial-gradient(circle at 20% 20%, rgba(56, 239, 125, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(127, 0, 255, 0.05) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(0, 242, 254, 0.03) 0%, transparent 60%);
+            animation: appBgGlow 12s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes appBgGlow {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.05) translate(20px, -20px); }
+            100% { transform: scale(1) translate(-10px, 15px); }
+        }
+
         .sidebar {
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
@@ -61,14 +84,14 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            box-shadow: 2px 0 10px var(--shadow-color);
+            box-shadow: 2px 0 15px var(--shadow-color);
         }
 
         .sidebar-brand {
-            padding: 10px;
+            padding: 12px;
             text-align: center;
-            border-bottom: 2px solid #333;
-            background: var(--urdu-red-bg);
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #1f0808 0%, #0d121d 100%);
             color: #fff;
         }
 
@@ -79,6 +102,7 @@
             color: var(--urdu-red) !important;
             text-align: center;
             line-height: 1.3;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.4);
         }
 
         .nav-list { list-style: none; padding: 5px 0; margin: 0; }
@@ -87,27 +111,28 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
-            color: var(--primary-blue);
+            padding: 9px 12px;
+            color: #a0aec0;
             text-decoration: none;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             border-left: 3px solid transparent;
+            transition: all 0.3s ease;
         }
         .nav-link:hover, .nav-link.active {
-            background: #eef5ff;
-            color: #003d82;
+            background: rgba(56, 239, 125, 0.08);
+            color: var(--primary-blue);
             border-left-color: var(--primary-blue);
         }
 
         .submenu {
             display: none;
-            background: #e8f0fe;
+            background: #080c14;
             list-style: none;
             padding-left: 10px;
         }
-        body.dark-theme .submenu { background: #0c121e; }
+        body.light-theme .submenu { background: #e8f0fe; }
         .submenu.open { display: block; }
         .submenu .nav-link {
             padding: 6px 10px 6px 15px;
@@ -130,14 +155,20 @@
             align-items: center;
             background: var(--header-bg);
             padding: 8px 14px;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             margin-bottom: 12px;
-            box-shadow: 0 2px 4px var(--shadow-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
+            backdrop-filter: blur(10px);
         }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; width: 100%; }
+        .tab-content.active { display: block; width: 100%; animation: fadeInTab 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .summary-cards { 
             display: grid; 
@@ -149,13 +180,30 @@
         .bubble-card { 
             background: var(--card-bg); 
             padding: 12px; 
-            border-radius: 12px; 
+            border-radius: 10px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 4px 10px var(--shadow-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
             cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .bubble-card::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-blue), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        .bubble-card:hover::after {
+            transform: translateX(100%);
+        }
+        .bubble-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 20px rgba(56, 239, 125, 0.15);
         }
 
-        .bubble-card h3 { margin: 0 0 4px 0; font-size: 10px; text-transform: uppercase; color: #6c757d; }
+        .bubble-card h3 { margin: 0 0 4px 0; font-size: 10px; text-transform: uppercase; color: #718096; }
         .bubble-card p { margin: 0; font-size: 15px; font-weight: 800; color: var(--primary-blue); }
 
         form, .section-box { 
@@ -164,26 +212,26 @@
             border-radius: 8px; 
             margin-bottom: 12px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 2px 6px var(--shadow-color);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
         .form-group { display: flex; flex-direction: column; gap: 3px; }
         label { font-weight: 700; font-size: 10px; color: var(--text-color); }
         input, select, textarea { 
-            padding: 6px 8px; 
+            padding: 7px 9px; 
             border: 1px solid var(--border-color); 
             background: var(--input-bg); 
             color: var(--text-color); 
-            border-radius: 4px; 
+            border-radius: 5px; 
             font-size: 11px; 
             width: 100%; 
         }
 
-        input:focus, select:focus { outline: none; border-color: var(--primary-blue); }
+        input:focus, select:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(56, 239, 125, 0.3); }
 
-        button.btn-add { background: var(--primary-blue); color: #fff; border: none; padding: 6px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; }
-        button.btn-add:hover { background: var(--primary-blue-hover); }
+        button.btn-add { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #05130b; border: none; padding: 6px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; transition: transform 0.2s, box-shadow 0.2s; }
+        button.btn-add:hover { opacity: 0.95; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(56, 239, 125, 0.3); }
 
         button.btn-excel { background: #1D6F42; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
         button.btn-pdf { background: #d32f2f; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
@@ -193,8 +241,9 @@
 
         .table-responsive { width: 100%; overflow-x: auto; margin-top: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); }
         table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 10px; }
-        th, td { border: 1px solid var(--border-color); padding: 6px 8px; text-align: left; }
-        th { background-color: var(--primary-blue); color: #ffffff; text-align: center; font-weight: bold; }
+        th, td { border: 1px solid var(--border-color); padding: 7px 9px; text-align: left; }
+        th { background-color: #1a2336; color: var(--primary-blue); text-align: center; font-weight: bold; }
+        body.light-theme th { background-color: var(--primary-blue); color: #ffffff; }
 
         .pos-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; }
         @media (max-width: 992px) {
@@ -204,35 +253,162 @@
             .pos-container { grid-template-columns: 1fr; }
         }
 
-        .pos-card { background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 6px var(--shadow-color); }
+        .pos-card { background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 4px 12px var(--shadow-color); }
 
         .snd-invoice-preview { background: #fff; padding: 10px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; color: #000; width: 100%; border-radius: 4px; font-size: 10px; }
         .snd-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 6px; }
         .snd-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
         .snd-table th, .snd-table td { border-bottom: 1px solid #ddd; padding: 3px 2px; font-size: 9px; color: #000; }
 
-        /* Animated Login Background & Overlay */
+        /* ADVANCED ANIMATED BRANDING LOGIN INTERFACE */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(-45deg, #0a0e17, #1a1f3c, #003d82, #11998e);
+            background: linear-gradient(-45deg, #050811, #0a1128, #001f3f, #1a0826, #0d2b1d);
             background-size: 400% 400%;
-            animation: gradientAnimation 12s ease infinite;
+            animation: gradientBG 15s ease infinite;
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; padding: 15px;
+            overflow: hidden;
         }
 
-        @keyframes gradientAnimation {
+        @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
+        /* Ambient Glowing Background Elements */
+        .bg-glow-1 {
+            position: absolute; width: 450px; height: 450px;
+            background: radial-gradient(circle, rgba(56, 239, 125, 0.25) 0%, rgba(0,0,0,0) 70%);
+            top: 5%; left: 10%; animation: floatGlow 8s infinite alternate ease-in-out;
+        }
+        .bg-glow-2 {
+            position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(127, 0, 255, 0.25) 0%, rgba(0,0,0,0) 70%);
+            bottom: 5%; right: 10%; animation: floatGlow 10s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, 50px) scale(1.2); }
+        }
+
+        /* Larger Animated Branding Card */
         .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px; border-radius: 16px; width: 100%; max-width: 380px;
-            text-align: center; border: 2px solid var(--primary-blue); color: #2c3e50;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            background: rgba(18, 24, 38, 0.85);
+            padding: 45px 40px; border-radius: 24px; width: 100%; max-width: 480px;
+            text-align: center; border: 1px solid rgba(255, 255, 255, 0.15); color: #fff;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(56, 239, 125, 0.25);
+            backdrop-filter: blur(20px);
+            position: relative; z-index: 2;
+            animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        /* Shiny Branding Border Light Streak */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, #38ef7d);
+            animation: rotateBorder 6s linear infinite;
+            z-index: -2;
+        }
+        .login-card::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: rgba(18, 24, 38, 0.92);
+            border-radius: 22px;
+            z-index: -1;
+        }
+
+        @keyframes rotateBorder {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes cardAppear {
+            0% { opacity: 0; transform: translateY(40px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Pulsing Animated Brand Badge */
+        .login-card .brand-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 65px; height: 65px;
+            background: linear-gradient(135deg, rgba(56, 239, 125, 0.2), rgba(0, 242, 254, 0.2));
+            border: 2px solid #38ef7d;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            box-shadow: 0 0 20px rgba(56, 239, 125, 0.4);
+            animation: pulseGlow 2.5s infinite alternate;
+        }
+        .login-card .brand-logo-badge span {
+            font-size: 30px;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 15px rgba(56, 239, 125, 0.3); transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(56, 239, 125, 0.7); transform: scale(1.08); }
+        }
+
+        .login-card .fmcg-badge {
+            display: inline-block;
+            background: rgba(56, 239, 125, 0.15);
+            color: #38ef7d;
+            border: 1px solid rgba(56, 239, 125, 0.4);
+            font-size: 10px; font-weight: 800; text-transform: uppercase;
+            padding: 5px 14px; border-radius: 20px; letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .login-card h2 {
+            color: #ff4d4d;
+            font-family: 'Noto Nastaliq Urdu', serif;
+            font-size: 28px;
+            margin-bottom: 6px;
+            text-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+            animation: textShine 3s ease-in-out infinite alternate;
+        }
+
+        .login-card p.subtitle {
+            font-size: 12px; color: #a0aec0; margin-bottom: 24px; font-weight: 600; letter-spacing: 0.5px;
+        }
+
+        .login-card .form-group label {
+            color: #cbd5e0; font-size: 11px; font-weight: 700; margin-bottom: 5px;
+        }
+
+        .login-card select, .login-card input {
+            background: rgba(11, 15, 25, 0.85);
+            border: 1px solid #2a364f;
+            color: #fff; padding: 12px 14px; border-radius: 10px; font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .login-card select:focus, .login-card input:focus {
+            border-color: #38ef7d;
+            box-shadow: 0 0 15px rgba(56, 239, 125, 0.4);
+            background: rgba(11, 15, 25, 0.98);
+        }
+
+        .login-btn {
+            width: 100%; padding: 13px; margin-top: 12px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none; border-radius: 10px; color: #04120a;
+            font-weight: 800; font-size: 13px; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(56, 239, 125, 0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 25px rgba(56, 239, 125, 0.6);
         }
 
         .modal-overlay {
@@ -297,23 +473,31 @@
 </head>
 <body>
 
-<!-- LOGIN OVERLAY -->
+<!-- ANIMATED BRANDING LOGIN OVERLAY WITH UNFILTERED USER SELECTION -->
 <div id="loginOverlay" class="no-print">
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+    
     <div class="login-card">
-        <h2 style="color: var(--urdu-red); font-family: 'Noto Nastaliq Urdu', serif; margin-bottom: 5px;">حُسَیْن ٹْرِیَڈَرْزْ</h2>
-        <p style="font-size: 10px; color: #666; margin-bottom: 12px;">Enterprise Point of Sale & Sales Distribution ERP</p>
-        
-        <div class="form-group" style="text-align: left; margin-bottom: 8px;">
-            <label>Username / یوزر نیم:</label>
-            <input type="text" id="loginUsernameInput" value="admin" placeholder="Enter Username">
+        <div class="brand-logo-badge">
+            <span>🏢</span>
         </div>
+        <br>
+        <span class="fmcg-badge">Multi-FMCG Enterprise ERP</span>
+        <h2>حُسَیْن ٹْرِیَڈَرْزْ</h2>
+        <p class="subtitle">Sales & Distribution Management System</p>
         
-        <div class="form-group" style="text-align: left; margin-bottom: 12px;">
+        <div class="form-group" style="text-align: left; margin-bottom: 14px;">
+            <label>Select User / یوزر منتخب کریں:</label>
+            <select id="loginUserSelect" onchange="onUserSelectChange()"></select>
+        </div>
+
+        <div class="form-group" style="text-align: left; margin-bottom: 18px;">
             <label>Password / پاسورڈ:</label>
-            <input type="password" id="loginPassInput" value="admin" placeholder="Enter Password">
+            <input type="password" id="loginPassInput" placeholder="Enter Password">
         </div>
         
-        <button class="btn-add" style="width:100%; padding: 8px;" onclick="attemptLogin()">Sign In (بِسمِ اللّٰهِ)</button>
+        <button class="login-btn" onclick="attemptLogin()">Sign In (بِسمِ اللّٰهِ)</button>
     </div>
 </div>
 
@@ -321,6 +505,7 @@
 <div class="sidebar no-print">
     <div class="sidebar-brand">
         <div class="urdu-title-main">حُسَیْن ٹْرِیَڈَرْزْ</div>
+        <div style="font-size: 8px; color: #a0aec0; margin-top:2px;">FMCG Sales & Distribution</div>
     </div>
     
     <ul class="nav-list">
@@ -394,7 +579,7 @@
     <!-- DASHBOARD OVERVIEW -->
     <div id="dashboard" class="tab-content active">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <h3 style="color:var(--primary-blue);">🚀 Business Dashboard Overview</h3>
+            <h3 style="color:var(--primary-blue);">🚀 FMCG Business Dashboard Overview</h3>
             <div style="display:flex; gap:6px;">
                 <button class="btn-add" onclick="openTab('posSales')">+ Order Punch</button>
                 <button class="btn-excel" onclick="openTab('recoveryEntry')">+ Recovery</button>
@@ -404,15 +589,15 @@
         <div class="summary-cards">
             <div class="bubble-card" onclick="openTab('marketCreditReportTab')">
                 <h3>Total Market Credit</h3>
-                <p id="dashTotalUdhaar" style="color:#d32f2f;">Rs. 0</p>
+                <p id="dashTotalUdhaar" style="color:#ff4d4d;">Rs. 0</p>
             </div>
             <div class="bubble-card" onclick="openTab('invoicesList')">
                 <h3>Net Sales</h3>
-                <p id="dashTodaySales" style="color:#2e7d32;">Rs. 0</p>
+                <p id="dashTodaySales" style="color:#38ef7d;">Rs. 0</p>
             </div>
             <div class="bubble-card" onclick="openTab('recoveryEntry')">
                 <h3>Approved Recovery</h3>
-                <p id="dashTodayRecovery" style="color:#0288d1;">Rs. 0</p>
+                <p id="dashTodayRecovery" style="color:#00f2fe;">Rs. 0</p>
             </div>
             <div class="bubble-card" onclick="openTab('expensesReport')">
                 <h3>Cash In Hand</h3>
@@ -420,11 +605,11 @@
             </div>
             <div class="bubble-card" onclick="openTab('companyDamageClaimTab')">
                 <h3>Reserved Claims</h3>
-                <p id="dashReservedStockVal" style="color:#7b1fa2;">Rs. 0</p>
+                <p id="dashReservedStockVal" style="color:#a855f7;">Rs. 0</p>
             </div>
             <div class="bubble-card" onclick="openTab('expensesReport')">
                 <h3>Total Expenses</h3>
-                <p id="dashTotalExpenses" style="color:#c62828;">Rs. 0</p>
+                <p id="dashTotalExpenses" style="color:#ff4d4d;">Rs. 0</p>
             </div>
             <div class="bubble-card" onclick="openTab('salesReturnTab')">
                 <h3>Total Stock Returns</h3>
@@ -508,11 +693,11 @@
                     </div>
                     <div class="form-group">
                         <label>Trade Price:</label>
-                        <input type="number" id="posItemTradeRate" placeholder="TP Rate" readonly style="background:#eef5ff;">
+                        <input type="number" id="posItemTradeRate" placeholder="TP Rate" readonly style="background:var(--input-bg);">
                     </div>
                     <div class="form-group">
                         <label>Retail Price:</label>
-                        <input type="number" id="posItemRetailRate" placeholder="Retail Rate" readonly style="background:#eef5ff;">
+                        <input type="number" id="posItemRetailRate" placeholder="Retail Rate" readonly style="background:var(--input-bg);">
                     </div>
                     <div class="form-group">
                         <label>Discount Type:</label>
@@ -549,7 +734,7 @@
                     <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
                         <span>Trade Price Full Subtotal:</span><strong id="posTradeSubtotalLbl">Rs. 0</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: #7b1fa2;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: #a855f7;">
                         <span>Item-wise Total Discount (-):</span><strong id="posItemDiscountsLbl">Rs. 0</strong>
                     </div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
@@ -559,11 +744,11 @@
                         <span>Tax Add (+ %):</span>
                         <input type="number" id="posTaxPercent" value="0" oninput="calculatePosTotals()" style="width: 70px; text-align: right; padding: 2px;">
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #d32f2f;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #ff4d4d;">
                         <span>Previous Balance (سابقہ بقایا):</span>
                         <strong id="posPrevBalanceLbl">Rs. 0</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #2e7d32;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #38ef7d;">
                         <span>Recovery / On-Spot Cash Paid (-):</span>
                         <input type="number" id="posPaid" value="0" oninput="calculatePosTotals()" style="width: 70px; text-align: right; padding: 2px;">
                     </div>
@@ -629,7 +814,7 @@
         </div>
     </div>
 
-    <!-- NEW FEATURE 1: SUPPLY MAN RECOVERY & KPO SYSTEM -->
+    <!-- SUPPLY MAN RECOVERY & KPO SYSTEM -->
     <div id="supplyManTab" class="tab-content">
         <h3>🚚 Supply Man Cash Recovery & KPO Entry System</h3>
         <div class="section-box" style="border-left: 4px solid var(--primary-blue);">
@@ -645,7 +830,7 @@
                 </div>
                 <div class="form-group">
                     <label>Invoice Total Amount:</label>
-                    <input type="text" id="kpoInvTotal" readonly style="background:#eef5ff; font-weight:bold;">
+                    <input type="text" id="kpoInvTotal" readonly style="background:var(--input-bg); font-weight:bold;">
                 </div>
                 <div class="form-group">
                     <label>Cash Collected by Supply Man (Rs) *:</label>
@@ -653,7 +838,7 @@
                 </div>
                 <div class="form-group">
                     <label>Remaining Balance for Shop:</label>
-                    <input type="text" id="kpoRemainingBal" readonly style="background:#fff0f0; color:red; font-weight:bold;">
+                    <input type="text" id="kpoRemainingBal" readonly style="background:var(--input-bg); color:#ff4d4d; font-weight:bold;">
                 </div>
                 <div class="form-group">
                     <label>KPO Entry Remarks:</label>
@@ -683,7 +868,7 @@
         </div>
     </div>
 
-    <!-- NEW FEATURE 2: MARKET RECOVERY & ADMIN APPROVAL -->
+    <!-- MARKET RECOVERY & ADMIN APPROVAL -->
     <div id="recoveryEntry" class="tab-content">
         <h3>💰 Market Recovery & Admin Approval System</h3>
         <div class="section-box" style="max-width: 500px;">
@@ -721,7 +906,7 @@
         </div>
     </div>
 
-    <!-- NEW FEATURE 3: MARKET CREDIT REPORT WITH INDIVIDUAL SHOP LEDGER VIEW -->
+    <!-- MARKET CREDIT REPORT WITH INDIVIDUAL SHOP LEDGER VIEW -->
     <div id="marketCreditReportTab" class="tab-content">
         <h3>💳 Market Credit & Outstanding Balance Report</h3>
         <div class="section-box no-print">
@@ -839,7 +1024,7 @@
         </div>
 
         <div class="section-box" style="border-left: 4px solid #ffc107;">
-            <h4 style="color: #d32f2f; margin-bottom:6px;">🔹 Bulk Delivery Date Extension (Max 7 Days)</h4>
+            <h4 style="color: var(--urdu-red); margin-bottom:6px;">🔹 Bulk Delivery Date Extension (Max 7 Days)</h4>
             <div class="form-grid" style="margin-bottom:8px;">
                 <div>
                     <label>Target Order Date:</label>
@@ -920,12 +1105,12 @@
     <div id="salesReturnTab" class="tab-content">
         <h3>🔄 Sales & Udhaar Credit Stock Return</h3>
 
-        <div class="section-box" style="border-left:4px solid #11998e; background:#f0fdf4;">
+        <div class="section-box" style="border-left:4px solid #11998e;">
             <h4 style="color:#11998e; margin-bottom:6px;">💰 Old Udhaar Stock Return</h4>
             <div class="form-grid">
                 <div class="form-group"><label>Return Date:</label><input type="date" id="creditRetDate"></div>
                 <div class="form-group"><label>Select Shop / Customer:</label><select id="creditRetShopSelect" onchange="updateCreditReturnPrevBal()"></select></div>
-                <div class="form-group"><label>Current Udhaar Balance:</label><input type="text" id="creditRetPrevBal" readonly style="background:#eef5ff; font-weight:bold; color:red;"></div>
+                <div class="form-group"><label>Current Udhaar Balance:</label><input type="text" id="creditRetPrevBal" readonly style="background:var(--input-bg); font-weight:bold; color:#ff4d4d;"></div>
                 <div class="form-group"><label>Product Name *:</label><input type="text" id="creditRetItemInput" list="stockDatalist" placeholder="Select Product"></div>
                 <div class="form-group"><label>Returned Pieces *:</label><input type="number" id="creditRetPcsQty" placeholder="Pcs Qty"></div>
                 <div class="form-group"><label>Stock Return Rate (Rs) *:</label><input type="number" id="creditRetRate" placeholder="Rate / Pc"></div>
@@ -933,8 +1118,8 @@
             <button class="btn-add" style="width:100%; margin-top:8px; background:#11998e;" onclick="submitCreditStockWasooliReturn()">Submit Udhaar Stock Wasooli Return 📥</button>
         </div>
 
-        <div class="section-box" style="border-left:4px solid #d32f2f;">
-            <h4 style="color:#d32f2f; margin-bottom:6px;">🚫 Full Invoice Cancel / Return</h4>
+        <div class="section-box" style="border-left:4px solid #ff4d4d;">
+            <h4 style="color:#ff4d4d; margin-bottom:6px;">🚫 Full Invoice Cancel / Return</h4>
             <div class="form-grid">
                 <div><label>Select Saved Invoice:</label><select id="fullReturnInvSelect"></select></div>
                 <div><label>Reason for Full Return *:</label><input type="text" id="fullReturnReason" placeholder="Reason for return"></div>
@@ -1228,11 +1413,12 @@
         </div>
     </div>
 
-    <!-- USER MANAGEMENT WITH GRANULAR ACCESS CONTROLS -->
+    <!-- USER MANAGEMENT WITH EDIT CAPABILITY AND GRANULAR ACCESS CONTROLS -->
     <div id="users" class="tab-content">
         <h3>⚙️ User Management & Module Access Permissions</h3>
         <div class="section-box">
-            <h4 style="color:var(--primary-blue); margin-bottom:6px;">Add / Edit User Access</h4>
+            <h4 style="color:var(--primary-blue); margin-bottom:6px;" id="userFormTitle">Add / Edit User Access</h4>
+            <input type="hidden" id="editingUserIndex" value="-1">
             <div class="form-grid">
                 <input type="text" id="newUsername" placeholder="Username">
                 <input type="password" id="newUserPass" placeholder="Password">
@@ -1272,7 +1458,10 @@
                 <label class="perm-item"><input type="checkbox" value="backup" checked> Backup System</label>
             </div>
 
-            <button class="btn-add" style="margin-top:10px; width:100%;" onclick="addNewUser()">Save User & Access Rights 💾</button>
+            <div style="display: flex; gap: 6px; margin-top: 10px;">
+                <button class="btn-add" style="flex:1;" onclick="addNewUser()">Save User & Access Rights 💾</button>
+                <button class="btn-add" id="cancelEditBtn" style="display:none; background:#718096;" onclick="resetUserForm()">Cancel Edit ✖️</button>
+            </div>
         </div>
 
         <div class="table-responsive">
@@ -1345,6 +1534,7 @@
         document.getElementById('ownerSummaryDate').value = todayStr;
 
         generateInvoiceNumber();
+        populateLoginUserDropdown();
         populateUserDropdowns();
         renderDashboard();
         renderShops();
@@ -1360,7 +1550,7 @@
     };
 
     function updateClock() { document.getElementById('liveDateTimeLabel').innerText = new Date().toLocaleString(); }
-    function toggleTheme() { document.body.classList.toggle('dark-theme'); }
+    function toggleTheme() { document.body.classList.toggle('light-theme'); }
     function toggleSubmenu(id) { document.getElementById(id).classList.toggle('open'); }
 
     function generateInvoiceNumber() {
@@ -1368,29 +1558,23 @@
         document.getElementById('prevInvNum').innerText = document.getElementById('posInvNum').value;
     }
 
-    function openTab(tabId, btn) {
-        if(currentUser && currentUser.role !== 'Admin' && currentUser.permissions && !currentUser.permissions.includes('ALL') && !currentUser.permissions.includes(tabId)) {
-            return alert('آپ کے پاس اس ماڈیول تک رسائی کا اختیار نہیں ہے!');
-        }
+    /* UNFILTERED ALL USERS DROPDOWN FOR LOGIN SCREEN */
+    function populateLoginUserDropdown() {
+        const select = document.getElementById('loginUserSelect');
+        if(!select) return;
+        select.innerHTML = dbUsers.map(u => `<option value="${u.username}">${u.username} (${u.role})</option>`).join('');
+        onUserSelectChange();
+    }
 
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        if(btn) btn.classList.add('active');
-
-        if(tabId === 'liveStockTab') renderLiveStockInventory();
-        if(tabId === 'invoicesList') renderInvoicesTable();
-        if(tabId === 'supplyManTab') { populateSupplyManDropdowns(); renderSupplyManPendingInvoices(); renderKpoLogsTable(); }
-        if(tabId === 'recoveryEntry') { renderRecoveryApprovalTable(); }
-        if(tabId === 'marketCreditReportTab') { renderMarketCreditReport(); }
-        if(tabId === 'reportUdhaar') renderUdhaarReport();
-        if(tabId === 'ownerDailySummary') renderOwnerDailySummary();
+    function onUserSelectChange() {
+        document.getElementById('loginPassInput').value = '';
+        document.getElementById('loginPassInput').focus();
     }
 
     function attemptLogin() {
-        const uName = document.getElementById('loginUsernameInput').value.trim();
+        const selectedUsername = document.getElementById('loginUserSelect').value;
         const pass = document.getElementById('loginPassInput').value.trim();
-        const found = dbUsers.find(x => x.username.toLowerCase() === uName.toLowerCase() && x.pass === pass);
+        const found = dbUsers.find(x => x.username.toLowerCase() === selectedUsername.toLowerCase() && x.pass === pass);
         if(found) {
             currentUser = found;
             document.getElementById('loginOverlay').style.display = 'none';
@@ -1398,7 +1582,7 @@
             document.getElementById('userRoleBadge').innerText = found.role;
             applyUserAccessPermissions();
         } else {
-            alert('غلط یوزر نیم یا پاسورڈ!');
+            alert('غلط پاسورڈ! براہ کرم درست پاسورڈ درج کریں۔');
         }
     }
 
@@ -1421,7 +1605,27 @@
 
     function logout() { 
         currentUser = null; 
+        populateLoginUserDropdown();
         document.getElementById('loginOverlay').style.display = 'flex'; 
+    }
+
+    function openTab(tabId, btn) {
+        if(currentUser && currentUser.role !== 'Admin' && currentUser.permissions && !currentUser.permissions.includes('ALL') && !currentUser.permissions.includes(tabId)) {
+            return alert('آپ کے پاس اس ماڈیول تک رسائی کا اختیار نہیں ہے!');
+        }
+
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        if(btn) btn.classList.add('active');
+
+        if(tabId === 'liveStockTab') renderLiveStockInventory();
+        if(tabId === 'invoicesList') renderInvoicesTable();
+        if(tabId === 'supplyManTab') { populateSupplyManDropdowns(); renderSupplyManPendingInvoices(); renderKpoLogsTable(); }
+        if(tabId === 'recoveryEntry') { renderRecoveryApprovalTable(); }
+        if(tabId === 'marketCreditReportTab') { renderMarketCreditReport(); }
+        if(tabId === 'reportUdhaar') renderUdhaarReport();
+        if(tabId === 'ownerDailySummary') renderOwnerDailySummary();
     }
 
     function populateUserDropdowns() {
@@ -1448,7 +1652,7 @@
         return shopInvoices[shopInvoices.length - 1].newGrandTotalBalance || 0;
     }
 
-    /* --- FEATURE 1: MARKET CREDIT REPORT & INDIVIDUAL SHOP LEDGER VIEW --- */
+    /* MARKET CREDIT REPORT */
     function renderMarketCreditReport() {
         const routes = [...new Set(dbShops.map(s => s.route || 'Unassigned'))];
         let routeOpts = `<option value="ALL">All Routes</option>` + routes.map(r => `<option value="${r}">${r}</option>`).join('');
@@ -1464,18 +1668,15 @@
         const container = document.getElementById('marketCreditReportContainer');
 
         if(selectedShop !== 'ALL') {
-            // Render Detailed Ledger for a Single Selected Shop
             renderSingleShopLedgerView(selectedShop, container);
             return;
         }
 
-        // Summary View for All Shops
         let filteredShops = dbShops.filter(shop => {
             let matchRoute = selectedRoute === 'ALL' || shop.route === selectedRoute;
             let matchSearch = shop.name.toLowerCase().includes(searchQuery) || (shop.owner && shop.owner.toLowerCase().includes(searchQuery));
             let matchBooker = true;
 
-            // Booker Strict Privacy Filter
             if(currentUser && currentUser.role === 'Order Booker') {
                 matchBooker = (shop.booker === currentUser.username);
             }
@@ -1500,8 +1701,8 @@
                 <td>${shop.route || '--'}</td>
                 <td>${shop.booker || '--'}</td>
                 <td>Rs. ${limit.toLocaleString()}</td>
-                <td style="color:${isOverLimit ? 'red' : 'black'}; font-weight:bold;">Rs. ${bal.toLocaleString()}</td>
-                <td><span style="background:${isOverLimit ? '#f8d7da' : '#d4edda'}; color:${isOverLimit ? 'red' : 'green'}; padding:2px 5px; border-radius:3px; font-weight:bold;">${isOverLimit ? '⚠️ Over Limit' : 'OK'}</span></td>
+                <td style="color:${isOverLimit ? '#ff4d4d' : 'var(--text-color)'}; font-weight:bold;">Rs. ${bal.toLocaleString()}</td>
+                <td><span style="background:${isOverLimit ? 'rgba(255, 77, 77, 0.2)' : 'rgba(56, 239, 125, 0.2)'}; color:${isOverLimit ? '#ff4d4d' : '#38ef7d'}; padding:2px 5px; border-radius:3px; font-weight:bold;">${isOverLimit ? '⚠️ Over Limit' : 'OK'}</span></td>
                 <td><button class="btn-print" onclick="viewSpecificShopLedger('${shop.name}')">View Ledger 📖</button></td>
             </tr>`;
         });
@@ -1520,7 +1721,6 @@
         const shopInvs = dbInvoices.filter(i => i.shop === shopName);
         const shopRecs = dbRecoveries.filter(r => r.shop === shopName && r.status === 'Approved');
 
-        // Merge Invoices and Recoveries chronologically
         let ledgerEntries = [];
         shopInvs.forEach(i => {
             ledgerEntries.push({ date: i.date, type: 'Sale Invoice', ref: i.invNum, debit: i.currentBillTotal, credit: 0 });
@@ -1538,9 +1738,9 @@
                 <td>${e.date}</td>
                 <td><strong>${e.type}</strong></td>
                 <td>${e.ref}</td>
-                <td style="color:green;">${e.debit ? 'Rs. ' + e.debit.toLocaleString() : '--'}</td>
-                <td style="color:blue;">${e.credit ? 'Rs. ' + e.credit.toLocaleString() : '--'}</td>
-                <td style="font-weight:bold; color:red;">Rs. ${runningBal.toLocaleString()}</td>
+                <td style="color:#38ef7d;">${e.debit ? 'Rs. ' + e.debit.toLocaleString() : '--'}</td>
+                <td style="color:#00f2fe;">${e.credit ? 'Rs. ' + e.credit.toLocaleString() : '--'}</td>
+                <td style="font-weight:bold; color:#ff4d4d;">Rs. ${runningBal.toLocaleString()}</td>
             </tr>`;
         }).join('') || `<tr><td colspan="6" style="text-align:center;">اس دوکان کی کوئی ٹرانزیکشن موجود نہیں ہے</td></tr>`;
 
@@ -1574,7 +1774,6 @@
         XLSX.writeFile(wb, `Market_Credit_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
     }
 
-    /* --- FEATURE 2: PURCHASE IMPORT (EXCEL / PDF / IMAGE) --- */
     function handlePurchaseImport(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1673,7 +1872,6 @@
             invNo, date, supplier, category, items: [...currentPurInvoiceItems], totalAmt
         });
 
-        // Update Live Stock
         currentPurInvoiceItems.forEach(item => {
             let found = dbStock.find(s => s.name === item.name);
             if(found) {
@@ -1705,7 +1903,6 @@
         renderLiveStockInventory();
     }
 
-    /* --- FEATURE 3 & 4: BULK SHOPS IMPORT & BOOKER PRIVACY RESTRICTIONS --- */
     function filterPosShopsByBooker() {
         const b = document.getElementById('posBookerSelect').value;
         
@@ -1769,11 +1966,12 @@
         reader.readAsArrayBuffer(file);
     }
 
-    /* --- USER MANAGEMENT WITH ACCESS CONTROLS --- */
+    /* USER MANAGEMENT WITH FULL EDIT CAPABILITY */
     function addNewUser() {
         let username = document.getElementById('newUsername').value.trim();
         let pass = document.getElementById('newUserPass').value.trim();
         let role = document.getElementById('newUserRole').value;
+        let editIdx = parseInt(document.getElementById('editingUserIndex').value);
 
         if(!username || !pass) return alert('یوزر کی معلومات درج کریں!');
 
@@ -1786,17 +1984,56 @@
             });
         }
 
-        let existingIdx = dbUsers.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
-        if(existingIdx >= 0) {
-            dbUsers[existingIdx] = { username, pass, role, permissions: perms };
+        if(editIdx >= 0 && editIdx < dbUsers.length) {
+            dbUsers[editIdx] = { username, pass, role, permissions: perms };
+            alert('یوزر کی معلومات کامیابی سے تبدیل ہو گئی ہیں!');
         } else {
-            dbUsers.push({ username, pass, role, permissions: perms });
+            let existingIdx = dbUsers.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+            if(existingIdx >= 0) {
+                dbUsers[existingIdx] = { username, pass, role, permissions: perms };
+            } else {
+                dbUsers.push({ username, pass, role, permissions: perms });
+            }
+            alert('نیا یوزر کامیابی سے شامل ہو گیا!');
         }
 
         localStorage.setItem('ht_users', JSON.stringify(dbUsers));
-        alert('یوزر کی معلومات اور تمام پرمیشنز محفوظ ہو گئیں!');
+        resetUserForm();
         renderUsersTable();
+        populateLoginUserDropdown();
         populateUserDropdowns();
+    }
+
+    function editUserRecord(index) {
+        let u = dbUsers[index];
+        if(!u) return;
+
+        document.getElementById('editingUserIndex').value = index;
+        document.getElementById('newUsername').value = u.username;
+        document.getElementById('newUserPass').value = u.pass;
+        document.getElementById('newUserRole').value = u.role;
+        document.getElementById('userFormTitle').innerText = 'Edit User Access Permissions';
+        document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+        let perms = u.permissions || [];
+        document.querySelectorAll('#permissionCheckboxes input[type="checkbox"]').forEach(cb => {
+            cb.checked = perms.includes('ALL') || perms.includes(cb.value);
+        });
+
+        document.getElementById('users').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetUserForm() {
+        document.getElementById('editingUserIndex').value = '-1';
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newUserPass').value = '';
+        document.getElementById('newUserRole').value = 'Admin';
+        document.getElementById('userFormTitle').innerText = 'Add / Edit User Access';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+
+        document.querySelectorAll('#permissionCheckboxes input[type="checkbox"]').forEach(cb => {
+            cb.checked = true;
+        });
     }
 
     function renderUsersTable() {
@@ -1804,13 +2041,15 @@
             <tr>
                 <td><strong>${u.username}</strong></td>
                 <td>${u.role}</td>
-                <td>${u.permissions.includes('ALL') ? '<strong style="color:green;">Full Access (Admin)</strong>' : u.permissions.length + ' Modules Allowed'}</td>
-                <td><button class="btn-delete" onclick="dbUsers.splice(${i},1);localStorage.setItem('ht_users',JSON.stringify(dbUsers));renderUsersTable();populateUserDropdowns();">Delete</button></td>
+                <td>${u.permissions.includes('ALL') ? '<strong style="color:#38ef7d;">Full Access (Admin)</strong>' : u.permissions.length + ' Modules Allowed'}</td>
+                <td>
+                    <button class="btn-edit" onclick="editUserRecord(${i})">Edit ✏️</button>
+                    <button class="btn-delete" onclick="dbUsers.splice(${i},1);localStorage.setItem('ht_users',JSON.stringify(dbUsers));renderUsersTable();populateLoginUserDropdown();populateUserDropdowns();">Delete</button>
+                </td>
             </tr>
         `).join('');
     }
 
-    /* --- FEATURE 5: BACKUP SYSTEM (DOWNLOAD & RESTORE) --- */
     function downloadBackup() {
         let backupData = {
             ht_invoices: dbInvoices,
@@ -1853,7 +2092,6 @@
         reader.readAsText(file);
     }
 
-    /* --- GENERAL ERP HELPER FUNCTIONS --- */
     function updateStockDatalist() {
         document.getElementById('stockDatalist').innerHTML = dbStock.map(s => `<option value="${s.name}">[SKU: ${s.sku || 'N/A'}] Trade: Rs.${s.tradePrice} | Stock: ${s.qty} Pcs</option>`).join('');
     }
@@ -1887,149 +2125,218 @@
         const discType = document.getElementById('posItemDiscType').value;
         const discVal = parseFloat(document.getElementById('posItemDiscVal').value) || 0;
 
-        if(!name || pcsQty <= 0) return alert('پروڈکٹ کی معلومات اور تعداد صحیح درج کریں!');
+        if(!name || pcsQty <= 0) return alert('پروڈکٹ کی معلومات اور تعداد صحیح درج کریں۔');
 
         let fullTradeAmount = pcsQty * tradeRate;
-        let discountAmount = discType === 'Percent' ? (fullTradeAmount * discVal) / 100 : discVal;
-        let netRowTotal = fullTradeAmount - discountAmount;
+        let calculatedDisc = discType === 'Percent' ? (fullTradeAmount * (discVal / 100)) : discVal;
+        let rowTotal = fullTradeAmount - calculatedDisc;
 
-        currentPosItems.push({ name, ctnQty, pcsQty, tradeRate, retailRate, discType, discVal, discountAmount, fullTradeAmount, netRowTotal });
-        renderPosItemsTable();
+        currentPosItems.push({
+            name, ctnQty, pcsQty, tradeRate, retailRate, discType, discVal, calculatedDisc, rowTotal
+        });
 
+        renderPosCartTable();
+        calculatePosTotals();
         document.getElementById('posStockInput').value = '';
         document.getElementById('posItemCtnQty').value = '0';
         document.getElementById('posItemPcsQty').value = '1';
     }
 
-    function renderPosItemsTable() {
-        let html = '';
-        currentPosItems.forEach((it, i) => {
-            html += `<tr>
-                <td><strong>${it.name}</strong></td>
-                <td>${it.ctnQty} Ctn / ${it.pcsQty} Pcs</td>
-                <td>Rs. ${it.tradeRate}</td>
-                <td>Rs. ${it.retailRate}</td>
-                <td>Rs. ${it.discountAmount.toFixed(1)}</td>
-                <td>Rs. ${it.netRowTotal.toFixed(1)}</td>
-                <td><button class="btn-delete" onclick="currentPosItems.splice(${i},1);renderPosItemsTable();">X</button></td>
-            </tr>`;
-        });
-        document.getElementById('posItemsTbody').innerHTML = html;
-        calculatePosTotals();
+    function renderPosCartTable() {
+        document.getElementById('posItemsTbody').innerHTML = currentPosItems.map((item, idx) => `
+            <tr>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.ctnQty} Ctn / ${item.pcsQty} Pcs</td>
+                <td>Rs. ${item.tradeRate}</td>
+                <td>Rs. ${item.retailRate}</td>
+                <td>Rs. ${item.calculatedDisc}</td>
+                <td>Rs. ${item.rowTotal}</td>
+                <td><button class="btn-delete" onclick="currentPosItems.splice(${idx},1);renderPosCartTable();calculatePosTotals();">X</button></td>
+            </tr>
+        `).join('');
+
+        document.getElementById('prevItemsTbody').innerHTML = currentPosItems.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td style="text-align:center;">${item.ctnQty}c/${item.pcsQty}p</td>
+                <td style="text-align:right;">${item.tradeRate}</td>
+                <td style="text-align:right;">${item.calculatedDisc}</td>
+                <td style="text-align:right;">${item.rowTotal}</td>
+            </tr>
+        `).join('') || `<tr><td colspan="5" style="text-align:center;">No Items Added</td></tr>`;
     }
 
     function calculatePosTotals() {
-        let fullTradeSubtotal = currentPosItems.reduce((acc, item) => acc + item.fullTradeAmount, 0);
-        let itemDiscountsTotal = currentPosItems.reduce((acc, item) => acc + item.discountAmount, 0);
-        let remainingAfterDisc = fullTradeSubtotal - itemDiscountsTotal;
+        let tradeSubtotal = currentPosItems.reduce((acc, item) => acc + (item.pcsQty * item.tradeRate), 0);
+        let totalDiscounts = currentPosItems.reduce((acc, item) => acc + item.calculatedDisc, 0);
+        let remainingSubtotal = tradeSubtotal - totalDiscounts;
 
         let taxPercent = parseFloat(document.getElementById('posTaxPercent').value) || 0;
-        let taxAmount = (remainingAfterDisc * taxPercent) / 100;
+        let taxAmt = remainingSubtotal * (taxPercent / 100);
 
-        let currentBillTotal = remainingAfterDisc + taxAmount;
         let shopName = document.getElementById('posShopSelect').value;
         let prevBal = getShopPreviousBalance(shopName);
-        let recoveryPaid = parseFloat(document.getElementById('posPaid').value) || 0;
 
-        let newGrandTotalBalance = (currentBillTotal + prevBal) - recoveryPaid;
+        let paid = parseFloat(document.getElementById('posPaid').value) || 0;
+        let grandTotal = (remainingSubtotal + taxAmt + prevBal) - paid;
 
-        document.getElementById('posTradeSubtotalLbl').innerText = `Rs. ${fullTradeSubtotal.toLocaleString()}`;
-        document.getElementById('posItemDiscountsLbl').innerText = `Rs. ${itemDiscountsTotal.toLocaleString()}`;
-        document.getElementById('posRemainingSubtotalLbl').innerText = `Rs. ${remainingAfterDisc.toLocaleString()}`;
-        document.getElementById('posPrevBalanceLbl').innerText = `Rs. ${prevBal.toLocaleString()}`;
-        document.getElementById('posGrandTotalLbl').innerText = `Rs. ${newGrandTotalBalance.toLocaleString()}`;
+        document.getElementById('posTradeSubtotalLbl').innerText = 'Rs. ' + tradeSubtotal.toLocaleString();
+        document.getElementById('posItemDiscountsLbl').innerText = 'Rs. ' + totalDiscounts.toLocaleString();
+        document.getElementById('posRemainingSubtotalLbl').innerText = 'Rs. ' + remainingSubtotal.toLocaleString();
+        document.getElementById('posPrevBalanceLbl').innerText = 'Rs. ' + prevBal.toLocaleString();
+        document.getElementById('posGrandTotalLbl').innerText = 'Rs. ' + grandTotal.toLocaleString();
+
+        document.getElementById('prevTradeSubtotal').innerText = 'Rs. ' + tradeSubtotal.toLocaleString();
+        document.getElementById('prevItemDiscounts').innerText = 'Rs. ' + totalDiscounts.toLocaleString();
+        document.getElementById('prevTaxAmount').innerText = 'Rs. ' + taxAmt.toLocaleString();
+        document.getElementById('prevOldBalance').innerText = 'Rs. ' + prevBal.toLocaleString();
+        document.getElementById('prevRecoveryPaid').innerText = 'Rs. ' + paid.toLocaleString();
+        document.getElementById('prevGrandTotal').innerText = 'Rs. ' + grandTotal.toLocaleString();
     }
 
-    function updatePrevShopName() { calculatePosTotals(); }
+    function updatePrevShopName() {
+        let shopName = document.getElementById('posShopSelect').value;
+        document.getElementById('prevCustomer').innerText = shopName || 'N/A';
+        calculatePosTotals();
+    }
 
-    function savePosInvoice(shouldPrint) {
-        if(currentPosItems.length === 0) return alert('آرڈر خالی ہے!');
+    function savePosInvoice(print) {
+        if(currentPosItems.length === 0) return alert('آرڈر میں کوئی پروڈکٹ شامل نہیں ہے!');
 
-        const invNum = document.getElementById('posInvNum').value;
-        const date = document.getElementById('posInvDate').value;
-        const deliveryDate = document.getElementById('posDeliveryDate').value;
-        const payType = document.getElementById('posPayType').value;
-        const booker = document.getElementById('posBookerSelect').value;
-        const supplyMan = document.getElementById('posSupplyManSelect').value;
-        const shop = document.getElementById('posShopSelect').value;
+        let invNum = document.getElementById('posInvNum').value;
+        let date = document.getElementById('posInvDate').value;
+        let deliveryDate = document.getElementById('posDeliveryDate').value;
+        let booker = document.getElementById('posBookerSelect').value;
+        let supplyMan = document.getElementById('posSupplyManSelect').value;
+        let shop = document.getElementById('posShopSelect').value;
+        let payType = document.getElementById('posPayType').value;
 
-        let fullTradeSubtotal = currentPosItems.reduce((acc, item) => acc + item.fullTradeAmount, 0);
-        let itemDiscountsTotal = currentPosItems.reduce((acc, item) => acc + item.discountAmount, 0);
-        let remainingAfterDisc = fullTradeSubtotal - itemDiscountsTotal;
+        let tradeSubtotal = currentPosItems.reduce((acc, item) => acc + (item.pcsQty * item.tradeRate), 0);
+        let itemDiscounts = currentPosItems.reduce((acc, item) => acc + item.calculatedDisc, 0);
+        let remainingSubtotal = tradeSubtotal - itemDiscounts;
+
         let taxPercent = parseFloat(document.getElementById('posTaxPercent').value) || 0;
-        let taxAmount = (remainingAfterDisc * taxPercent) / 100;
-        let currentBillTotal = remainingAfterDisc + taxAmount;
-        let prevBal = getShopPreviousBalance(shop);
-        let recoveryPaid = parseFloat(document.getElementById('posPaid').value) || 0;
-        let newGrandTotalBalance = (currentBillTotal + prevBal) - recoveryPaid;
+        let taxAmount = remainingSubtotal * (taxPercent / 100);
 
-        const newInv = { 
-            invNum, date, deliveryDate, payType, booker, supplyMan, shop, 
-            items: [...currentPosItems], fullTradeSubtotal, itemDiscountsTotal, taxPercent, taxAmount, 
-            currentBillTotal, prevBal, recoveryPaid, newGrandTotalBalance,
-            kpoProcessed: false
+        let prevBalance = getShopPreviousBalance(shop);
+        let paidAmount = parseFloat(document.getElementById('posPaid').value) || 0;
+
+        let currentBillTotal = remainingSubtotal + taxAmount;
+        let newGrandTotalBalance = (currentBillTotal + prevBalance) - paidAmount;
+
+        let newInvoice = {
+            invNum, date, deliveryDate, booker, supplyMan, shop, payType,
+            items: [...currentPosItems],
+            tradeSubtotal, itemDiscounts, remainingSubtotal, taxPercent, taxAmount,
+            prevBalance, paidAmount, currentBillTotal, newGrandTotalBalance,
+            status: 'Delivered'
         };
 
-        dbInvoices.push(newInv);
-        localStorage.setItem('ht_invoices', JSON.stringify(dbInvoices));
+        dbInvoices.push(newInvoice);
 
-        alert('آرڈر پنشنگ کامیابی سے محفوظ ہو گیا!');
+        currentPosItems.forEach(item => {
+            let found = dbStock.find(s => s.name === item.name);
+            if(found) {
+                found.qty = Math.max(0, found.qty - item.pcsQty);
+            }
+        });
+
+        if(paidAmount > 0) {
+            dbCashInHand += paidAmount;
+            localStorage.setItem('ht_cash_in_hand', dbCashInHand);
+        }
+
+        localStorage.setItem('ht_invoices', JSON.stringify(dbInvoices));
+        localStorage.setItem('ht_stock', JSON.stringify(dbStock));
+
+        alert('انواؤس کامیابی سے محفوظ ہو گئی ہے!');
+
+        if(print) {
+            printDualA5Invoice(newInvoice);
+        }
+
         currentPosItems = [];
+        renderPosCartTable();
         generateInvoiceNumber();
-        renderPosItemsTable();
         renderDashboard();
-        renderInvoicesTable();
+    }
+
+    function printDualA5Invoice(inv) {
+        let printArea = document.getElementById('printableA4DualContainer');
+        let singleInvoiceHtml = `
+            <div class="print-invoice-half">
+                <div style="text-align:center; border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 6px;">
+                    <h2 style="margin:0; font-size: 16px;">حُسَیْن ٹْرِیَڈَرْزْ (HUSSAIN TRADERS)</h2>
+                    <p style="font-size: 9px; margin:0;">FMCG Sales & Distribution, Bannu Road, Dera Ismail Khan</p>
+                    <p style="font-size: 9px; margin:0;">Phone: 0334-7218606 | Invoice Copy</p>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:6px;">
+                    <div>
+                        <div><strong>Inv #:</strong> ${inv.invNum}</div>
+                        <div><strong>Shop:</strong> ${inv.shop}</div>
+                        <div><strong>Payment:</strong> ${inv.payType}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div><strong>Date:</strong> ${inv.date}</div>
+                        <div><strong>Delivery:</strong> ${inv.deliveryDate}</div>
+                        <div><strong>Booker:</strong> ${inv.booker}</div>
+                    </div>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:9px; margin-bottom:6px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="border:1px solid #000; padding:3px;">Item</th>
+                            <th style="border:1px solid #000; padding:3px; text-align:center;">Qty</th>
+                            <th style="border:1px solid #000; padding:3px; text-align:right;">Rate</th>
+                            <th style="border:1px solid #000; padding:3px; text-align:right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${inv.items.map(it => `
+                            <tr>
+                                <td style="border:1px solid #000; padding:3px;">${it.name}</td>
+                                <td style="border:1px solid #000; padding:3px; text-align:center;">${it.ctnQty}c / ${it.pcsQty}p</td>
+                                <td style="border:1px solid #000; padding:3px; text-align:right;">${it.tradeRate}</td>
+                                <td style="border:1px solid #000; padding:3px; text-align:right;">${it.rowTotal}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div style="font-size:10px; border-top:1px solid #000; padding-top:4px;">
+                    <div style="display:flex; justify-content:space-between;"><span>Current Bill Amount:</span><strong>Rs. ${inv.currentBillTotal.toLocaleString()}</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Previous Balance:</span><strong>Rs. ${inv.prevBalance.toLocaleString()}</strong></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Amount Paid:</span><strong>Rs. ${inv.paidAmount.toLocaleString()}</strong></div>
+                    <div style="display:flex; justify-content:space-between; font-size:11px; border-top:1px solid #000; margin-top:2px; padding-top:2px;"><span>Net Balance Due:</span><strong>Rs. ${inv.newGrandTotalBalance.toLocaleString()}</strong></div>
+                </div>
+                <div style="margin-top:20px; display:flex; justify-content:space-between; font-size:9px;">
+                    <div>__________________<br>Receiver Signature</div>
+                    <div>__________________<br>Authorized Signature</div>
+                </div>
+            </div>
+        `;
+
+        printArea.innerHTML = singleInvoiceHtml + singleInvoiceHtml;
+        printArea.style.display = 'flex';
+        window.print();
+        printArea.style.display = 'none';
     }
 
     function renderDashboard() {
-        let grossSales = dbInvoices.reduce((a, x) => a + x.currentBillTotal, 0);
-        let totalReturns = dbReturns.reduce((a, x) => a + x.totalRefund, 0);
-        let netSales = grossSales - totalReturns;
-        
-        let totalUdhaar = dbShops.reduce((a, x) => a + getShopPreviousBalance(x.name), 0);
-        let totalRecovery = dbRecoveries.filter(r => r.status === 'Approved').reduce((a, x) => a + x.amount, 0);
-        let totalExpenses = dbExpenses.reduce((a, x) => a + x.amount, 0);
+        let totalUdhaar = dbShops.reduce((acc, s) => acc + getShopPreviousBalance(s.name), 0);
+        let todayStr = new Date().toISOString().slice(0,10);
+        let todaySales = dbInvoices.filter(i => i.date === todayStr).reduce((acc, i) => acc + i.currentBillTotal, 0);
+        let todayRecovery = dbRecoveries.filter(r => r.date === todayStr && r.status === 'Approved').reduce((acc, r) => acc + r.amount, 0);
+        let totalExpenses = dbExpenses.reduce((acc, e) => acc + e.amount, 0);
+        let totalReturns = dbReturns.reduce((acc, r) => acc + (r.totalRefund || 0), 0);
+        let reservedClaims = dbCompanyClaims.reduce((acc, c) => acc + (c.totalVal || 0), 0);
 
-        document.getElementById('dashTotalUdhaar').innerText = `Rs. ${totalUdhaar.toLocaleString()}`;
-        document.getElementById('dashTodaySales').innerText = `Rs. ${netSales.toLocaleString()}`;
-        document.getElementById('dashTodayRecovery').innerText = `Rs. ${totalRecovery.toLocaleString()}`;
-        document.getElementById('dashCashInHand').innerText = `Rs. ${dbCashInHand.toLocaleString()}`;
-        document.getElementById('dashTotalExpenses').innerText = `Rs. ${totalExpenses.toLocaleString()}`;
-        document.getElementById('dashTotalReturns').innerText = `Rs. ${totalReturns.toLocaleString()}`;
-    }
-
-    function renderLiveStockInventory() {
-        document.getElementById('liveStockInventoryTbody').innerHTML = dbStock.map(s => `
-            <tr>
-                <td>${s.sku || 'N/A'}</td>
-                <td>${s.category || 'General'}</td>
-                <td><strong>${s.name}</strong></td>
-                <td>${s.pcsPerCarton || 12} Pcs</td>
-                <td>Rs. ${s.costPrice || 0}</td>
-                <td>Rs. ${s.tradePrice || 0}</td>
-                <td>Rs. ${s.retailPrice || 0}</td>
-                <td><strong style="color:${s.qty<10?'red':'green'};">${Math.floor(s.qty/(s.pcsPerCarton||12))} Ctn / ${s.qty%(s.pcsPerCarton||12)} Pcs</strong></td>
-                <td><strong>${s.qty} Pcs</strong></td>
-            </tr>
-        `).join('');
-    }
-
-    function renderInvoicesTable() {
-        document.getElementById('invoicesTable').innerHTML = dbInvoices.map(inv => `
-            <tr>
-                <td><input type="checkbox"></td>
-                <td><strong>${inv.invNum}</strong></td>
-                <td>${inv.date}</td>
-                <td>${inv.deliveryDate}</td>
-                <td>${inv.booker}</td>
-                <td>${inv.supplyMan || '--'}</td>
-                <td><strong>${inv.shop}</strong></td>
-                <td>${inv.payType}</td>
-                <td>Rs. ${inv.currentBillTotal.toLocaleString()}</td>
-                <td>${inv.kpoProcessed ? '<span style="color:green; font-weight:bold;">Processed</span>' : '<span style="color:orange; font-weight:bold;">Pending</span>'}</td>
-                <td><button class="btn-delete" onclick="dbInvoices=dbInvoices.filter(i=>i.invNum!='${inv.invNum}');localStorage.setItem('ht_invoices',JSON.stringify(dbInvoices));renderInvoicesTable();">Delete</button></td>
-            </tr>
-        `).join('') || `<tr><td colspan="11" style="text-align:center;">کوئی انوائس نہیں ہے</td></tr>`;
+        document.getElementById('dashTotalUdhaar').innerText = 'Rs. ' + totalUdhaar.toLocaleString();
+        document.getElementById('dashTodaySales').innerText = 'Rs. ' + todaySales.toLocaleString();
+        document.getElementById('dashTodayRecovery').innerText = 'Rs. ' + todayRecovery.toLocaleString();
+        document.getElementById('dashCashInHand').innerText = 'Rs. ' + dbCashInHand.toLocaleString();
+        document.getElementById('dashReservedStockVal').innerText = 'Rs. ' + reservedClaims.toLocaleString();
+        document.getElementById('dashTotalExpenses').innerText = 'Rs. ' + totalExpenses.toLocaleString();
+        document.getElementById('dashTotalReturns').innerText = 'Rs. ' + totalReturns.toLocaleString();
     }
 
     function renderShops() {
@@ -2039,8 +2346,8 @@
                 <td>${s.owner || '--'}</td>
                 <td>${s.route || '--'}</td>
                 <td>${s.booker || '--'}</td>
-                <td>Rs. ${s.creditLimit || 0}</td>
-                <td style="color:red; font-weight:bold;">Rs. ${getShopPreviousBalance(s.name).toLocaleString()}</td>
+                <td>Rs. ${(s.creditLimit || 50000).toLocaleString()}</td>
+                <td>Rs. ${getShopPreviousBalance(s.name).toLocaleString()}</td>
             </tr>
         `).join('');
     }
@@ -2057,9 +2364,81 @@
 
         dbShops.push({ name, owner, contact, route, creditLimit, booker });
         localStorage.setItem('ht_shops', JSON.stringify(dbShops));
-        alert('دوکان شامل ہو گئی!');
+        alert('دوکان کامیابی سے شامل ہو گئی!');
         renderShops();
         filterPosShopsByBooker();
+    }
+
+    function renderLiveStockInventory() {
+        document.getElementById('liveStockInventoryTbody').innerHTML = dbStock.map(s => `
+            <tr>
+                <td>${s.sku || 'SKU-001'}</td>
+                <td>${s.category || 'General'}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.pcsPerCarton || 24} Pcs/Ctn</td>
+                <td>Rs. ${s.costPrice || 0}</td>
+                <td>Rs. ${s.tradePrice || 0}</td>
+                <td>Rs. ${s.retailPrice || 0}</td>
+                <td>${Math.floor(s.qty / (s.pcsPerCarton || 24))} Ctn / ${s.qty % (s.pcsPerCarton || 24)} Pcs</td>
+                <td><strong>${s.qty} Pcs</strong></td>
+            </tr>
+        `).join('');
+    }
+
+    function renderInvoicesTable() {
+        document.getElementById('invoicesTable').innerHTML = dbInvoices.map((inv, i) => `
+            <tr>
+                <td><input type="checkbox" value="${i}"></td>
+                <td><strong>${inv.invNum}</strong></td>
+                <td>${inv.date}</td>
+                <td>${inv.deliveryDate}</td>
+                <td>${inv.booker}</td>
+                <td>${inv.supplyMan}</td>
+                <td>${inv.shop}</td>
+                <td>${inv.payType}</td>
+                <td>Rs. ${inv.currentBillTotal.toLocaleString()}</td>
+                <td><span style="color:#38ef7d; font-weight:bold;">${inv.status}</span></td>
+                <td><button class="btn-print" onclick="printDualA5Invoice(dbInvoices[${i}])">Print 🖨️</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function submitRecoveryEntry() {
+        let date = document.getElementById('recDate').value;
+        let booker = document.getElementById('recBookerSelect').value;
+        let shop = document.getElementById('recShopSelect').value;
+        let amount = parseFloat(document.getElementById('recAmount').value) || 0;
+        let method = document.getElementById('recPaymentMethod').value;
+
+        if(amount <= 0) return alert('وصولی کی رقم درج کریں!');
+
+        dbRecoveries.push({
+            id: 'REC_' + Date.now(),
+            date, booker, shop, amount, method, status: 'Approved'
+        });
+
+        dbCashInHand += amount;
+        localStorage.setItem('ht_cash_in_hand', dbCashInHand);
+        localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
+
+        alert('ریکوری کامیابی سے شامل ہو گئی!');
+        document.getElementById('recAmount').value = '';
+        renderDashboard();
+        renderRecoveryApprovalTable();
+    }
+
+    function renderRecoveryApprovalTable() {
+        document.getElementById('recoveryApprovalTbody').innerHTML = dbRecoveries.map(r => `
+            <tr>
+                <td>${r.date}</td>
+                <td><strong>${r.shop}</strong></td>
+                <td>${r.booker}</td>
+                <td>${r.method}</td>
+                <td>Rs. ${r.amount.toLocaleString()}</td>
+                <td><span style="color:#38ef7d; font-weight:bold;">${r.status}</span></td>
+                <td>Approved</td>
+            </tr>
+        `).join('');
     }
 
     function addExpenseRecord() {
@@ -2067,14 +2446,16 @@
         let title = document.getElementById('expTitle').value.trim();
         let amount = parseFloat(document.getElementById('expAmount').value) || 0;
 
-        if(!title || amount <= 0) return alert('معلومات درست درج کریں!');
+        if(!title || amount <= 0) return alert('اخراجات کی تفصیل اور رقم درست درج کریں!');
 
-        dbExpenses.push({ id: `EXP_${Date.now()}`, date, title, amount });
-        dbCashInHand -= amount;
-        localStorage.setItem('ht_expenses', JSON.stringify(dbExpenses));
+        dbExpenses.push({ date, title, amount });
+        dbCashInHand = Math.max(0, dbCashInHand - amount);
         localStorage.setItem('ht_cash_in_hand', dbCashInHand);
+        localStorage.setItem('ht_expenses', JSON.stringify(dbExpenses));
 
-        alert('اخراجات درج ہو گئے!');
+        alert('خرچہ کامیابی سے درج ہو گیا!');
+        document.getElementById('expTitle').value = '';
+        document.getElementById('expAmount').value = '';
         renderDashboard();
     }
 </script>
