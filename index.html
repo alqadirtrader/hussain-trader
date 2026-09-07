@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-   <title>🟢 Hussain Traders - Complete ERP System</title>
+    <title>🟢 Hussain Traders - Enterprise ERP & Distribution System</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&family=Noto+Nastaliq+Urdu:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --bg-body: #f4f7fb;
+            --bg-body: #f0f4f9;
             --card-bg: #ffffff;
             --text-color: #2c3e50;
             --border-color: #dcdfe6;
@@ -18,7 +21,7 @@
             --header-bg: #ffffff;
             --input-bg: #ffffff;
             --sidebar-bg: #ffffff;
-            --sidebar-width: 280px;
+            --sidebar-width: 240px;
             --shadow-color: rgba(0,0,0,0.08);
         }
 
@@ -44,23 +47,13 @@
             position: relative;
             overflow-x: hidden;
             display: flex;
+            font-size: 11px;
         }
 
-        /* TRADING ANIMATED BACKGROUND CANVAS */
-        #tradingBgCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.25;
-        }
-
-        /* SIDEBAR NAVIGATION LAYOUT */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
-            border-right: 2px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
             height: 100vh;
             position: fixed;
             top: 0; left: 0;
@@ -72,38 +65,35 @@
         }
 
         .sidebar-brand {
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             border-bottom: 2px solid #333;
             background: var(--urdu-red-bg);
             color: #fff;
         }
 
-        .brand-logo { height: 60px; width: auto; object-fit: contain; margin-bottom: 5px; }
-
         .urdu-title-main {
             font-family: 'Noto Nastaliq Urdu', serif;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             color: var(--urdu-red) !important;
             text-align: center;
-            line-height: 1.4;
-            text-shadow: 0 0 5px rgba(255, 82, 82, 0.4);
+            line-height: 1.3;
         }
 
-        .nav-list { list-style: none; padding: 10px 0; margin: 0; }
+        .nav-list { list-style: none; padding: 5px 0; margin: 0; }
         .nav-item { margin-bottom: 2px; }
         .nav-link {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 18px;
+            padding: 8px 12px;
             color: var(--primary-blue);
             text-decoration: none;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            border-left: 4px solid transparent;
+            border-left: 3px solid transparent;
         }
         .nav-link:hover, .nav-link.active {
             background: #eef5ff;
@@ -111,31 +101,24 @@
             border-left-color: var(--primary-blue);
         }
 
-        body.dark-theme .nav-link:hover, body.dark-theme .nav-link.active {
-            background: #1a2436;
-            color: var(--primary-blue);
-        }
-
-        /* ACCORDION / SUBMENU FOR REPORTS */
         .submenu {
             display: none;
             background: #e8f0fe;
             list-style: none;
-            padding-left: 15px;
+            padding-left: 10px;
         }
         body.dark-theme .submenu { background: #0c121e; }
         .submenu.open { display: block; }
         .submenu .nav-link {
-            padding: 9px 15px 9px 20px;
-            font-size: 12px;
+            padding: 6px 10px 6px 15px;
+            font-size: 10px;
             border-left: none;
         }
 
-        /* MAIN CONTENT AREA */
         .main-wrapper {
             margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 18px;
+            padding: 12px;
             position: relative;
             z-index: 1;
             width: calc(100% - var(--sidebar-width));
@@ -146,279 +129,320 @@
             justify-content: space-between;
             align-items: center;
             background: var(--header-bg);
-            padding: 12px 18px;
-            border-radius: 10px;
+            padding: 8px 14px;
+            border-radius: 6px;
             border: 1px solid var(--border-color);
-            margin-bottom: 18px;
-            box-shadow: 0 4px 6px var(--shadow-color);
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px var(--shadow-color);
         }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; width: 100%; }
 
-        /* DASHBOARD BUBBLE CARDS */
         .summary-cards { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 20px; 
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 10px; 
+            margin-bottom: 15px; 
         }
 
         .bubble-card { 
             background: var(--card-bg); 
-            padding: 16px; 
-            border-radius: 16px; 
+            padding: 12px; 
+            border-radius: 12px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 6px 15px var(--shadow-color);
+            box-shadow: 0 4px 10px var(--shadow-color);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            overflow: hidden;
         }
 
-        .bubble-card:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 12px 22px rgba(0, 86, 179, 0.2);
-            border-color: var(--primary-blue);
-        }
-
-        .bubble-card h3 { margin: 0 0 6px 0; font-size: 11px; text-transform: uppercase; color: #6c757d; letter-spacing: 0.5px; }
-        .bubble-card p { margin: 0; font-size: 19px; font-weight: 800; color: var(--primary-blue); }
+        .bubble-card h3 { margin: 0 0 4px 0; font-size: 10px; text-transform: uppercase; color: #6c757d; }
+        .bubble-card p { margin: 0; font-size: 15px; font-weight: 800; color: var(--primary-blue); }
 
         form, .section-box { 
             background: var(--card-bg); 
-            padding: 18px; 
-            border-radius: 12px; 
-            margin-bottom: 18px; 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 12px; 
             border: 1px solid var(--border-color); 
-            box-shadow: 0 4px 10px var(--shadow-color);
+            box-shadow: 0 2px 6px var(--shadow-color);
         }
 
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-        .form-group { display: flex; flex-direction: column; gap: 5px; }
-        label { font-weight: 700; font-size: 11px; color: var(--text-color); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 3px; }
+        label { font-weight: 700; font-size: 10px; color: var(--text-color); }
         input, select, textarea { 
-            padding: 9px; 
+            padding: 6px 8px; 
             border: 1px solid var(--border-color); 
             background: var(--input-bg); 
             color: var(--text-color); 
-            border-radius: 6px; 
-            font-size: 13px; 
+            border-radius: 4px; 
+            font-size: 11px; 
             width: 100%; 
-            box-sizing: border-box; 
         }
 
-        input:focus, select:focus { outline: none; border-color: var(--primary-blue); box-shadow: 0 0 5px rgba(0,86,179,0.3); }
+        input:focus, select:focus { outline: none; border-color: var(--primary-blue); }
 
-        button.btn-add { background: var(--primary-blue); color: #fff; border: none; padding: 10px 14px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 13px; }
+        button.btn-add { background: var(--primary-blue); color: #fff; border: none; padding: 6px 12px; font-weight: bold; border-radius: 4px; cursor: pointer; font-size: 11px; }
         button.btn-add:hover { background: var(--primary-blue-hover); }
 
-        button.btn-excel { background: #1D6F42; color: white; border: none; padding: 9px 13px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
-        button.btn-edit { background: #ffc107; color: #000; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        button.btn-delete { background: #dc3545; color: white; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        button.btn-print { background: #0288d1; color: white; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        button.btn-excel { background: #1D6F42; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        button.btn-pdf { background: #d32f2f; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        button.btn-edit { background: #ffc107; color: #000; border: none; padding: 4px 7px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        button.btn-delete { background: #dc3545; color: white; border: none; padding: 4px 7px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        button.btn-print { background: #0288d1; color: white; border: none; padding: 4px 7px; border-radius: 3px; cursor: pointer; font-size: 10px; font-weight: bold; }
 
-        .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--card-bg); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 12px; }
-        th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); }
+        table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: 10px; }
+        th, td { border: 1px solid var(--border-color); padding: 6px 8px; text-align: left; }
         th { background-color: var(--primary-blue); color: #ffffff; text-align: center; font-weight: bold; }
 
-        .pos-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 18px; }
+        .pos-container { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px; }
         @media (max-width: 992px) {
-            .sidebar { width: 70px; }
+            .sidebar { width: 50px; }
             .sidebar .nav-text, .sidebar-brand .urdu-title-main { display: none; }
-            .main-wrapper { margin-left: 70px; width: calc(100% - 70px); }
+            .main-wrapper { margin-left: 50px; width: calc(100% - 50px); }
             .pos-container { grid-template-columns: 1fr; }
         }
 
-        .pos-card { background: var(--card-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px var(--shadow-color); }
+        .pos-card { background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); box-shadow: 0 2px 6px var(--shadow-color); }
 
-        /* LIVE PRINTABLE PREVIEW INVOICE */
-        .snd-invoice-preview { background: #fff; padding: 15px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; color: #000; box-sizing: border-box; width: 100%; border-radius: 6px; }
-        .snd-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px dashed #000; padding-bottom: 8px; margin-bottom: 8px; }
-        .snd-table { width: 100%; border-collapse: collapse; margin: 8px 0; table-layout: fixed; }
-        .snd-table th, .snd-table td { border-bottom: 1px solid #ddd; padding: 4px 2px; font-size: 10px; color: #000; }
+        .snd-invoice-preview { background: #fff; padding: 10px; border: 1px solid #ccc; font-family: 'Courier New', Courier, monospace; color: #000; width: 100%; border-radius: 4px; font-size: 10px; }
+        .snd-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 6px; }
+        .snd-table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+        .snd-table th, .snd-table td { border-bottom: 1px solid #ddd; padding: 3px 2px; font-size: 9px; color: #000; }
 
-        /* LOGIN OVERLAY */
+        /* Animated Login Background & Overlay */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 14, 23, 0.92);
+            background: linear-gradient(-45deg, #0a0e17, #1a1f3c, #003d82, #11998e);
+            background-size: 400% 400%;
+            animation: gradientAnimation 12s ease infinite;
             display: flex; justify-content: center; align-items: center;
             z-index: 9999; padding: 15px;
-            backdrop-filter: blur(5px);
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .login-card {
-            background: #ffffff;
-            padding: 30px; border-radius: 20px; width: 100%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px; border-radius: 16px; width: 100%; max-width: 380px;
             text-align: center; border: 2px solid var(--primary-blue); color: #2c3e50;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
         }
 
-        /* AI BOT WIDGET */
-        .ai-assistant-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            width: 55px; height: 55px; border-radius: 50%;
-            background: linear-gradient(135deg, #0056b3, #00d2ff);
-            color: #fff; font-size: 26px; border: none;
-            cursor: pointer; z-index: 99;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-            display: flex; align-items: center; justify-content: center;
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center;
+            z-index: 999; padding: 15px;
+        }
+        .modal-body {
+            background: var(--card-bg); width: 100%; max-width: 650px;
+            border-radius: 8px; padding: 15px; max-height: 90vh; overflow-y: auto;
+            border: 1px solid var(--border-color);
         }
 
-        .ai-chat-box {
-            position: fixed; bottom: 85px; right: 20px;
-            width: 320px; height: 380px; background: var(--card-bg);
-            border: 1px solid var(--border-color); border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 99;
-            display: none; flex-direction: column; overflow: hidden;
+        .perm-checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 6px;
+            margin-top: 6px;
+            background: var(--bg-body);
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+        .perm-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+        }
+        .perm-item input[type="checkbox"] {
+            width: auto;
         }
 
-        .ai-chat-header { background: var(--primary-blue); color: #fff; padding: 10px 14px; font-weight: bold; font-size: 13px; display: flex; justify-content: space-between; }
-        .ai-chat-messages { flex: 1; padding: 10px; overflow-y: auto; font-size: 12px; }
-        .ai-chat-input { display: flex; padding: 8px; border-top: 1px solid var(--border-color); }
-
-        @page { size: A4 landscape; margin: 5mm; }
         @media print {
-            .no-print, .sidebar, .top-bar, button, .ai-assistant-btn, .ai-chat-box { display: none !important; }
-            body { background: white !important; padding: 0; margin: 0; color: #000; font-size: 11px; }
+            .no-print, .sidebar, .top-bar, button, .modal-overlay { display: none !important; }
+            body { background: white !important; padding: 0; margin: 0; color: #000; font-size: 9pt; }
             .main-wrapper { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
-            body.print-invoice-mode * { visibility: hidden; }
-            body.print-invoice-mode #printWrapper, body.print-invoice-mode #printWrapper * { visibility: visible; }
             
-            #printWrapper {
-                position: absolute; left: 0; top: 0; width: 100vw; height: 100vh;
-                display: flex !important; flex-direction: row !important; justify-content: space-around; align-items: center;
-                padding: 2mm; box-sizing: border-box; background: #fff;
+            @page {
+                size: A4 landscape;
+                margin: 5mm;
             }
 
-            .a5-invoice-half {
-                width: 48%; height: 98%; border: 1px dashed #000; padding: 8px;
-                box-sizing: border-box; font-family: 'Courier New', Courier, monospace; overflow: hidden;
+            .print-dual-container {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                width: 100% !important;
+                height: 100% !important;
+                gap: 10mm;
+                page-break-after: always;
+            }
+
+            .print-invoice-half {
+                width: 48% !important;
+                box-sizing: border-box;
+                border: 1px dashed #000;
+                padding: 8px;
             }
         }
-        #printWrapper { display: none; }
     </style>
 </head>
 <body>
 
-<!-- ANIMATED TRADING BACKGROUND CANVAS -->
-<canvas id="tradingBgCanvas"></canvas>
-
-<!-- LOGIN OVERLAY WITH MANUAL USER ENTRY & PICTURE -->
+<!-- LOGIN OVERLAY -->
 <div id="loginOverlay" class="no-print">
     <div class="login-card">
-        <img src="Gemini_Generated_Image_mrfbflmrfbflmrfb.jpeg" alt="Logo" style="height: 80px; margin-bottom: 12px; object-fit: contain;" onerror="this.style.display='none'">
         <h2 style="color: var(--urdu-red); font-family: 'Noto Nastaliq Urdu', serif; margin-bottom: 5px;">حُسَیْن ٹْرِیَڈَرْزْ</h2>
-        <p style="font-size: 12px; color: #666; margin-bottom: 18px;">Enterprise POS & ERP Solution</p>
+        <p style="font-size: 10px; color: #666; margin-bottom: 12px;">Enterprise Point of Sale & Sales Distribution ERP</p>
+        
+        <div class="form-group" style="text-align: left; margin-bottom: 8px;">
+            <label>Username / یوزر نیم:</label>
+            <input type="text" id="loginUsernameInput" value="admin" placeholder="Enter Username">
+        </div>
         
         <div class="form-group" style="text-align: left; margin-bottom: 12px;">
-            <label>Username / یوزر نیم لکھیں:</label>
-            <input type="text" id="loginUsernameInput" placeholder="Enter Username (e.g. admin)">
-        </div>
-        
-        <div class="form-group" style="text-align: left; margin-bottom: 18px;">
             <label>Password / پاسورڈ:</label>
-            <input type="password" id="loginPassInput" placeholder="Enter Password">
+            <input type="password" id="loginPassInput" value="admin" placeholder="Enter Password">
         </div>
         
-        <button class="btn-add" style="width:100%; padding: 12px; font-size: 14px;" onclick="attemptLogin()">Sign In (بِسمِ اللّٰهِ)</button>
+        <button class="btn-add" style="width:100%; padding: 8px;" onclick="attemptLogin()">Sign In (بِسمِ اللّٰهِ)</button>
     </div>
 </div>
 
-<!-- LEFT SIDEBAR NAVIGATION -->
+<!-- SIDEBAR NAVIGATION -->
 <div class="sidebar no-print">
     <div class="sidebar-brand">
-        <img src="Gemini_Generated_Image_mrfbflmrfbflmrfb.jpeg" alt="Hussain Traders Logo" class="brand-logo" onerror="this.style.display='none'">
         <div class="urdu-title-main">حُسَیْن ٹْرِیَڈَرْزْ</div>
     </div>
     
     <ul class="nav-list">
-        <li class="nav-item"><a class="nav-link active" onclick="openTab('dashboard', this)"><span class="nav-text">📊 Dashboard Overview</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('posSales', this)"><span class="nav-text">🛒 Order Punching / POS</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('stockPurchaseTab', this)"><span class="nav-text">📥 Purchase Stock Invoice</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('liveStockTab', this)"><span class="nav-text">📦 Live Stock Inventory</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('recoveryEntry', this)"><span class="nav-text">💰 Market Wasoli / Recovery</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('recoveryApprovals', this)"><span class="nav-text">✅ Admin Approvals</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('expensesEntry', this)"><span class="nav-text">💸 Expense Entry (روزمرہ خرچہ)</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('shops', this)"><span class="nav-text">🏪 Shops & Route Mgmt</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('invoicesList', this)"><span class="nav-text">📄 Saved Invoices</span></a></li>
+        <li class="nav-item" data-perm="dashboard"><a class="nav-link active" onclick="openTab('dashboard', this)"><span class="nav-text">📊 Dashboard Overview</span></a></li>
         
-        <!-- MAIN REPORTS MENU WITH ACCORDION SUBMENU -->
-        <li class="nav-item">
-            <a class="nav-link" onclick="toggleSubmenu('reportsSubmenu')">
-                <span class="nav-text">📈 Reports System (رپورٹس)</span> <span>▼</span>
+        <!-- SALES NAVIGATION -->
+        <li class="nav-item" data-perm="posSales">
+            <a class="nav-link" onclick="toggleSubmenu('saleSubmenu')">
+                <span class="nav-text">🏷️ Sales Navigation</span> <span>▼</span>
             </a>
-            <ul class="submenu" id="reportsSubmenu">
-                <li><a class="nav-link" onclick="openTab('reportUdhaar', this)">📋 Udhaar & Ledger Report</a></li>
-                <li><a class="nav-link" onclick="openTab('bookerReports', this)">🏬 Booker Shopwise Report</a></li>
-                <li><a class="nav-link" onclick="openTab('discountReport', this)">🏷️ Discount Report</a></li>
-                <li><a class="nav-link" onclick="openTab('expensesReport', this)">💵 Daily Expense Report</a></li>
-                <li><a class="nav-link" onclick="openTab('ownerDailySummary', this)">📝 Daily KPO / Owner Summary</a></li>
-                <li><a class="nav-link" onclick="openTab('profitLoss', this)">📊 Profit & Loss Report</a></li>
+            <ul class="submenu open" id="saleSubmenu">
+                <li data-perm="posSales"><a class="nav-link" onclick="openTab('posSales', this)">🛒 Order Punching / POS</a></li>
+                <li data-perm="invoicesList"><a class="nav-link" onclick="openTab('invoicesList', this)">📄 Saved Invoices List</a></li>
+                <li data-perm="deliveryDateTab"><a class="nav-link" onclick="openTab('deliveryDateTab', this)">📅 Delivery Date Selection</a></li>
+                <li data-perm="picklistTab"><a class="nav-link" onclick="openTab('picklistTab', this)">🚚 Picklist Summary</a></li>
+                <li data-perm="salesReturnTab"><a class="nav-link" onclick="openTab('salesReturnTab', this)">🔄 Sales & Credit Stock Return</a></li>
+                <li data-perm="companyDamageClaimTab"><a class="nav-link" onclick="openTab('companyDamageClaimTab', this)">⚠️ Company Claims</a></li>
             </ul>
         </li>
 
-        <li class="nav-item"><a class="nav-link" onclick="openTab('users', this)"><span class="nav-text">⚙️ User Permissions & Roles</span></a></li>
-        <li class="nav-item"><a class="nav-link" onclick="openTab('backup', this)"><span class="nav-text">💾 Backup System (ڈیٹا بیک اپ)</span></a></li>
+        <!-- PURCHASE NAVIGATION -->
+        <li class="nav-item" data-perm="stockPurchaseTab">
+            <a class="nav-link" onclick="toggleSubmenu('purchaseSubmenu')">
+                <span class="nav-text">📥 Purchase</span> <span>▼</span>
+            </a>
+            <ul class="submenu" id="purchaseSubmenu">
+                <li data-perm="stockPurchaseTab"><a class="nav-link" onclick="openTab('stockPurchaseTab', this)">➕ Purchase Invoice Entry</a></li>
+                <li data-perm="purchaseInvoiceListTab"><a class="nav-link" onclick="openTab('purchaseInvoiceListTab', this)">📑 Purchase Invoices List</a></li>
+                <li data-perm="purchaseStockReportTab"><a class="nav-link" onclick="openTab('purchaseStockReportTab', this)">📦 Purchase Stock Report</a></li>
+            </ul>
+        </li>
+
+        <li class="nav-item" data-perm="liveStockTab"><a class="nav-link" onclick="openTab('liveStockTab', this)"><span class="nav-text">📦 Live Stock Inventory</span></a></li>
+        <li class="nav-item" data-perm="supplyManTab"><a class="nav-link" onclick="openTab('supplyManTab', this)"><span class="nav-text">🚚 Supply Man Recovery & KPO</span></a></li>
+        <li class="nav-item" data-perm="recoveryEntry"><a class="nav-link" onclick="openTab('recoveryEntry', this)"><span class="nav-text">💰 Market Recovery & Approval</span></a></li>
+        <li class="nav-item" data-perm="expensesEntry"><a class="nav-link" onclick="openTab('expensesEntry', this)"><span class="nav-text">💸 Expense Entry</span></a></li>
+        <li class="nav-item" data-perm="shops"><a class="nav-link" onclick="openTab('shops', this)"><span class="nav-text">🏪 Shops Management</span></a></li>
+        
+        <!-- SYSTEM REPORTS -->
+        <li class="nav-item" data-perm="marketCreditReportTab">
+            <a class="nav-link" onclick="toggleSubmenu('reportsSubmenu')">
+                <span class="nav-text">📈 System Reports</span> <span>▼</span>
+            </a>
+            <ul class="submenu" id="reportsSubmenu">
+                <li data-perm="marketCreditReportTab"><a class="nav-link" onclick="openTab('marketCreditReportTab', this)">💳 Market Credit Report</a></li>
+                <li data-perm="shopWiseTaxReportTab"><a class="nav-link" onclick="openTab('shopWiseTaxReportTab', this)">📑 Shop Wise Tax Report</a></li>
+                <li data-perm="reportUdhaar"><a class="nav-link" onclick="openTab('reportUdhaar', this)">📋 Udhaar Report</a></li>
+                <li data-perm="stockDetailReport"><a class="nav-link" onclick="openTab('stockDetailReport', this)">📦 Stock Detail Report</a></li>
+                <li data-perm="bookerReports"><a class="nav-link" onclick="openTab('bookerReports', this)">🏬 Booker Report</a></li>
+                <li data-perm="expensesReport"><a class="nav-link" onclick="openTab('expensesReport', this)">💵 Expense Report</a></li>
+                <li data-perm="ownerDailySummary"><a class="nav-link" onclick="openTab('ownerDailySummary', this)">📝 Daily Summary</a></li>
+            </ul>
+        </li>
+
+        <li class="nav-item" data-perm="users"><a class="nav-link" onclick="openTab('users', this)"><span class="nav-text">⚙️ User Roles</span></a></li>
+        <li class="nav-item" data-perm="backup"><a class="nav-link" onclick="openTab('backup', this)"><span class="nav-text">💾 Backup System</span></a></li>
     </ul>
 </div>
 
-<!-- MAIN WORKSPACE CONTENT AREA -->
+<!-- MAIN WORKSPACE -->
 <div class="main-wrapper">
     <div class="top-bar no-print">
         <div>👤 User: <strong id="loggedUsername">ADMIN</strong> (<span id="userRoleBadge">Admin</span>)</div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <button class="btn-edit" onclick="toggleTheme()">☀️ Day / 🌙 Night</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="btn-edit" onclick="toggleTheme()">☀️ / 🌙</button>
             <span id="liveDateTimeLabel" style="color: var(--primary-blue); font-weight:bold;">--</span>
             <button class="btn-delete" onclick="logout()">Logout 🚪</button>
         </div>
     </div>
 
-    <!-- 1. DASHBOARD OVERVIEW WITH BUBBLE CARDS -->
+    <!-- DASHBOARD OVERVIEW -->
     <div id="dashboard" class="tab-content active">
-        <div class="summary-cards">
-            <div class="bubble-card" onclick="openTab('reportUdhaar')">
-                <h3>Total Market Udhaar</h3>
-                <p id="dashTotalUdhaar" style="color:#d32f2f;">Rs. 0</p>
-                <span style="font-size:10px; color:#888;">Click for Market Ledger ➔</span>
-            </div>
-            <div class="bubble-card">
-                <h3>Cash In Hand (موجودہ کیش)</h3>
-                <p id="dashTotalCash" style="color:#2e7d32;">Rs. 0</p>
-            </div>
-            <div class="bubble-card">
-                <h3>Total Sales (کل فروخت)</h3>
-                <p id="dashTotalSales">Rs. 0</p>
-            </div>
-            <div class="bubble-card" onclick="openTab('expensesReport')">
-                <h3>Total Expenses (کل اخراجات)</h3>
-                <p id="dashTotalExpenses" style="color:#c62828;">Rs. 0</p>
-                <span style="font-size:10px; color:#888;">Click for Expense Report ➔</span>
-            </div>
-            <div class="bubble-card" onclick="openTab('discountReport')">
-                <h3>Total Discount Given</h3>
-                <p id="dashTotalDiscount" style="color:#f57c00;">Rs. 0</p>
-                <span style="font-size:10px; color:#888;">Click for Discount Report ➔</span>
-            </div>
-            <div class="bubble-card" onclick="openTab('profitLoss')">
-                <h3>Net Profit (مجموعی منافع)</h3>
-                <p id="dashNetProfit" style="color:#0288d1;">Rs. 0</p>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h3 style="color:var(--primary-blue);">🚀 Business Dashboard Overview</h3>
+            <div style="display:flex; gap:6px;">
+                <button class="btn-add" onclick="openTab('posSales')">+ Order Punch</button>
+                <button class="btn-excel" onclick="openTab('recoveryEntry')">+ Recovery</button>
             </div>
         </div>
 
-        <h3 style="margin-bottom: 10px; color: var(--primary-blue);">Market Booker Wise Performance Overview</h3>
+        <div class="summary-cards">
+            <div class="bubble-card" onclick="openTab('marketCreditReportTab')">
+                <h3>Total Market Credit</h3>
+                <p id="dashTotalUdhaar" style="color:#d32f2f;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('invoicesList')">
+                <h3>Net Sales</h3>
+                <p id="dashTodaySales" style="color:#2e7d32;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('recoveryEntry')">
+                <h3>Approved Recovery</h3>
+                <p id="dashTodayRecovery" style="color:#0288d1;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('expensesReport')">
+                <h3>Cash In Hand</h3>
+                <p id="dashCashInHand" style="color:#11998e;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('companyDamageClaimTab')">
+                <h3>Reserved Claims</h3>
+                <p id="dashReservedStockVal" style="color:#7b1fa2;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('expensesReport')">
+                <h3>Total Expenses</h3>
+                <p id="dashTotalExpenses" style="color:#c62828;">Rs. 0</p>
+            </div>
+            <div class="bubble-card" onclick="openTab('salesReturnTab')">
+                <h3>Total Stock Returns</h3>
+                <p id="dashTotalReturns" style="color:#f57c00;">Rs. 0</p>
+            </div>
+        </div>
+
+        <h4 style="margin-bottom: 8px; color: var(--primary-blue);">Booker Wise Performance</h4>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 35px;">#</th>
+                        <th style="width: 30px;">#</th>
                         <th>Booker Name</th>
                         <th>Shops</th>
-                        <th>Punched Sales</th>
-                        <th>Market Credit</th>
+                        <th>Sales</th>
+                        <th>Credit</th>
                         <th>Recovery</th>
-                        <th>Net Balance</th>
                     </tr>
                 </thead>
                 <tbody id="dashBookerSummaryTable"></tbody>
@@ -426,24 +450,39 @@
         </div>
     </div>
 
-    <!-- 2. POS / ORDER PUNCHING -->
+    <!-- ORDER PUNCHING / POS -->
     <div id="posSales" class="tab-content">
-        <h3>🛒 Order Punching & Billing</h3>
+        <h3>🛒 Order Punching & Point of Sale</h3>
         <div class="pos-container">
             <div class="pos-card">
-                <h4 style="color: var(--primary-blue); margin-bottom: 8px;">Order & Customer Info</h4>
+                <h4 style="color: var(--primary-blue); margin-bottom: 6px;">Order & Customer Info</h4>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Invoice No:</label>
+                        <label>Invoice Number:</label>
                         <input type="text" id="posInvNum" readonly style="font-weight: bold; color: var(--primary-blue);">
                     </div>
                     <div class="form-group">
                         <label>Order Date *:</label>
                         <input type="date" id="posInvDate" onchange="calculatePosTotals()">
                     </div>
-                    <div class="form-group">
-                        <label>Booker *:</label>
+                    <div class="form-group" id="posBookerGroup">
+                        <label>Order Booker / Admin *:</label>
                         <select id="posBookerSelect" onchange="filterPosShopsByBooker()"></select>
+                    </div>
+                    <div class="form-group" id="posDeliveryDateGroup">
+                        <label>Delivery Date (Single Selection) *:</label>
+                        <input type="date" id="posDeliveryDate" onchange="validateDeliveryDateRule()">
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Type *:</label>
+                        <select id="posPayType" onchange="calculatePosTotals()">
+                            <option value="Credit">Credit (ادھار)</option>
+                            <option value="Cash">Cash (نقد)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Supply Man Name *:</label>
+                        <select id="posSupplyManSelect"></select>
                     </div>
                     <div class="form-group">
                         <label>Select Shop *:</label>
@@ -451,416 +490,900 @@
                     </div>
                 </div>
 
-                <h4 style="color: var(--primary-blue); margin: 12px 0 8px 0;">Add Products</h4>
+                <h4 style="color: var(--primary-blue); margin: 10px 0 6px 0;">Add Products</h4>
                 
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 6px; margin-bottom: 8px;">
-                    <div>
-                        <input type="text" id="posStockInput" list="stockDatalist" placeholder="🔍 Search Product..." onchange="autoFillItemRateFromInput()">
+                <div style="display: grid; grid-template-columns: 2fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr auto; gap: 4px; margin-bottom: 6px; align-items: flex-end;">
+                    <div class="form-group">
+                        <label>Search/Select Product:</label>
+                        <input type="text" id="posStockInput" list="stockDatalist" placeholder="🔍 Type/Select Product..." onchange="autoFillItemDetails()">
                         <datalist id="stockDatalist"></datalist>
                     </div>
-                    <input type="number" id="posItemQty" placeholder="Qty" value="1">
-                    <input type="number" id="posItemRate" placeholder="Rate">
-                    <button class="btn-add" onclick="addPosItem()">+ Add</button>
+                    <div class="form-group">
+                        <label>Cartons:</label>
+                        <input type="number" id="posItemCtnQty" placeholder="Ctn" value="0" oninput="recalcPosPieceFromCarton()">
+                    </div>
+                    <div class="form-group">
+                        <label>Pieces:</label>
+                        <input type="number" id="posItemPcsQty" placeholder="Pcs" value="1" oninput="calculateRowTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label>Trade Price:</label>
+                        <input type="number" id="posItemTradeRate" placeholder="TP Rate" readonly style="background:#eef5ff;">
+                    </div>
+                    <div class="form-group">
+                        <label>Retail Price:</label>
+                        <input type="number" id="posItemRetailRate" placeholder="Retail Rate" readonly style="background:#eef5ff;">
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Type:</label>
+                        <select id="posItemDiscType" onchange="calculateRowTotal()">
+                            <option value="Amount">Rs</option>
+                            <option value="Percent">%</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Value:</label>
+                        <input type="number" id="posItemDiscVal" value="0" oninput="calculateRowTotal()">
+                    </div>
+                    <button class="btn-add" style="height: 28px;" onclick="addPosItem()">+ Add</button>
                 </div>
 
-                <div class="table-responsive" style="max-height: 160px; overflow-y: auto;">
+                <div class="table-responsive" style="max-height: 140px; overflow-y: auto;">
                     <table>
                         <thead>
                             <tr>
                                 <th>Item Description</th>
-                                <th style="width: 40px;">Qty</th>
-                                <th style="width: 55px;">Rate</th>
+                                <th style="width: 70px;">Ctn / Pcs</th>
+                                <th style="width: 55px;">Trade Rate</th>
+                                <th style="width: 55px;">Retail Rate</th>
+                                <th style="width: 60px;">Discount</th>
                                 <th style="width: 65px;">Total</th>
-                                <th style="width: 30px;">Action</th>
+                                <th style="width: 25px;">X</th>
                             </tr>
                         </thead>
                         <tbody id="posItemsTbody"></tbody>
                     </table>
                 </div>
 
-                <div style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px;">
-                        <span>Subtotal:</span><strong id="posSubtotalLbl">Rs. 0</strong>
+                <div style="margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 6px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                        <span>Trade Price Full Subtotal:</span><strong id="posTradeSubtotalLbl">Rs. 0</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">
-                        <span>Discount / Adjustment:</span>
-                        <input type="number" id="posDiscount" value="0" oninput="calculatePosTotals()" style="width: 90px; text-align: right; padding: 4px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: #7b1fa2;">
+                        <span>Item-wise Total Discount (-):</span><strong id="posItemDiscountsLbl">Rs. 0</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; color: #d32f2f;">
-                        <span>Previous Balance (سابقہ بقایہ):</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 2px; font-weight: bold;">
+                        <span>Remaining Amount:</span><strong id="posRemainingSubtotalLbl">Rs. 0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                        <span>Tax Add (+ %):</span>
+                        <input type="number" id="posTaxPercent" value="0" oninput="calculatePosTotals()" style="width: 70px; text-align: right; padding: 2px;">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #d32f2f;">
+                        <span>Previous Balance (سابقہ بقایا):</span>
                         <strong id="posPrevBalanceLbl">Rs. 0</strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">
-                        <span>On-Spot Cash Paid:</span>
-                        <input type="number" id="posPaid" value="0" oninput="calculatePosTotals()" style="width: 90px; text-align: right; padding: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; color: #2e7d32;">
+                        <span>Recovery / On-Spot Cash Paid (-):</span>
+                        <input type="number" id="posPaid" value="0" oninput="calculatePosTotals()" style="width: 70px; text-align: right; padding: 2px;">
                     </div>
-                    <div style="display: flex; justify-content: space-between; font-size: 14px; margin-top: 4px; border-top: 2px solid var(--primary-blue); padding-top: 4px;">
-                        <span>Net Payable Balance:</span><strong id="posGrandTotalLbl" style="color: var(--primary-blue);">Rs. 0</strong>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 3px; border-top: 2px solid var(--primary-blue); padding-top: 3px;">
+                        <span>New Bill Grand Total Balance (نیا بقایا):</span><strong id="posGrandTotalLbl" style="color: var(--primary-blue);">Rs. 0</strong>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <div style="display: flex; gap: 6px; margin-top: 8px;">
                     <button class="btn-add" style="flex:1;" onclick="savePosInvoice(false)">Save Order 💾</button>
-                    <button class="btn-excel" style="background: #0288d1; flex:1;" onclick="savePosInvoice(true)">Save & Print 🖨️</button>
+                    <button class="btn-excel" style="background: #0288d1; flex:1;" onclick="savePosInvoice(true)">Save & Print (A4 Dual A5) 🖨️</button>
                 </div>
             </div>
 
-            <!-- LIVE PRINTABLE PREVIEW WITH LOGO & PREVIOUS BALANCE -->
             <div class="pos-card">
                 <div class="snd-invoice-preview" id="livePreviewBox">
                     <div class="snd-header">
                         <div>
-                            <h3 style="margin:0; font-size: 15px; font-family: 'Montserrat', sans-serif; color: #1a0505;">HUSSAIN TRADERS</h3>
-                            <p style="font-size:9px; font-weight: bold;">Bannu Road, Dera Ismail Khan</p>
-                            <p style="font-size:9px; font-weight: bold; color: #1b5e20;">Phone: 03347218606</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <img src="Gemini_Generated_Image_mrfbflmrfbflmrfb.jpeg" style="height: 55px; width: auto; object-fit: contain;" alt="Logo" onerror="this.style.display='none'">
+                            <h3 style="margin:0; font-size: 13px; font-family: 'Montserrat', sans-serif;">HUSSAIN TRADERS</h3>
+                            <p style="font-size:8px;">Bannu Road, Dera Ismail Khan | Ph: 03347218606</p>
                         </div>
                     </div>
 
-                    <div style="font-size: 9px; margin-bottom: 6px; display: flex; justify-content: space-between; border-bottom: 1px dashed #000; padding-bottom: 4px;">
+                    <div style="font-size: 8px; margin-bottom: 4px; display: flex; justify-content: space-between; border-bottom: 1px dashed #000; padding-bottom: 2px;">
                         <div>
                             <div><strong>Inv #:</strong> <span id="prevInvNum">INV-1001</span></div>
-                            <div><strong>Shop:</strong> <span id="prevCustomer">GENERAL SHOP</span></div>
+                            <div><strong>Shop:</strong> <span id="prevCustomer">GENERAL STORE</span></div>
+                            <div><strong>Pay Mode:</strong> <span id="prevPayType">Credit</span></div>
                         </div>
                         <div style="text-align: right;">
                             <div><strong>Date:</strong> <span id="prevDate">--</span></div>
+                            <div><strong>Delivery:</strong> <span id="prevDeliveryDate">--</span></div>
                             <div><strong>Booker:</strong> <span id="prevBooker">ADMIN</span></div>
+                            <div><strong>Supply Man:</strong> <span id="prevSupplyMan">--</span></div>
                         </div>
                     </div>
 
                     <table class="snd-table">
                         <thead>
                             <tr>
-                                <th style="width: 45%;">Item Description</th>
-                                <th style="text-align: center; width: 15%;">Qty</th>
-                                <th style="text-align: right; width: 20%;">Rate</th>
-                                <th style="text-align: right; width: 20%;">Amount</th>
+                                <th>Item</th>
+                                <th style="text-align:center;">Ctn / Pcs</th>
+                                <th style="text-align:right;">Rate</th>
+                                <th style="text-align:right;">Disc</th>
+                                <th style="text-align:right;">Total</th>
                             </tr>
                         </thead>
                         <tbody id="prevItemsTbody">
-                            <tr><td colspan="4" style="text-align:center;">No Items Added</td></tr>
+                            <tr><td colspan="5" style="text-align:center;">No Items Added</td></tr>
                         </tbody>
                     </table>
 
-                    <div style="border-top: 1px dashed #000; padding-top: 4px; font-size: 10px;">
-                        <div style="display: flex; justify-content: space-between;"><span>Current Bill:</span><span id="prevSubtotal">Rs. 0</span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>Discount:</span><span id="prevDiscount">Rs. 0</span></div>
-                        <div style="display: flex; justify-content: space-between; color:#d32f2f; font-weight:bold;"><span>Previous Balance:</span><span id="prevOldBalance">Rs. 0</span></div>
-                        <div style="display: flex; justify-content: space-between; font-weight:bold; border-top:1px solid #000;"><span>Total Due:</span><span id="prevGrandTotal">Rs. 0</span></div>
-                        <div style="display: flex; justify-content: space-between;"><span>Cash Paid:</span><span id="prevPaid">Rs. 0</span></div>
-                        <div style="display: flex; justify-content: space-between; font-weight:bold; background:#eee; padding:2px;"><span>Net Balance Due:</span><span id="prevBalance">Rs. 0</span></div>
+                    <div style="border-top: 1px dashed #000; padding-top: 3px; font-size: 8px;">
+                        <div style="display: flex; justify-content: space-between;"><span>Full Trade Total:</span><span id="prevTradeSubtotal">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Total Disc:</span><span id="prevItemDiscounts">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Tax Added:</span><span id="prevTaxAmount">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between; color:#d32f2f;"><span>Previous Balance:</span><span id="prevOldBalance">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between; color:#2e7d32;"><span>Recovery Paid:</span><span id="prevRecoveryPaid">Rs. 0</span></div>
+                        <div style="display: flex; justify-content: space-between; font-weight:bold; border-top:1px solid #000; margin-top:2px;"><span>Net New Balance:</span><span id="prevGrandTotal">Rs. 0</span></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 3. PURCHASE STOCK INVOICE MANAGEMENT (باوقار پرچیز انوائس اینٹری) -->
-    <div id="stockPurchaseTab" class="tab-content">
-        <h3>📥 Stock Purchase Invoice Entry (کمپنی سے خریدنے کا انوائس فارم)</h3>
-        <div class="section-box">
-            <h4 style="color:var(--primary-blue); margin-bottom:10px;">1. Invoice & Supplier Details</h4>
+    <!-- NEW FEATURE 1: SUPPLY MAN RECOVERY & KPO SYSTEM -->
+    <div id="supplyManTab" class="tab-content">
+        <h3>🚚 Supply Man Cash Recovery & KPO Entry System</h3>
+        <div class="section-box" style="border-left: 4px solid var(--primary-blue);">
+            <h4 style="color: var(--primary-blue); margin-bottom: 8px;">📥 Supply Delivery Cash Collection & KPO Ledger Update</h4>
             <div class="form-grid">
-                <div class="form-group"><label>Invoice Date *:</label><input type="date" id="purInvDate"></div>
-                <div class="form-group"><label>Company / Supplier Name *:</label><input type="text" id="purSupplierName" placeholder="e.g. Unilever, Nestlé"></div>
-                <div class="form-group"><label>Invoice No *:</label><input type="text" id="purInvoiceNo" placeholder="INV-8890"></div>
-                <div class="form-group"><label>Vehicle No (گاڑی نمبر):</label><input type="text" id="purVehicleNo" placeholder="LES-1234"></div>
+                <div class="form-group">
+                    <label>Select Supply Man *:</label>
+                    <select id="kpoSupplyManSelect" onchange="renderSupplyManPendingInvoices()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Select Invoice / Order *:</label>
+                    <select id="kpoInvoiceSelect" onchange="updateKpoInvoiceFields()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Invoice Total Amount:</label>
+                    <input type="text" id="kpoInvTotal" readonly style="background:#eef5ff; font-weight:bold;">
+                </div>
+                <div class="form-group">
+                    <label>Cash Collected by Supply Man (Rs) *:</label>
+                    <input type="number" id="kpoCashCollected" placeholder="Enter Cash Collected" oninput="calculateKpoBalance()">
+                </div>
+                <div class="form-group">
+                    <label>Remaining Balance for Shop:</label>
+                    <input type="text" id="kpoRemainingBal" readonly style="background:#fff0f0; color:red; font-weight:bold;">
+                </div>
+                <div class="form-group">
+                    <label>KPO Entry Remarks:</label>
+                    <input type="text" id="kpoRemarks" placeholder="e.g. Delivered fully, partial paid">
+                </div>
             </div>
+            <button class="btn-add" style="width: 100%; margin-top: 10px;" onclick="submitKpoRecoveryEntry()">Process & Save KPO Recovery Entry 💾</button>
+        </div>
 
-            <h4 style="color:var(--primary-blue); margin: 15px 0 10px 0;">2. Bulk CSV / Excel File Upload Option</h4>
+        <h4>📑 Supply Cash Recovery Logs</h4>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Inv #</th>
+                        <th>Shop Name</th>
+                        <th>Supply Man</th>
+                        <th>Total Bill</th>
+                        <th>Cash Collected</th>
+                        <th>Added to Credit</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="kpoLogsTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- NEW FEATURE 2: MARKET RECOVERY & ADMIN APPROVAL -->
+    <div id="recoveryEntry" class="tab-content">
+        <h3>💰 Market Recovery & Admin Approval System</h3>
+        <div class="section-box" style="max-width: 500px;">
+            <h4 style="color:var(--primary-blue); margin-bottom:8px;">➕ Submit New Market Recovery</h4>
+            <div class="form-group"><label>Date:</label><input type="date" id="recDate"></div>
+            <div class="form-group"><label>Booker / Collector:</label><select id="recBookerSelect" onchange="filterRecoveryShopsByBooker()"></select></div>
+            <div class="form-group"><label>Shop Name:</label><select id="recShopSelect"></select></div>
+            <div class="form-group"><label>Amount Recovered (Rs):</label><input type="number" id="recAmount" placeholder="Enter Amount"></div>
+            <div class="form-group"><label>Payment Method:</label>
+                <select id="recPaymentMethod">
+                    <option value="Cash">Cash (نقد)</option>
+                    <option value="Cheque">Cheque (چیک)</option>
+                    <option value="Online Transfer">Online Bank Transfer</option>
+                </select>
+            </div>
+            <button class="btn-add" style="width: 100%; margin-top:8px;" onclick="submitRecoveryEntry()">Submit Recovery For Approval 📤</button>
+        </div>
+
+        <h4 style="margin-top:15px; margin-bottom:8px; color:var(--primary-blue);">🔍 Recoveries Approval Panel (Admin)</h4>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Shop Name</th>
+                        <th>Collector/Booker</th>
+                        <th>Payment Mode</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Admin Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recoveryApprovalTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- NEW FEATURE 3: MARKET CREDIT REPORT WITH INDIVIDUAL SHOP LEDGER VIEW -->
+    <div id="marketCreditReportTab" class="tab-content">
+        <h3>💳 Market Credit & Outstanding Balance Report</h3>
+        <div class="section-box no-print">
             <div class="form-grid">
-                <input type="file" id="purCsvFile" accept=".csv">
-                <button class="btn-excel" onclick="uploadStockCsv()">Upload & Import Stock CSV 📁</button>
+                <div>
+                    <label>Filter by Route / Area:</label>
+                    <select id="creditReportRouteFilter" onchange="renderMarketCreditReport()">
+                        <option value="ALL">All Routes</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Filter by Shop Ledger:</label>
+                    <select id="creditReportShopFilter" onchange="renderMarketCreditReport()">
+                        <option value="ALL">All Shops (Summary)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Search Shop Name:</label>
+                    <input type="text" id="creditReportSearch" placeholder="🔍 Search..." oninput="renderMarketCreditReport()">
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-excel" style="width:100%;" onclick="exportMarketCreditToExcel()">Export Report to Excel 📊</button>
+                </div>
             </div>
+        </div>
 
-            <h4 style="color:var(--primary-blue); margin: 15px 0 10px 0;">3. Add Products SKU / Itemwise</h4>
-            <div class="form-grid">
-                <input type="text" id="purItemName" placeholder="Product Name *">
-                <input type="text" id="purBrand" placeholder="Brand Name">
-                <input type="text" id="purCategory" placeholder="Category">
-                <input type="text" id="purSKU" placeholder="SKU Code">
-                <input type="number" id="purCartonQty" placeholder="Cartons Qty">
-                <input type="number" id="purPerCartonCost" placeholder="Cost Price / Carton">
-                <input type="number" id="purPieceCost" placeholder="Cost Price / Piece">
-                <input type="number" id="purTradePriceCarton" placeholder="Trade Price / Carton">
-                <input type="number" id="purTradePricePiece" placeholder="Trade Price / Piece (Selling)">
-                <button class="btn-add" onclick="addPurchaseRowItem()">+ Add Item to Invoice</button>
-            </div>
-
-            <div class="table-responsive" style="margin-top: 15px;">
+        <!-- Dynamic Container: Switches between summary table and single shop ledger -->
+        <div id="marketCreditReportContainer">
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Product Name</th>
-                            <th>Brand / SKU</th>
-                            <th>Carton Qty</th>
-                            <th>Cost/Carton</th>
-                            <th>Cost/Piece</th>
-                            <th>Trade Price/Piece</th>
-                            <th>Total Amount</th>
-                            <th>Action</th>
+                            <th>#</th>
+                            <th>Shop Name</th>
+                            <th>Owner Name</th>
+                            <th>Contact</th>
+                            <th>Route</th>
+                            <th>Assigned Booker</th>
+                            <th>Credit Limit</th>
+                            <th>Current Outstanding Balance</th>
+                            <th>Status</th>
+                            <th>Ledger</th>
+                        </tr>
+                    </thead>
+                    <tbody id="marketCreditReportTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAVED INVOICES LIST & MANAGEMENT -->
+    <div id="invoicesList" class="tab-content">
+        <h3>📄 Saved Sales Invoices List</h3>
+        <div class="section-box no-print">
+            <h4 style="color:var(--primary-blue); margin-bottom:8px;">🔍 Filter & Search Invoices</h4>
+            <div class="form-grid">
+                <div>
+                    <label>Order / Booking Date:</label>
+                    <input type="date" id="filterBookingDate" onchange="renderInvoicesTable()">
+                </div>
+                <div>
+                    <label>Delivery Date:</label>
+                    <input type="date" id="filterDeliveryDate" onchange="renderInvoicesTable()">
+                </div>
+                <div>
+                    <label>Search Shop / Booker / Inv #:</label>
+                    <input type="text" id="filterSearchQuery" placeholder="🔍 Search..." oninput="renderInvoicesTable()">
+                </div>
+                <div style="display:flex; align-items:flex-end; gap:5px;">
+                    <button class="btn-add" style="width:100%;" onclick="resetInvoiceFilters()">Reset Filters 🔄</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:25px;"><input type="checkbox" id="selectAllSalesInvoices" onclick="toggleSelectAllSalesInvoices(this)"></th>
+                        <th>Inv #</th>
+                        <th>Order Date</th>
+                        <th>Delivery Date</th>
+                        <th>Booker</th>
+                        <th>Supply Man</th>
+                        <th>Shop Name</th>
+                        <th>Pay Type</th>
+                        <th>Bill Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="invoicesTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- DELIVERY DATE MANAGEMENT -->
+    <div id="deliveryDateTab" class="tab-content">
+        <h3>📅 Delivery Date Management Section</h3>
+        <div class="section-box" style="border-left: 4px solid var(--primary-blue);">
+            <h4 style="color: var(--primary-blue); margin-bottom:6px;">🔹 Single Invoice Delivery Date Update</h4>
+            <div class="form-grid">
+                <div>
+                    <label>Select Saved Invoice:</label>
+                    <select id="singleInvDeliverySelect"></select>
+                </div>
+                <div>
+                    <label>New Delivery Date:</label>
+                    <input type="date" id="singleDeliveryDateInput">
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-add" style="width:100%;" onclick="updateSingleInvoiceDeliveryDate()">Update Delivery Date 📅</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-box" style="border-left: 4px solid #ffc107;">
+            <h4 style="color: #d32f2f; margin-bottom:6px;">🔹 Bulk Delivery Date Extension (Max 7 Days)</h4>
+            <div class="form-grid" style="margin-bottom:8px;">
+                <div>
+                    <label>Target Order Date:</label>
+                    <input type="date" id="bulkTargetOrderDate" onchange="renderBulkDeliveryTable()">
+                </div>
+                <div>
+                    <label>Target Route / Booker:</label>
+                    <select id="bulkTargetBookerSelect" onchange="renderBulkDeliveryTable()"></select>
+                </div>
+                <div>
+                    <label>New Extended Delivery Date:</label>
+                    <input type="date" id="bulkNewDeliveryDateInput">
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button class="btn-edit" style="width:100%;" onclick="applyBulkDeliveryDateUpdate()">Apply Selected Extended Dates 🔄</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:30px;"><input type="checkbox" id="selectAllBulkDelivery" onclick="toggleSelectAllBulkDelivery(this)"></th>
+                            <th>Inv #</th>
+                            <th>Shop Name</th>
+                            <th>Booker</th>
+                            <th>Current Order Date</th>
+                            <th>Current Delivery Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulkDeliveryTableTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PICKLIST SUMMARY -->
+    <div id="picklistTab" class="tab-content">
+        <h3>🚚 Picklist & Vehicle Load Summary</h3>
+        <div class="section-box no-print">
+            <div class="form-grid">
+                <div><label>Select Order Date:</label><input type="date" id="loadSheetDate"></div>
+                <div><label>Select Booker / Route:</label><select id="loadSheetBooker"></select></div>
+                <div style="display:flex; align-items:flex-end;"><button class="btn-add" style="width:100%;" onclick="generateVehicleLoadSheet()">Generate Picklist & Summary 📋</button></div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h4>📋 Generated Picklists Log</h4>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Picklist ID</th>
+                            <th>Order Date</th>
+                            <th>Booker / Route</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="generatedPicklistsTbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section-box" id="loadSheetPrintArea">
+            <h3 style="text-align:center;">🚚 HUSSAIN TRADERS - PICKLIST & ROUTE SALE SUMMARY</h3>
+            <p style="text-align:center; font-size:10px; margin-bottom:8px;">Date: <strong id="loadSheetDateLbl">--</strong> | Booker/Route: <strong id="loadSheetBookerLbl">ALL</strong></p>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>#</th><th>Product Name</th><th>Packing</th><th>Total Cartons</th><th>Loose Pieces</th><th>Total Pieces</th></tr></thead>
+                    <tbody id="loadSheetTableTbody"><tr><td colspan="6" style="text-align:center;">No data generated.</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SALES RETURN -->
+    <div id="salesReturnTab" class="tab-content">
+        <h3>🔄 Sales & Udhaar Credit Stock Return</h3>
+
+        <div class="section-box" style="border-left:4px solid #11998e; background:#f0fdf4;">
+            <h4 style="color:#11998e; margin-bottom:6px;">💰 Old Udhaar Stock Return</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Return Date:</label><input type="date" id="creditRetDate"></div>
+                <div class="form-group"><label>Select Shop / Customer:</label><select id="creditRetShopSelect" onchange="updateCreditReturnPrevBal()"></select></div>
+                <div class="form-group"><label>Current Udhaar Balance:</label><input type="text" id="creditRetPrevBal" readonly style="background:#eef5ff; font-weight:bold; color:red;"></div>
+                <div class="form-group"><label>Product Name *:</label><input type="text" id="creditRetItemInput" list="stockDatalist" placeholder="Select Product"></div>
+                <div class="form-group"><label>Returned Pieces *:</label><input type="number" id="creditRetPcsQty" placeholder="Pcs Qty"></div>
+                <div class="form-group"><label>Stock Return Rate (Rs) *:</label><input type="number" id="creditRetRate" placeholder="Rate / Pc"></div>
+            </div>
+            <button class="btn-add" style="width:100%; margin-top:8px; background:#11998e;" onclick="submitCreditStockWasooliReturn()">Submit Udhaar Stock Wasooli Return 📥</button>
+        </div>
+
+        <div class="section-box" style="border-left:4px solid #d32f2f;">
+            <h4 style="color:#d32f2f; margin-bottom:6px;">🚫 Full Invoice Cancel / Return</h4>
+            <div class="form-grid">
+                <div><label>Select Saved Invoice:</label><select id="fullReturnInvSelect"></select></div>
+                <div><label>Reason for Full Return *:</label><input type="text" id="fullReturnReason" placeholder="Reason for return"></div>
+                <div style="display:flex; align-items:flex-end;"><button class="btn-delete" style="width:100%;" onclick="processFullInvoiceReturn()">Cancel Full Invoice 🔄</button></div>
+            </div>
+        </div>
+
+        <div class="section-box">
+            <h4 style="color:var(--primary-blue); margin-bottom:6px;">📦 General Item Return</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Return Date:</label><input type="date" id="retDate"></div>
+                <div class="form-group"><label>Select Shop:</label><select id="retShopSelect"></select></div>
+                <div class="form-group"><label>Return Type:</label><select id="retType"><option value="Fresh">Fresh Return</option><option value="Damage">Damage / Expiry</option></select></div>
+                <div class="form-group"><label>Product Name:</label><input type="text" id="retItemInput" list="stockDatalist" placeholder="Select Product"></div>
+                <div class="form-group"><label>Returned Pieces:</label><input type="number" id="retPcsQty" placeholder="Quantity"></div>
+                <div class="form-group"><label>Refund Rate:</label><input type="number" id="retRate" placeholder="Rate"></div>
+                <div class="form-group" style="grid-column: span 2;"><label>Return Reason *:</label><input type="text" id="retItemReason" placeholder="Enter Reason"></div>
+            </div>
+            <button class="btn-add" style="width:100%; margin-top:8px;" onclick="submitSalesReturn()">Submit Item Return 📥</button>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Date</th><th>Shop</th><th>Type</th><th>Item</th><th>Qty Pcs</th><th>Rate</th><th>Total Wasool / Refund</th><th>Remarks / Reason</th></tr></thead>
+                <tbody id="returnsTableTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- COMPANY DAMAGE CLAIMS -->
+    <div id="companyDamageClaimTab" class="tab-content">
+        <h3>⚠️ Company Damage & Expiry Claims System</h3>
+        <div class="section-box">
+            <h4 style="color:var(--urdu-red); margin-bottom:6px;">➕ Create Claim Invoice to Company</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Claim Date *:</label><input type="date" id="claimDate"></div>
+                <div class="form-group"><label>Company / Supplier Name *:</label><input type="text" id="claimCompany" placeholder="e.g. Shahi Foods"></div>
+                <div class="form-group"><label>Product Name *:</label><input type="text" id="claimItemName" list="stockDatalist" placeholder="Select Product"></div>
+                <div class="form-group"><label>Claim Type *:</label><select id="claimType"><option value="Damage">Damage Stock</option><option value="Expired">Expired Stock</option></select></div>
+                <div class="form-group"><label>Pieces Qty *:</label><input type="number" id="claimPcsQty" placeholder="Pieces"></div>
+                <div class="form-group"><label>Cost Price Rate *:</label><input type="number" id="claimRate" placeholder="Cost Rate"></div>
+                <div class="form-group"><label>Claim Reason *:</label><input type="text" id="claimReason" placeholder="Reason"></div>
+            </div>
+            <button class="btn-add" style="width:100%; margin-top:8px; background:var(--urdu-red);" onclick="submitCompanyDamageClaim()">Submit Claim Invoice 📤</button>
+        </div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Date</th>
+                        <th>Company</th>
+                        <th>Product</th>
+                        <th>Type</th>
+                        <th>Qty Pcs</th>
+                        <th>Total Investment</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="companyClaimsTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SHOP WISE TAX REPORT -->
+    <div id="shopWiseTaxReportTab" class="tab-content">
+        <h3>📑 Shop Wise Tax Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Shop Name</th>
+                        <th>Total Invoices</th>
+                        <th>Sales Amount</th>
+                        <th>Tax (%) Applied</th>
+                        <th>Total Tax Amount Collected</th>
+                    </tr>
+                </thead>
+                <tbody id="shopWiseTaxReportTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PURCHASE STOCK INVOICE ENTRY WITH EXCEL/PDF/IMAGE IMPORT -->
+    <div id="stockPurchaseTab" class="tab-content">
+        <h3>📥 Purchase Stock Invoice Entry</h3>
+        <div class="section-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h4 style="color:var(--primary-blue);">Invoice Details & Stock Import</h4>
+                <div>
+                    <input type="file" id="purchaseImportFile" accept=".xlsx, .xls, .pdf, image/*" style="display:none;" onchange="handlePurchaseImport(event)">
+                    <button class="btn-excel" onclick="document.getElementById('purchaseImportFile').click()">📥 Stock Import (Excel / PDF / Image)</button>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group"><label>Invoice Date *:</label><input type="date" id="purInvDate"></div>
+                <div class="form-group"><label>Category *:</label><select id="purCategory"><option value="Shahi Foods">Shahi Foods</option><option value="General">General</option></select></div>
+                <div class="form-group"><label>Supplier Name *:</label><input type="text" id="purSupplierName" placeholder="e.g. Shahi Foods"></div>
+                <div class="form-group"><label>Purchase Invoice No *:</label><input type="text" id="purInvoiceNo" placeholder="INV-8890"></div>
+                <div class="form-group"><label>Attach Invoice:</label><input type="file" id="purInvoiceAttachment" accept="image/*,.pdf,.xlsx,.xls"></div>
+            </div>
+
+            <h4 style="color:var(--primary-blue); margin: 10px 0 6px 0;">Add Products</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Product Name *:</label><input type="text" id="purItemName" placeholder="Product Name"></div>
+                <div class="form-group"><label>Cotton Packing (Pcs) *:</label><input type="number" id="purPcsPerCarton" placeholder="e.g. 24" value="24"></div>
+                <div class="form-group"><label>Cartons Quantity *:</label><input type="number" id="purCartonQty" placeholder="Cartons"></div>
+                <div class="form-group"><label>List Price (Cost) *:</label><input type="number" id="purPieceCost" placeholder="List Price"></div>
+                <div class="form-group"><label>Trade Price / Pcs:</label><input type="number" id="purTradePricePiece" placeholder="TP Price"></div>
+                <div class="form-group"><label>Retail Price / Pcs:</label><input type="number" id="purRetailPricePiece" placeholder="Retail Price"></div>
+                <div style="display:flex; align-items:flex-end;"><button class="btn-add" style="width:100%; height:28px;" onclick="addPurchaseRowItem()">+ Add Product</button></div>
+            </div>
+
+            <div class="table-responsive" style="margin-top: 10px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>SKU Code</th>
+                            <th>Category</th>
+                            <th>Product</th>
+                            <th>Packing (Carton)</th>
+                            <th>Cartons Qty</th>
+                            <th>Total Pieces</th>
+                            <th>List Price</th>
+                            <th>Trade Price</th>
+                            <th>Retail Price</th>
+                            <th>Subtotal</th>
+                            <th>X</th>
                         </tr>
                     </thead>
                     <tbody id="purInvoiceItemsTbody"></tbody>
                 </table>
             </div>
 
-            <button class="btn-add" style="margin-top: 15px; width: 100%; font-size: 15px;" onclick="saveCompletePurchaseInvoice()">Save Complete Purchase Invoice 💾</button>
+            <div style="display:flex; gap:10px; margin-top:12px;">
+                <button class="btn-add" style="flex:1;" onclick="saveCompletePurchaseInvoice(false)">Save Purchase Invoice 💾</button>
+            </div>
         </div>
     </div>
 
-    <!-- 4. LIVE STOCK INVENTORY -->
-    <div id="liveStockTab" class="tab-content">
-        <h3>📦 Live Stock & Inventory Report</h3>
+    <!-- PURCHASE INVOICES LIST -->
+    <div id="purchaseInvoiceListTab" class="tab-content">
+        <h3>📑 Saved Purchase Invoices List</h3>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th>Product Name</th>
-                        <th>Brand / Category</th>
-                        <th>SKU</th>
-                        <th>Cost Price (Piece)</th>
-                        <th>Trade Price (Piece)</th>
-                        <th>Available Stock Qty</th>
+                        <th style="width:25px;"><input type="checkbox" id="selectAllPurInvoices" onclick="toggleSelectAllPurInvoices(this)"></th>
+                        <th>Purchase Inv #</th>
+                        <th>Date</th>
+                        <th>Supplier Name</th>
+                        <th>Category</th>
+                        <th>Total Items</th>
+                        <th>Total Amount</th>
+                        <th>Actions</th>
                     </tr>
+                </thead>
+                <tbody id="purInvoicesListTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PURCHASE STOCK REPORT -->
+    <div id="purchaseStockReportTab" class="tab-content">
+        <h3>📦 Purchase Stock Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>SKU Code</th>
+                        <th>Category</th>
+                        <th>Product Name</th>
+                        <th>Cotton Packing</th>
+                        <th>Total Cartons Purchased</th>
+                        <th>Total Pieces Purchased</th>
+                        <th>Total Investment</th>
+                    </tr>
+                </thead>
+                <tbody id="purStockReportTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- LIVE STOCK TAB -->
+    <div id="liveStockTab" class="tab-content">
+        <h3>📦 Live Stock Inventory Management</h3>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr><th>SKU Code</th><th>Category</th><th>Product Name</th><th>Packing</th><th>List Price</th><th>Trade Price</th><th>Retail Price</th><th>Available Stock</th><th>Total Pieces</th></tr>
                 </thead>
                 <tbody id="liveStockInventoryTbody"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- 5. SHOPS & ROUTE MANAGEMENT -->
+    <!-- SHOPS TAB WITH BULK EXCEL IMPORT & AREA GROUPING -->
     <div id="shops" class="tab-content">
         <h3>🏪 Shops & Route Management</h3>
         <div class="section-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <h4 style="color:var(--primary-blue);">Add Shop & Grouping</h4>
+                <div>
+                    <input type="file" id="bulkShopExcelFile" accept=".xlsx, .xls" style="display:none;" onchange="importBulkShopsExcel(event)">
+                    <button class="btn-excel" onclick="document.getElementById('bulkShopExcelFile').click()">📊 Bulk Import Shops (Excel)</button>
+                </div>
+            </div>
             <div class="form-grid">
                 <input type="text" id="newShopName" placeholder="Shop Name *">
                 <input type="text" id="newOwnerName" placeholder="Owner Name">
                 <input type="text" id="newShopContact" placeholder="Contact No">
-                <input type="text" id="newShopAddress" placeholder="Address">
-                <input type="text" id="newShopRoute" placeholder="Route / Area (e.g. Bannu Road)">
+                <input type="text" id="newShopRoute" placeholder="Route / Area Group *">
+                <input type="number" id="newShopCreditLimit" placeholder="Credit Limit (Rs.)" value="50000">
                 <select id="newShopBooker"></select>
                 <button class="btn-add" onclick="addSingleShop()">Add Shop</button>
             </div>
         </div>
-
         <div class="table-responsive">
             <table>
-                <thead>
-                    <tr>
-                        <th>Shop Name</th>
-                        <th>Owner Name</th>
-                        <th>Route / Area</th>
-                        <th>Contact</th>
-                        <th>Booker</th>
-                        <th>Balance Due</th>
-                        <th>Actions / Ledger</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Shop Name</th><th>Owner</th><th>Route / Area Group</th><th>Booker</th><th>Credit Limit</th><th>Balance Due</th></tr></thead>
                 <tbody id="shopsTable"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- SHOP DETAILED LEDGER MODAL BOX -->
-    <div id="shopLedgerModal" class="section-box" style="display:none; position:fixed; top:10%; left:10%; width:80%; height:80%; z-index:999; overflow-y:auto; background:var(--card-bg); border:2px solid var(--primary-blue);">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <h3 id="modalShopTitle">Shop Ledger</h3>
-            <button class="btn-delete" onclick="document.getElementById('shopLedgerModal').style.display='none'">Close ✖</button>
-        </div>
-        <div id="modalLedgerContent"></div>
-    </div>
-
-    <!-- 6. EXPENSES ENTRY (خرچہ کا اپشن) -->
+    <!-- EXPENSES ENTRY -->
     <div id="expensesEntry" class="tab-content">
-        <h3>💸 Add Daily Expense (روزمرہ خرچہ کی انٹری)</h3>
-        <div class="section-box" style="max-width: 500px;">
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Expense Date:</label>
-                <input type="date" id="expDate">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Expense Category / Title:</label>
-                <input type="text" id="expTitle" placeholder="e.g. Fuel, Tea, Rent">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Amount Paid (Rs):</label>
-                <input type="number" id="expAmount" placeholder="Enter Amount">
-            </div>
-            <div class="form-group" style="margin-bottom: 12px;">
-                <label>Remarks / Paid To:</label>
-                <input type="text" id="expRemarks" placeholder="Optional Details">
-            </div>
-            <button class="btn-add" style="width: 100%;" onclick="addExpenseRecord()">Save Expense 💾</button>
+        <h3>💸 Expense Entry</h3>
+        <div class="section-box" style="max-width: 400px;">
+            <div class="form-group"><label>Date:</label><input type="date" id="expDate"></div>
+            <div class="form-group"><label>Title:</label><input type="text" id="expTitle" placeholder="Fuel, Tea, Rent"></div>
+            <div class="form-group"><label>Amount (Rs):</label><input type="number" id="expAmount"></div>
+            <button class="btn-add" style="width: 100%; margin-top:8px;" onclick="addExpenseRecord()">Save Expense 💾</button>
         </div>
     </div>
 
-    <!-- 7. WASOLI / RECOVERY ENTRY WITH EXTRA DISCOUNT -->
-    <div id="recoveryEntry" class="tab-content">
-        <h3>💰 Market Wasoli / Cash Recovery</h3>
-        <div class="section-box" style="max-width: 500px;">
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Recovery Date:</label>
-                <input type="date" id="recDate">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Booker Name:</label>
-                <select id="recBookerSelect" onchange="filterRecoveryShopsByBooker()"></select>
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Select Shop / Customer:</label>
-                <select id="recShopSelect"></select>
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Recovered Cash Amount (Rs):</label>
-                <input type="number" id="recAmount" placeholder="Enter Cash Amount Collected">
-            </div>
-            <div class="form-group" style="margin-bottom: 8px;">
-                <label>Extra Discount Given (Rs) (چھوٹ):</label>
-                <input type="number" id="recExtraDiscount" value="0" placeholder="e.g. 50">
-            </div>
-            <button class="btn-add" style="width: 100%;" onclick="submitRecoveryEntry()">Submit Recovery 📤</button>
-        </div>
-    </div>
-
-    <!-- 8. DAILY OWNER KPO SUMMARY REPORT -->
-    <div id="ownerDailySummary" class="tab-content">
-        <h3>📝 Daily Summary Report for Owner / KPO</h3>
-        <div class="section-box no-print">
-            <input type="date" id="ownerSummaryDate" onchange="renderOwnerDailySummary()">
-            <button class="btn-excel" onclick="window.print()">Print Owner Summary 🖨️</button>
-        </div>
-
-        <div class="section-box" id="ownerSummaryPrintArea">
-            <h2 style="text-align:center; color: var(--urdu-red); font-family: 'Noto Nastaliq Urdu';">حُسَیْن ٹْرِیَڈَرْزْ - روزانہ کی خلاصہ رپورٹ</h2>
-            <p style="text-align:center; font-weight:bold; margin-bottom:15px;">Date: <span id="summaryDateLbl">--</span></p>
-
-            <table style="width:100%; border-collapse:collapse; margin-bottom:15px;">
-                <tr><td style="padding:8px; font-weight:bold;">Total Sales (کل فروخت):</td><td style="padding:8px; font-weight:bold;" id="sumTotalSales">Rs. 0</td></tr>
-                <tr><td style="padding:8px; font-weight:bold;">Total Credit / Udhaar Sales (کل ادھار):</td><td style="padding:8px; font-weight:bold; color:#d32f2f;" id="sumTotalUdhaar">Rs. 0</td></tr>
-                <tr><td style="padding:8px; font-weight:bold;">Total Wasoli Recovered (کل واصولی):</td><td style="padding:8px; font-weight:bold; color:#2e7d32;" id="sumTotalRecovery">Rs. 0</td></tr>
-                <tr><td style="padding:8px; font-weight:bold;">Total Expenses Paid (کل اخراجات):</td><td style="padding:8px; font-weight:bold; color:#c62828;" id="sumTotalExpenses">Rs. 0</td></tr>
-                <tr><td style="padding:8px; font-weight:bold;">Total Discount Given (کل ڈسکاؤنٹ):</td><td style="padding:8px; font-weight:bold; color:#f57c00;" id="sumTotalDiscount">Rs. 0</td></tr>
-                <tr style="background:#eef5ff;"><td style="padding:10px; font-weight:bold; font-size:15px;">Estimated Net Profit (آج کا خالص منافع):</td><td style="padding:10px; font-weight:bold; font-size:15px; color:#0056b3;" id="sumNetProfit">Rs. 0</td></tr>
+    <!-- REPORTS & USERS -->
+    <div id="reportUdhaar" class="tab-content">
+        <h3>📋 Udhaar & Ledger Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Shop Name</th><th>Route</th><th>Booker</th><th>Balance Due</th></tr></thead>
+                <tbody id="ledgerTable"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- 9. USER PERMISSIONS MANAGEMENT -->
-    <div id="users" class="tab-content">
-        <h3>⚙️ User Management & Role Access Permissions</h3>
+    <div id="stockDetailReport" class="tab-content">
+        <h3>📦 Stock Detail Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>#</th><th>Category</th><th>Product Name</th><th>Packing</th><th>Purchase Rate</th><th>Trade Rate</th><th>Retail Rate</th><th>Available Stock</th></tr></thead>
+                <tbody id="stockReportTableTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="bookerReports" class="tab-content">
+        <h3>📋 Booker Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Booker</th><th>Total Invoices</th><th>Total Sales Amount</th></tr></thead>
+                <tbody id="shopWiseReportTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="expensesReport" class="tab-content">
+        <h3>💵 Expense Report</h3>
+        <div class="table-responsive">
+            <table>
+                <thead><tr><th>Date</th><th>Title</th><th>Amount</th></tr></thead>
+                <tbody id="expenseReportTbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="ownerDailySummary" class="tab-content">
+        <h3>📝 Owner Daily Summary Report</h3>
         <div class="section-box">
-            <div class="form-grid">
-                <input type="text" id="newUsername" placeholder="Username *">
-                <input type="password" id="newUserPass" placeholder="Password *">
-                <select id="newUserRole">
-                    <option value="Admin">Admin (Full Control)</option>
-                    <option value="Order Booker">Order Booker</option>
-                    <option value="Stock Manager">Stock Manager</option>
-                </select>
-                <button class="btn-add" onclick="addNewUser()">Add / Grant Access</button>
+            <input type="date" id="ownerSummaryDate" onchange="renderOwnerDailySummary()">
+            <div id="ownerSummaryPrintArea" style="margin-top:10px;">
+                <p>Total Sales: <strong id="sumTotalSales">Rs. 0</strong></p>
+                <p>Total Recovery: <strong id="sumTotalRecovery">Rs. 0</strong></p>
+                <p>Total Expenses: <strong id="sumTotalExpenses">Rs. 0</strong></p>
             </div>
+        </div>
+    </div>
+
+    <!-- USER MANAGEMENT WITH GRANULAR ACCESS CONTROLS -->
+    <div id="users" class="tab-content">
+        <h3>⚙️ User Management & Module Access Permissions</h3>
+        <div class="section-box">
+            <h4 style="color:var(--primary-blue); margin-bottom:6px;">Add / Edit User Access</h4>
+            <div class="form-grid">
+                <input type="text" id="newUsername" placeholder="Username">
+                <input type="password" id="newUserPass" placeholder="Password">
+                <select id="newUserRole">
+                    <option value="Admin">Admin</option>
+                    <option value="Order Booker">Order Booker</option>
+                    <option value="Supply Man">Supply Man</option>
+                    <option value="Custom">Custom Role</option>
+                </select>
+            </div>
+            
+            <h5 style="margin-top:10px; color:var(--primary-blue);">Module Permissions (Custom Access):</h5>
+            <div class="perm-checkbox-group" id="permissionCheckboxes">
+                <label class="perm-item"><input type="checkbox" value="dashboard" checked> Dashboard</label>
+                <label class="perm-item"><input type="checkbox" value="posSales" checked> Order Punching / POS</label>
+                <label class="perm-item"><input type="checkbox" value="invoicesList" checked> Saved Invoices</label>
+                <label class="perm-item"><input type="checkbox" value="deliveryDateTab" checked> Delivery Dates</label>
+                <label class="perm-item"><input type="checkbox" value="picklistTab" checked> Picklist Summary</label>
+                <label class="perm-item"><input type="checkbox" value="salesReturnTab" checked> Sales Returns</label>
+                <label class="perm-item"><input type="checkbox" value="companyDamageClaimTab" checked> Company Claims</label>
+                <label class="perm-item"><input type="checkbox" value="stockPurchaseTab" checked> Purchase Entry</label>
+                <label class="perm-item"><input type="checkbox" value="purchaseInvoiceListTab" checked> Purchase Invoices</label>
+                <label class="perm-item"><input type="checkbox" value="purchaseStockReportTab" checked> Purchase Stock Report</label>
+                <label class="perm-item"><input type="checkbox" value="liveStockTab" checked> Live Stock</label>
+                <label class="perm-item"><input type="checkbox" value="supplyManTab" checked> Supply Man & KPO</label>
+                <label class="perm-item"><input type="checkbox" value="recoveryEntry" checked> Market Recovery</label>
+                <label class="perm-item"><input type="checkbox" value="expensesEntry" checked> Expense Entry</label>
+                <label class="perm-item"><input type="checkbox" value="shops" checked> Shops Management</label>
+                <label class="perm-item"><input type="checkbox" value="marketCreditReportTab" checked> Market Credit Report</label>
+                <label class="perm-item"><input type="checkbox" value="shopWiseTaxReportTab" checked> Tax Report</label>
+                <label class="perm-item"><input type="checkbox" value="reportUdhaar" checked> Udhaar Report</label>
+                <label class="perm-item"><input type="checkbox" value="stockDetailReport" checked> Stock Detail Report</label>
+                <label class="perm-item"><input type="checkbox" value="bookerReports" checked> Booker Report</label>
+                <label class="perm-item"><input type="checkbox" value="expensesReport" checked> Expense Report</label>
+                <label class="perm-item"><input type="checkbox" value="ownerDailySummary" checked> Owner Daily Summary</label>
+                <label class="perm-item"><input type="checkbox" value="users" checked> User Roles</label>
+                <label class="perm-item"><input type="checkbox" value="backup" checked> Backup System</label>
+            </div>
+
+            <button class="btn-add" style="margin-top:10px; width:100%;" onclick="addNewUser()">Save User & Access Rights 💾</button>
         </div>
 
         <div class="table-responsive">
             <table>
-                <thead>
-                    <tr><th>Username</th><th>Password</th><th>Role Access</th><th>Action</th></tr>
-                </thead>
+                <thead><tr><th>Username</th><th>Role</th><th>Allowed Access Modules</th><th>Action</th></tr></thead>
                 <tbody id="usersTable"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- 10. BACKUP & RESTORE SYSTEM -->
+    <!-- BACKUP SYSTEM -->
     <div id="backup" class="tab-content">
-        <h3>💾 Backup & Data Restore System</h3>
-        <div class="section-box">
-            <h4>Download Database Backup File</h4>
-            <button class="btn-add" style="margin-top:8px;" onclick="downloadBackup()">Download Complete JSON Backup 📥</button>
-
-            <h4 style="margin-top:20px;">Upload / Restore Database Backup File</h4>
-            <input type="file" id="restoreBackupFile" accept=".json" style="margin-top:8px;">
-            <button class="btn-excel" style="margin-top:8px;" onclick="restoreBackup()">Upload & Restore System Data 📤</button>
+        <h3>💾 Complete Data Backup & Restore System</h3>
+        <div class="section-box" style="display:flex; gap:10px;">
+            <button class="btn-add" style="flex:1;" onclick="downloadBackup()">Download JSON Backup 📥</button>
+            <input type="file" id="restoreFile" accept=".json" style="display:none;" onchange="restoreData(event)">
+            <button class="btn-excel" style="flex:1; background:#0288d1;" onclick="document.getElementById('restoreFile').click()">Restore Data File 📤</button>
         </div>
     </div>
-
-    <!-- OTHER TAB SECTIONS (Invoices, Reports, Approvals, Expenses) -->
-    <div id="recoveryApprovals" class="tab-content"><h3>✅ Admin Approvals</h3><div class="table-responsive"><table><thead><tr><th>#</th><th>Date</th><th>Booker</th><th>Shop</th><th>Amount</th></tr></thead><tbody id="adminApprovalTable"></tbody></table></div></div>
-    <div id="invoicesList" class="tab-content"><h3>📄 Saved Invoices</h3><div class="table-responsive"><table><thead><tr><th>Inv #</th><th>Date</th><th>Booker</th><th>Shop</th><th>Total</th><th>Action</th></tr></thead><tbody id="invoicesTable"></tbody></table></div></div>
-    <div id="reportUdhaar" class="tab-content"><h3>📋 Udhaar & Shop Ledger Report</h3><div class="table-responsive"><table><thead><tr><th>Date</th><th>Shop</th><th>Booker</th><th>Sale</th><th>Recovery</th></tr></thead><tbody id="ledgerTable"></tbody></table></div></div>
-    <div id="bookerReports" class="tab-content"><h3>📋 Booker Shopwise Report</h3><div class="table-responsive"><table><thead><tr><th>Shop</th><th>Booker</th><th>Total Sale</th></tr></thead><tbody id="shopWiseReportTbody"></tbody></table></div></div>
-    <div id="discountReport" class="tab-content"><h3>🏷️ Discount Report</h3><div class="table-responsive"><table><thead><tr><th>Inv #</th><th>Shop</th><th>Discount</th></tr></thead><tbody id="discountReportTbody"></tbody></table></div></div>
-    <div id="expensesReport" class="tab-content"><h3>💵 Expense Report</h3><div class="table-responsive"><table><thead><tr><th>Date</th><th>Title</th><th>Amount</th></tr></thead><tbody id="expenseReportTbody"></tbody></table></div></div>
-    <div id="profitLoss" class="tab-content"><h3>📊 Profit & Loss Report</h3><div id="plDisplay"></div></div>
-
 </div>
 
-<!-- AI ASSISTANT WIDGET -->
-<button class="ai-assistant-btn no-print" onclick="toggleAiChat()">🤖</button>
-<div class="ai-chat-box no-print" id="aiChatBox">
-    <div class="ai-chat-header">
-        <span>🤖 Hussain Traders AI Assistant</span>
-        <span style="cursor:pointer;" onclick="toggleAiChat()">✖</span>
-    </div>
-    <div class="ai-chat-messages" id="aiChatMessages">
-        <div style="background:#e1f5fe; padding:8px; border-radius:6px; margin-bottom:6px; color:#000;">سلام! میں آپ کا AI اسسٹنٹ ہوں۔ آپ کیا معلوم کرنا چاہتے ہیں؟</div>
-    </div>
-    <div class="ai-chat-input">
-        <input type="text" id="aiQueryInput" placeholder="سوال پوچھیں..." onkeydown="if(event.key==='Enter') sendAiMessage()">
-        <button class="btn-add" onclick="sendAiMessage()">Send</button>
-    </div>
-</div>
+<!-- PRINT CONTAINER -->
+<div id="printableA4DualContainer" class="print-dual-container" style="display:none;"></div>
 
 <script>
-    // DATABASES
+    // DATABASES INITIALIZATION
     let dbInvoices = JSON.parse(localStorage.getItem('ht_invoices')) || [];
+    let dbPurchaseInvoices = JSON.parse(localStorage.getItem('ht_purchase_invoices')) || [];
     let dbShops = JSON.parse(localStorage.getItem('ht_shops')) || [
-        { name: 'AL-MADINA STORE', owner: 'Ali', contact: '03347218606', address: 'Bannu Road', route: 'Bannu Road Area', booker: 'Huzaifa' }
+        { name: 'AL-MADINA STORE', owner: 'Ali', contact: '03347218606', route: 'Bannu Road Area', booker: 'Huzaifa', creditLimit: 50000 }
     ];
-    let dbStock = JSON.parse(localStorage.getItem('ht_stock')) || [];
+    let dbStock = JSON.parse(localStorage.getItem('ht_stock')) || [
+        { id: 'STK_1', sku: 'SKU-GEN-1001', category: 'General', name: 'JUICE 200ML', pcsPerCarton: 24, qty: 240, costPrice: 30, tradePrice: 40, retailPrice: 45 },
+        { id: 'STK_2', sku: 'SKU-SHAHI-1002', category: 'Shahi Foods', name: 'SHAHI NMT KACHORI', pcsPerCarton: 24, qty: 120, costPrice: 15, tradePrice: 20, retailPrice: 25 },
+        { id: 'STK_3', sku: 'SKU-SHAHI-1003', category: 'Shahi Foods', name: 'SHAHI DAHI BHALAY', pcsPerCarton: 24, qty: 120, costPrice: 25, tradePrice: 35, retailPrice: 40 }
+    ];
     let dbRecoveries = JSON.parse(localStorage.getItem('ht_recoveries')) || [];
+    let dbKpoLogs = JSON.parse(localStorage.getItem('ht_kpo_logs')) || [];
     let dbExpenses = JSON.parse(localStorage.getItem('ht_expenses')) || [];
+    let dbReturns = JSON.parse(localStorage.getItem('ht_returns')) || [];
+    let dbCompanyClaims = JSON.parse(localStorage.getItem('ht_company_claims')) || [];
     let dbUsers = JSON.parse(localStorage.getItem('ht_users')) || [
-        { username: 'admin', pass: 'admin', role: 'Admin' },
-        { username: 'Huzaifa', pass: '1234', role: 'Order Booker' }
+        { username: 'admin', pass: 'admin', role: 'Admin', permissions: ['ALL'] },
+        { username: 'Huzaifa', pass: '1234', role: 'Order Booker', permissions: ['dashboard', 'posSales', 'invoicesList', 'shops'] },
+        { username: 'Tariq Supply', pass: '1234', role: 'Supply Man', permissions: ['dashboard', 'supplyManTab'] }
     ];
+    let dbGeneratedPicklists = JSON.parse(localStorage.getItem('ht_generated_picklists')) || [];
+    let dbCashInHand = parseFloat(localStorage.getItem('ht_cash_in_hand')) || 0;
 
+    let currentUser = null;
     let currentPosItems = [];
     let currentPurInvoiceItems = [];
 
     window.onload = function() {
-        const today = new Date().toISOString().slice(0,10);
-        document.getElementById('posInvDate').value = today;
-        document.getElementById('purInvDate').value = today;
-        document.getElementById('recDate').value = today;
-        document.getElementById('expDate').value = today;
-        document.getElementById('ownerSummaryDate').value = today;
+        const today = new Date();
+        const todayStr = today.toISOString().slice(0,10);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().slice(0,10);
 
-        populateBookerDropdowns();
+        document.getElementById('posInvDate').value = todayStr;
+        document.getElementById('posDeliveryDate').value = tomorrowStr;
+        document.getElementById('purInvDate').value = todayStr;
+        document.getElementById('recDate').value = todayStr;
+        document.getElementById('expDate').value = todayStr;
+        document.getElementById('retDate').value = todayStr;
+        document.getElementById('creditRetDate').value = todayStr;
+        document.getElementById('claimDate').value = todayStr;
+        document.getElementById('loadSheetDate').value = todayStr;
+        document.getElementById('ownerSummaryDate').value = todayStr;
+
+        generateInvoiceNumber();
+        populateUserDropdowns();
         renderDashboard();
         renderShops();
         renderLiveStockInventory();
         renderUsersTable();
-        initTradingCanvas();
+        updateStockDatalist();
+        renderInvoicesTable();
+        renderReturnsTable();
+        renderKpoLogsTable();
+        renderRecoveryApprovalTable();
+        renderMarketCreditReport();
         setInterval(updateClock, 1000);
     };
 
     function updateClock() { document.getElementById('liveDateTimeLabel').innerText = new Date().toLocaleString(); }
-
     function toggleTheme() { document.body.classList.toggle('dark-theme'); }
-
     function toggleSubmenu(id) { document.getElementById(id).classList.toggle('open'); }
 
+    function generateInvoiceNumber() {
+        document.getElementById('posInvNum').value = 'INV-' + (1000 + dbInvoices.length + 1);
+        document.getElementById('prevInvNum').innerText = document.getElementById('posInvNum').value;
+    }
+
     function openTab(tabId, btn) {
+        if(currentUser && currentUser.role !== 'Admin' && currentUser.permissions && !currentUser.permissions.includes('ALL') && !currentUser.permissions.includes(tabId)) {
+            return alert('آپ کے پاس اس ماڈیول تک رسائی کا اختیار نہیں ہے!');
+        }
+
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         if(btn) btn.classList.add('active');
 
         if(tabId === 'liveStockTab') renderLiveStockInventory();
+        if(tabId === 'invoicesList') renderInvoicesTable();
+        if(tabId === 'supplyManTab') { populateSupplyManDropdowns(); renderSupplyManPendingInvoices(); renderKpoLogsTable(); }
+        if(tabId === 'recoveryEntry') { renderRecoveryApprovalTable(); }
+        if(tabId === 'marketCreditReportTab') { renderMarketCreditReport(); }
+        if(tabId === 'reportUdhaar') renderUdhaarReport();
         if(tabId === 'ownerDailySummary') renderOwnerDailySummary();
     }
 
@@ -869,303 +1392,690 @@
         const pass = document.getElementById('loginPassInput').value.trim();
         const found = dbUsers.find(x => x.username.toLowerCase() === uName.toLowerCase() && x.pass === pass);
         if(found) {
+            currentUser = found;
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('loggedUsername').innerText = found.username.toUpperCase();
             document.getElementById('userRoleBadge').innerText = found.role;
+            applyUserAccessPermissions();
         } else {
             alert('غلط یوزر نیم یا پاسورڈ!');
         }
     }
 
-    function logout() { document.getElementById('loginOverlay').style.display = 'flex'; }
+    function applyUserAccessPermissions() {
+        if(!currentUser) return;
+        const perms = currentUser.permissions || ['ALL'];
+        
+        document.querySelectorAll('[data-perm]').forEach(el => {
+            const reqPerm = el.getAttribute('data-perm');
+            if(currentUser.role === 'Admin' || perms.includes('ALL') || perms.includes(reqPerm)) {
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        });
 
-    function populateBookerDropdowns() {
+        filterPosShopsByBooker();
+        filterRecoveryShopsByBooker();
+    }
+
+    function logout() { 
+        currentUser = null; 
+        document.getElementById('loginOverlay').style.display = 'flex'; 
+    }
+
+    function populateUserDropdowns() {
         const bookers = dbUsers.filter(u => u.role === 'Admin' || u.role === 'Order Booker').map(u => u.username);
-        let opts = bookers.map(b => `<option value="${b}">${b}</option>`).join('');
-        document.getElementById('posBookerSelect').innerHTML = opts;
-        document.getElementById('recBookerSelect').innerHTML = opts;
-        document.getElementById('newShopBooker').innerHTML = opts;
+        let bookerOpts = bookers.map(b => `<option value="${b}">${b}</option>`).join('');
+        document.getElementById('posBookerSelect').innerHTML = bookerOpts;
+        document.getElementById('recBookerSelect').innerHTML = bookerOpts;
+        document.getElementById('newShopBooker').innerHTML = bookerOpts;
+
+        populateSupplyManDropdowns();
         filterPosShopsByBooker();
     }
 
+    function populateSupplyManDropdowns() {
+        const supplyMen = dbUsers.filter(u => u.role === 'Supply Man' || u.role === 'Admin').map(u => u.username);
+        let sOpts = supplyMen.map(s => `<option value="${s}">${s}</option>`).join('');
+        if(document.getElementById('posSupplyManSelect')) document.getElementById('posSupplyManSelect').innerHTML = sOpts;
+        if(document.getElementById('kpoSupplyManSelect')) document.getElementById('kpoSupplyManSelect').innerHTML = sOpts;
+    }
+
+    function getShopPreviousBalance(shopName) {
+        let shopInvoices = dbInvoices.filter(i => i.shop === shopName);
+        if(shopInvoices.length === 0) return 0;
+        return shopInvoices[shopInvoices.length - 1].newGrandTotalBalance || 0;
+    }
+
+    /* --- FEATURE 1: MARKET CREDIT REPORT & INDIVIDUAL SHOP LEDGER VIEW --- */
+    function renderMarketCreditReport() {
+        const routes = [...new Set(dbShops.map(s => s.route || 'Unassigned'))];
+        let routeOpts = `<option value="ALL">All Routes</option>` + routes.map(r => `<option value="${r}">${r}</option>`).join('');
+        document.getElementById('creditReportRouteFilter').innerHTML = routeOpts;
+
+        let shopOpts = `<option value="ALL">All Shops (Summary)</option>` + dbShops.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        document.getElementById('creditReportShopFilter').innerHTML = shopOpts;
+
+        const selectedRoute = document.getElementById('creditReportRouteFilter').value;
+        const selectedShop = document.getElementById('creditReportShopFilter').value;
+        const searchQuery = document.getElementById('creditReportSearch').value.toLowerCase();
+
+        const container = document.getElementById('marketCreditReportContainer');
+
+        if(selectedShop !== 'ALL') {
+            // Render Detailed Ledger for a Single Selected Shop
+            renderSingleShopLedgerView(selectedShop, container);
+            return;
+        }
+
+        // Summary View for All Shops
+        let filteredShops = dbShops.filter(shop => {
+            let matchRoute = selectedRoute === 'ALL' || shop.route === selectedRoute;
+            let matchSearch = shop.name.toLowerCase().includes(searchQuery) || (shop.owner && shop.owner.toLowerCase().includes(searchQuery));
+            let matchBooker = true;
+
+            // Booker Strict Privacy Filter
+            if(currentUser && currentUser.role === 'Order Booker') {
+                matchBooker = (shop.booker === currentUser.username);
+            }
+
+            return matchRoute && matchSearch && matchBooker;
+        });
+
+        let html = `<div class="table-responsive"><table><thead><tr>
+            <th>#</th><th>Shop Name</th><th>Owner Name</th><th>Contact</th><th>Route / Area</th><th>Assigned Booker</th><th>Credit Limit</th><th>Current Outstanding</th><th>Status</th><th>Action</th>
+        </tr></thead><tbody>`;
+
+        filteredShops.forEach((shop, idx) => {
+            let bal = getShopPreviousBalance(shop.name);
+            let limit = shop.creditLimit || 50000;
+            let isOverLimit = bal > limit;
+
+            html += `<tr>
+                <td>${idx + 1}</td>
+                <td><strong>${shop.name}</strong></td>
+                <td>${shop.owner || '--'}</td>
+                <td>${shop.contact || '--'}</td>
+                <td>${shop.route || '--'}</td>
+                <td>${shop.booker || '--'}</td>
+                <td>Rs. ${limit.toLocaleString()}</td>
+                <td style="color:${isOverLimit ? 'red' : 'black'}; font-weight:bold;">Rs. ${bal.toLocaleString()}</td>
+                <td><span style="background:${isOverLimit ? '#f8d7da' : '#d4edda'}; color:${isOverLimit ? 'red' : 'green'}; padding:2px 5px; border-radius:3px; font-weight:bold;">${isOverLimit ? '⚠️ Over Limit' : 'OK'}</span></td>
+                <td><button class="btn-print" onclick="viewSpecificShopLedger('${shop.name}')">View Ledger 📖</button></td>
+            </tr>`;
+        });
+
+        html += `</tbody></table></div>`;
+        container.innerHTML = html;
+    }
+
+    function viewSpecificShopLedger(shopName) {
+        document.getElementById('creditReportShopFilter').value = shopName;
+        renderMarketCreditReport();
+    }
+
+    function renderSingleShopLedgerView(shopName, container) {
+        const shop = dbShops.find(s => s.name === shopName);
+        const shopInvs = dbInvoices.filter(i => i.shop === shopName);
+        const shopRecs = dbRecoveries.filter(r => r.shop === shopName && r.status === 'Approved');
+
+        // Merge Invoices and Recoveries chronologically
+        let ledgerEntries = [];
+        shopInvs.forEach(i => {
+            ledgerEntries.push({ date: i.date, type: 'Sale Invoice', ref: i.invNum, debit: i.currentBillTotal, credit: 0 });
+        });
+        shopRecs.forEach(r => {
+            ledgerEntries.push({ date: r.date, type: `Recovery (${r.method})`, ref: 'REC-' + r.id.slice(-4), debit: 0, credit: r.amount });
+        });
+
+        ledgerEntries.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+        let runningBal = 0;
+        let rowsHtml = ledgerEntries.map(e => {
+            runningBal += (e.debit - e.credit);
+            return `<tr>
+                <td>${e.date}</td>
+                <td><strong>${e.type}</strong></td>
+                <td>${e.ref}</td>
+                <td style="color:green;">${e.debit ? 'Rs. ' + e.debit.toLocaleString() : '--'}</td>
+                <td style="color:blue;">${e.credit ? 'Rs. ' + e.credit.toLocaleString() : '--'}</td>
+                <td style="font-weight:bold; color:red;">Rs. ${runningBal.toLocaleString()}</td>
+            </tr>`;
+        }).join('') || `<tr><td colspan="6" style="text-align:center;">اس دوکان کی کوئی ٹرانزیکشن موجود نہیں ہے</td></tr>`;
+
+        container.innerHTML = `
+            <div class="section-box" style="border-left: 4px solid var(--primary-blue);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h3 style="color:var(--primary-blue);">${shopName} - Detailed Account Ledger</h3>
+                        <p>Route/Area: <strong>${shop ? shop.route : '--'}</strong> | Booker: <strong>${shop ? shop.booker : '--'}</strong></p>
+                    </div>
+                    <div>
+                        <button class="btn-add" onclick="document.getElementById('creditReportShopFilter').value='ALL'; renderMarketCreditReport();">Back to All Shops ↩️</button>
+                    </div>
+                </div>
+                <div class="table-responsive" style="margin-top:10px;">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Transaction Type</th><th>Reference #</th><th>Debit (Bill Total)</th><th>Credit (Paid/Recovery)</th><th>Running Balance</th></tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    function exportMarketCreditToExcel() {
+        let table = document.getElementById("marketCreditReportContainer").querySelector("table");
+        if(!table) return alert('ایکپورٹ کے لیے ڈیٹا موجود نہیں!');
+        let wb = XLSX.utils.table_to_book(table, {sheet: "Market Credit Report"});
+        XLSX.writeFile(wb, `Market_Credit_Report_${new Date().toISOString().slice(0,10)}.xlsx`);
+    }
+
+    /* --- FEATURE 2: PURCHASE IMPORT (EXCEL / PDF / IMAGE) --- */
+    function handlePurchaseImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                
+                jsonData.forEach(row => {
+                    let name = row['Product'] || row['Item'] || row['Name'] || 'Imported Product';
+                    let ctnQty = parseFloat(row['Cartons'] || row['Qty'] || 1);
+                    let packing = parseFloat(row['Packing'] || 24);
+                    let cost = parseFloat(row['Cost'] || row['Price'] || 0);
+                    let tp = parseFloat(row['TP'] || cost * 1.1);
+                    let retail = parseFloat(row['Retail'] || cost * 1.2);
+
+                    currentPurInvoiceItems.push({
+                        sku: 'SKU-' + Date.now().toString().slice(-4),
+                        category: document.getElementById('purCategory').value,
+                        name: name.toUpperCase(),
+                        pcsPerCarton: packing,
+                        cartonQty: ctnQty,
+                        totalPcs: ctnQty * packing,
+                        pieceCost: cost,
+                        tradePrice: tp,
+                        retailPrice: retail,
+                        subtotal: (ctnQty * packing) * cost
+                    });
+                });
+                renderPurInvoiceItemsTable();
+                alert('ایکسل سے اسٹاک کامیابی سے امپورٹ ہو گیا!');
+            };
+            reader.readAsArrayBuffer(file);
+        } else {
+            alert('PDF/تصویر منسلک ہو گئی ہے۔ براہ کرم مصنوعات کی تفصیلات کی تصدیق کریں۔');
+        }
+    }
+
+    function addPurchaseRowItem() {
+        let name = document.getElementById('purItemName').value.trim().toUpperCase();
+        let pcsPerCarton = parseFloat(document.getElementById('purPcsPerCarton').value) || 24;
+        let cartonQty = parseFloat(document.getElementById('purCartonQty').value) || 0;
+        let pieceCost = parseFloat(document.getElementById('purPieceCost').value) || 0;
+        let tradePrice = parseFloat(document.getElementById('purTradePricePiece').value) || pieceCost;
+        let retailPrice = parseFloat(document.getElementById('purRetailPricePiece').value) || tradePrice;
+
+        if(!name || cartonQty <= 0) return alert('پروڈکٹ کا نام اور کارٹن کی تعداد درج کریں!');
+
+        let totalPcs = cartonQty * pcsPerCarton;
+        let subtotal = totalPcs * pieceCost;
+
+        currentPurInvoiceItems.push({
+            sku: 'SKU-' + Date.now().toString().slice(-4),
+            category: document.getElementById('purCategory').value,
+            name, pcsPerCarton, cartonQty, totalPcs, pieceCost, tradePrice, retailPrice, subtotal
+        });
+
+        renderPurInvoiceItemsTable();
+        document.getElementById('purItemName').value = '';
+        document.getElementById('purCartonQty').value = '';
+    }
+
+    function renderPurInvoiceItemsTable() {
+        document.getElementById('purInvoiceItemsTbody').innerHTML = currentPurInvoiceItems.map((item, idx) => `
+            <tr>
+                <td>${item.sku}</td>
+                <td>${item.category}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.pcsPerCarton} Pcs</td>
+                <td>${item.cartonQty} Ctn</td>
+                <td>${item.totalPcs} Pcs</td>
+                <td>Rs. ${item.pieceCost}</td>
+                <td>Rs. ${item.tradePrice}</td>
+                <td>Rs. ${item.retailPrice}</td>
+                <td>Rs. ${item.subtotal.toLocaleString()}</td>
+                <td><button class="btn-delete" onclick="currentPurInvoiceItems.splice(${idx},1);renderPurInvoiceItemsTable();">X</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function saveCompletePurchaseInvoice(print) {
+        if(currentPurInvoiceItems.length === 0) return alert('پرچیز انوائس خالی ہے!');
+
+        let date = document.getElementById('purInvDate').value;
+        let supplier = document.getElementById('purSupplierName').value.trim();
+        let invNo = document.getElementById('purInvoiceNo').value.trim();
+        let category = document.getElementById('purCategory').value;
+
+        let totalAmt = currentPurInvoiceItems.reduce((a, b) => a + b.subtotal, 0);
+
+        dbPurchaseInvoices.push({
+            invNo, date, supplier, category, items: [...currentPurInvoiceItems], totalAmt
+        });
+
+        // Update Live Stock
+        currentPurInvoiceItems.forEach(item => {
+            let found = dbStock.find(s => s.name === item.name);
+            if(found) {
+                found.qty += item.totalPcs;
+                found.costPrice = item.pieceCost;
+                found.tradePrice = item.tradePrice;
+                found.retailPrice = item.retailPrice;
+            } else {
+                dbStock.push({
+                    id: 'STK_' + Date.now(),
+                    sku: item.sku,
+                    category: item.category,
+                    name: item.name,
+                    pcsPerCarton: item.pcsPerCarton,
+                    qty: item.totalPcs,
+                    costPrice: item.pieceCost,
+                    tradePrice: item.tradePrice,
+                    retailPrice: item.retailPrice
+                });
+            }
+        });
+
+        localStorage.setItem('ht_purchase_invoices', JSON.stringify(dbPurchaseInvoices));
+        localStorage.setItem('ht_stock', JSON.stringify(dbStock));
+
+        alert('پرچیز انوائس محفوظ ہو گئی اور لائیو اسٹاک اپڈیٹ ہو گیا!');
+        currentPurInvoiceItems = [];
+        renderPurInvoiceItemsTable();
+        renderLiveStockInventory();
+    }
+
+    /* --- FEATURE 3 & 4: BULK SHOPS IMPORT & BOOKER PRIVACY RESTRICTIONS --- */
     function filterPosShopsByBooker() {
         const b = document.getElementById('posBookerSelect').value;
-        const shops = dbShops.filter(s => s.booker === b);
-        document.getElementById('posShopSelect').innerHTML = shops.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        
+        let filteredShops = dbShops;
+        if(currentUser && currentUser.role === 'Order Booker') {
+            filteredShops = dbShops.filter(s => s.booker === currentUser.username);
+            document.getElementById('posBookerSelect').value = currentUser.username;
+            document.getElementById('posBookerSelect').disabled = true;
+        } else if(b) {
+            filteredShops = dbShops.filter(s => s.booker === b);
+        }
+
+        document.getElementById('posShopSelect').innerHTML = filteredShops.map(s => `<option value="${s.name}">${s.name} (${s.route || 'No Route'})</option>`).join('');
         updatePrevShopName();
     }
 
     function filterRecoveryShopsByBooker() {
         const b = document.getElementById('recBookerSelect').value;
-        const shops = dbShops.filter(s => s.booker === b);
-        document.getElementById('recShopSelect').innerHTML = shops.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+        
+        let filteredShops = dbShops;
+        if(currentUser && currentUser.role === 'Order Booker') {
+            filteredShops = dbShops.filter(s => s.booker === currentUser.username);
+            document.getElementById('recBookerSelect').value = currentUser.username;
+            document.getElementById('recBookerSelect').disabled = true;
+        } else if(b) {
+            filteredShops = dbShops.filter(s => s.booker === b);
+        }
+
+        document.getElementById('recShopSelect').innerHTML = filteredShops.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
     }
 
-    function addPurchaseRowItem() {
-        const name = document.getElementById('purItemName').value.trim().toUpperCase();
-        const cartonQty = parseFloat(document.getElementById('purCartonQty').value) || 0;
-        const pieceCost = parseFloat(document.getElementById('purPieceCost').value) || 0;
-        const tradePricePiece = parseFloat(document.getElementById('purTradePricePiece').value) || 0;
+    function importBulkShopsExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-        if(!name || cartonQty <= 0) return alert('پروڈکٹ کا نام اور کوانٹٹی درج کریں!');
-
-        currentPurInvoiceItems.push({ name, cartonQty, pieceCost, tradePricePiece, amount: cartonQty * pieceCost * 12 });
-        renderPurchaseRowItems();
-    }
-
-    function renderPurchaseRowItems() {
-        let html = '';
-        currentPurInvoiceItems.forEach((it, i) => {
-            html += `<tr><td>${it.name}</td><td>-</td><td>${it.cartonQty}</td><td>-</td><td>Rs. ${it.pieceCost}</td><td>Rs. ${it.tradePricePiece}</td><td>Rs. ${it.amount}</td><td><button class="btn-delete" onclick="currentPurInvoiceItems.splice(${i},1);renderPurchaseRowItems();">X</button></td></tr>`;
-        });
-        document.getElementById('purInvoiceItemsTbody').innerHTML = html;
-    }
-
-    function saveCompletePurchaseInvoice() {
-        currentPurInvoiceItems.forEach(it => {
-            let found = dbStock.find(s => s.name.toUpperCase() === it.name.toUpperCase());
-            if(found) {
-                found.qty += (it.cartonQty * 12);
-                found.costPrice = it.pieceCost;
-                found.tradePrice = it.tradePricePiece;
-            } else {
-                dbStock.push({ id: `STK_${Date.now()}`, name: it.name, qty: it.cartonQty * 12, costPrice: it.pieceCost, tradePrice: it.tradePricePiece });
-            }
-        });
-
-        localStorage.setItem('ht_stock', JSON.stringify(dbStock));
-        alert('پرچیز انوائس اور سٹاک کامیابی سے درج ہو گیا ہے!');
-        currentPurInvoiceItems = [];
-        renderPurchaseRowItems();
-        renderLiveStockInventory();
-    }
-
-    function uploadStockCsv() {
-        const file = document.getElementById('purCsvFile').files[0];
-        if(!file) return alert('فائل منتخب کریں!');
         const reader = new FileReader();
         reader.onload = function(e) {
-            const lines = e.target.result.split('\n');
-            lines.forEach((line, idx) => {
-                if(idx > 0 && line.trim() !== '') {
-                    const parts = line.split(',');
-                    if(parts.length >= 3) {
-                        dbStock.push({ name: parts[0].trim().toUpperCase(), qty: parseFloat(parts[1]) || 0, costPrice: parseFloat(parts[2]) || 0, tradePrice: parseFloat(parts[3]) || 0 });
-                    }
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+            jsonData.forEach(row => {
+                let name = (row['Shop Name'] || row['Shop'] || '').toString().toUpperCase().trim();
+                let owner = row['Owner'] || '';
+                let contact = row['Contact'] || '';
+                let route = row['Route'] || row['Area'] || 'General Route';
+                let booker = row['Booker'] || 'Huzaifa';
+                let creditLimit = parseFloat(row['Credit Limit'] || 50000);
+
+                if(name && !dbShops.some(s => s.name === name)) {
+                    dbShops.push({ name, owner, contact, route, creditLimit, booker });
                 }
             });
-            localStorage.setItem('ht_stock', JSON.stringify(dbStock));
-            alert('CSV سٹاک فائل کامیابی سے امپورٹ ہو گئی!');
-            renderLiveStockInventory();
+
+            localStorage.setItem('ht_shops', JSON.stringify(dbShops));
+            alert('ایکسیل سے تمام دکانیں اور ایریا گروپس امپورٹ ہو گئے!');
+            renderShops();
+            filterPosShopsByBooker();
         };
-        reader.readAsText(file);
+        reader.readAsArrayBuffer(file);
     }
 
-    function renderLiveStockInventory() {
-        document.getElementById('liveStockInventoryTbody').innerHTML = dbStock.map(s => `
-            <tr><td><strong>${s.name}</strong></td><td>General</td><td>-</td><td>Rs. ${s.costPrice || 0}</td><td>Rs. ${s.tradePrice || 0}</td><td><strong>${s.qty}</strong></td></tr>
-        `).join('');
-    }
-
-    function addSingleShop() {
-        const name = document.getElementById('newShopName').value.trim().toUpperCase();
-        const owner = document.getElementById('newOwnerName').value.trim();
-        const contact = document.getElementById('newShopContact').value.trim();
-        const route = document.getElementById('newShopRoute').value.trim();
-        const booker = document.getElementById('newShopBooker').value;
-
-        if(!name) return alert('دوکان کا نام درج کریں!');
-
-        dbShops.push({ name, owner, contact, route, booker });
-        localStorage.setItem('ht_shops', JSON.stringify(dbShops));
-        renderShops();
-        alert('شاپ کامیابی سے ایڈ ہو گئی!');
-    }
-
-    function renderShops() {
-        document.getElementById('shopsTable').innerHTML = dbShops.map((s, i) => `
-            <tr>
-                <td><strong>${s.name}</strong></td>
-                <td>${s.owner || '-'}</td>
-                <td>${s.route || '-'}</td>
-                <td>${s.contact || '-'}</td>
-                <td>${s.booker}</td>
-                <td style="color:#d32f2f; font-weight:bold;">Rs. ${getShopPreviousBalance(s.name)}</td>
-                <td>
-                    <button class="btn-print" onclick="viewShopLedger('${s.name}')">Ledger 📜</button>
-                    <button class="btn-delete" onclick="dbShops.splice(${i},1);localStorage.setItem('ht_shops',JSON.stringify(dbShops));renderShops();">Delete</button>
-                </td>
-            </tr>
-        `).join('');
-    }
-
-    function viewShopLedger(shopName) {
-        document.getElementById('modalShopTitle').innerText = `Shop Detailed Ledger: ${shopName}`;
-        const shopInvoices = dbInvoices.filter(i => i.shop.toUpperCase() === shopName.toUpperCase());
-        const shopRecoveries = dbRecoveries.filter(r => r.shop.toUpperCase() === shopName.toUpperCase());
-
-        let html = `<table><thead><tr><th>Date</th><th>Type</th><th>Ref / Inv</th><th>Amount</th><th>Extra Discount</th><th>Action</th></tr></thead><tbody>`;
-        shopInvoices.forEach(inv => {
-            html += `<tr><td>${inv.date}</td><td>Sale Invoice</td><td>${inv.invNum}</td><td>Rs. ${inv.grandTotal}</td><td>-</td><td>-</td></tr>`;
-        });
-        shopRecoveries.forEach((rec, idx) => {
-            html += `<tr><td>${rec.date}</td><td>Cash Recovery</td><td>REC-${rec.id}</td><td>Rs. ${rec.amount}</td><td>Rs. ${rec.extraDiscount || 0}</td><td><button class="btn-delete" onclick="deleteRecovery('${rec.id}')">Delete Payment</button></td></tr>`;
-        });
-        html += `</tbody></table>`;
-        document.getElementById('modalLedgerContent').innerHTML = html;
-        document.getElementById('shopLedgerModal').style.display = 'block';
-    }
-
-    function deleteRecovery(recId) {
-        dbRecoveries = dbRecoveries.filter(r => r.id !== recId);
-        localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
-        alert('وصولی کامیابی سے ڈیلیٹ ہو گئی!');
-        document.getElementById('shopLedgerModal').style.display = 'none';
-        renderDashboard();
-    }
-
-    function submitRecoveryEntry() {
-        const date = document.getElementById('recDate').value;
-        const booker = document.getElementById('recBookerSelect').value;
-        const shop = document.getElementById('recShopSelect').value;
-        const amount = parseFloat(document.getElementById('recAmount').value) || 0;
-        const extraDiscount = parseFloat(document.getElementById('recExtraDiscount').value) || 0;
-
-        if(!shop || amount <= 0) return alert('معلومات درست درج کریں!');
-
-        dbRecoveries.push({ id: `REC_${Date.now()}`, date, booker, shop, amount, extraDiscount, status: 'Approved' });
-        localStorage.setItem('ht_recoveries', JSON.stringify(dbRecoveries));
-        document.getElementById('recAmount').value = '';
-        document.getElementById('recExtraDiscount').value = '0';
-        alert('واصولی موصول ہو گئی!');
-        renderDashboard();
-    }
-
-    function renderOwnerDailySummary() {
-        const date = document.getElementById('ownerSummaryDate').value;
-        document.getElementById('summaryDateLbl').innerText = date;
-
-        const dateInvoices = dbInvoices.filter(i => i.date === date);
-        const dateRecoveries = dbRecoveries.filter(r => r.date === date);
-        const dateExpenses = dbExpenses.filter(e => e.date === date);
-
-        const totalSales = dateInvoices.reduce((a, b) => a + b.grandTotal, 0);
-        const totalUdhaar = dateInvoices.reduce((a, b) => a + b.balance, 0);
-        const totalRecovery = dateRecoveries.reduce((a, b) => a + b.amount, 0);
-        const totalExpenses = dateExpenses.reduce((a, b) => a + b.amount, 0);
-        const totalDiscount = dateInvoices.reduce((a, b) => a + b.discount, 0) + dateRecoveries.reduce((a, b) => a + (b.extraDiscount || 0), 0);
-
-        document.getElementById('sumTotalSales').innerText = `Rs. ${totalSales.toLocaleString()}`;
-        document.getElementById('sumTotalUdhaar').innerText = `Rs. ${totalUdhaar.toLocaleString()}`;
-        document.getElementById('sumTotalRecovery').innerText = `Rs. ${totalRecovery.toLocaleString()}`;
-        document.getElementById('sumTotalExpenses').innerText = `Rs. ${totalExpenses.toLocaleString()}`;
-        document.getElementById('sumTotalDiscount').innerText = `Rs. ${totalDiscount.toLocaleString()}`;
-        document.getElementById('sumNetProfit').innerText = `Rs. ${(totalSales * 0.15 - totalExpenses).toLocaleString()}`;
-    }
-
+    /* --- USER MANAGEMENT WITH ACCESS CONTROLS --- */
     function addNewUser() {
-        const username = document.getElementById('newUsername').value.trim();
-        const pass = document.getElementById('newUserPass').value.trim();
-        const role = document.getElementById('newUserRole').value;
+        let username = document.getElementById('newUsername').value.trim();
+        let pass = document.getElementById('newUserPass').value.trim();
+        let role = document.getElementById('newUserRole').value;
 
-        if(!username || !pass) return alert('یوزر نیم اور پاسورڈ درج کریں!');
+        if(!username || !pass) return alert('یوزر کی معلومات درج کریں!');
 
-        dbUsers.push({ username, pass, role });
+        let perms = [];
+        if(role === 'Admin') {
+            perms = ['ALL'];
+        } else {
+            document.querySelectorAll('#permissionCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+                perms.push(cb.value);
+            });
+        }
+
+        let existingIdx = dbUsers.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+        if(existingIdx >= 0) {
+            dbUsers[existingIdx] = { username, pass, role, permissions: perms };
+        } else {
+            dbUsers.push({ username, pass, role, permissions: perms });
+        }
+
         localStorage.setItem('ht_users', JSON.stringify(dbUsers));
+        alert('یوزر کی معلومات اور تمام پرمیشنز محفوظ ہو گئیں!');
         renderUsersTable();
-        populateBookerDropdowns();
-        alert('نیا یوزر کامیابی سے شامل ہو گیا!');
+        populateUserDropdowns();
     }
 
     function renderUsersTable() {
         document.getElementById('usersTable').innerHTML = dbUsers.map((u, i) => `
-            <tr><td><strong>${u.username}</strong></td><td>****</td><td>${u.role}</td><td><button class="btn-delete" onclick="dbUsers.splice(${i},1);localStorage.setItem('ht_users',JSON.stringify(dbUsers));renderUsersTable();">Delete</button></td></tr>
+            <tr>
+                <td><strong>${u.username}</strong></td>
+                <td>${u.role}</td>
+                <td>${u.permissions.includes('ALL') ? '<strong style="color:green;">Full Access (Admin)</strong>' : u.permissions.length + ' Modules Allowed'}</td>
+                <td><button class="btn-delete" onclick="dbUsers.splice(${i},1);localStorage.setItem('ht_users',JSON.stringify(dbUsers));renderUsersTable();populateUserDropdowns();">Delete</button></td>
+            </tr>
         `).join('');
     }
 
+    /* --- FEATURE 5: BACKUP SYSTEM (DOWNLOAD & RESTORE) --- */
     function downloadBackup() {
-        const data = { dbInvoices, dbShops, dbStock, dbRecoveries, dbExpenses, dbUsers };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `Hussain_Traders_ERP_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
+        let backupData = {
+            ht_invoices: dbInvoices,
+            ht_purchase_invoices: dbPurchaseInvoices,
+            ht_shops: dbShops,
+            ht_stock: dbStock,
+            ht_recoveries: dbRecoveries,
+            ht_kpo_logs: dbKpoLogs,
+            ht_expenses: dbExpenses,
+            ht_returns: dbReturns,
+            ht_company_claims: dbCompanyClaims,
+            ht_users: dbUsers,
+            ht_cash_in_hand: dbCashInHand
+        };
+
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData));
+        let dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", `HussainTraders_ERP_Backup_${new Date().toISOString().slice(0,10)}.json`);
+        dlAnchorElem.click();
     }
 
-    function restoreBackup() {
-        const file = document.getElementById('restoreBackupFile').files[0];
-        if(!file) return alert('فائل منتخب کریں!');
+    function restoreData(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = JSON.parse(e.target.result);
-            if(data.dbInvoices) localStorage.setItem('ht_invoices', JSON.stringify(data.dbInvoices));
-            if(data.dbShops) localStorage.setItem('ht_shops', JSON.stringify(data.dbShops));
-            if(data.dbStock) localStorage.setItem('ht_stock', JSON.stringify(data.dbStock));
-            if(data.dbRecoveries) localStorage.setItem('ht_recoveries', JSON.stringify(data.dbRecoveries));
-            if(data.dbExpenses) localStorage.setItem('ht_expenses', JSON.stringify(data.dbExpenses));
-            if(data.dbUsers) localStorage.setItem('ht_users', JSON.stringify(data.dbUsers));
-            alert('ڈیٹا کامیابی سے ریسٹور ہو گیا ہے!');
-            location.reload();
+            try {
+                const restored = JSON.parse(e.target.result);
+                Object.keys(restored).forEach(key => {
+                    localStorage.setItem(key, typeof restored[key] === 'object' ? JSON.stringify(restored[key]) : restored[key]);
+                });
+                alert('تمام بیک اپ ڈیٹا کامیابی سے بحال (Restore) ہو گیا ہے!');
+                location.reload();
+            } catch(err) {
+                alert('فائل فارمیٹ غلط ہے!');
+            }
         };
         reader.readAsText(file);
     }
 
-    function toggleAiChat() {
-        const box = document.getElementById('aiChatBox');
-        box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+    /* --- GENERAL ERP HELPER FUNCTIONS --- */
+    function updateStockDatalist() {
+        document.getElementById('stockDatalist').innerHTML = dbStock.map(s => `<option value="${s.name}">[SKU: ${s.sku || 'N/A'}] Trade: Rs.${s.tradePrice} | Stock: ${s.qty} Pcs</option>`).join('');
     }
 
-    function sendAiMessage() {
-        const input = document.getElementById('aiQueryInput');
-        const txt = input.value.trim();
-        if(!txt) return;
-        const msgDiv = document.getElementById('aiChatMessages');
-        msgDiv.innerHTML += `<div style="background:#eef5ff; padding:6px; border-radius:6px; margin-bottom:6px; text-align:right;">${txt}</div>`;
-        input.value = '';
-
-        setTimeout(() => {
-            msgDiv.innerHTML += `<div style="background:#e1f5fe; padding:6px; border-radius:6px; margin-bottom:6px;">آپ کے سوال کا جواب: سسٹم مکمل کام کر رہا ہے۔</div>`;
-            msgDiv.scrollTop = msgDiv.scrollHeight;
-        }, 500);
+    function autoFillItemDetails() {
+        const name = document.getElementById('posStockInput').value.trim();
+        const found = dbStock.find(s => s.name.toUpperCase() === name.toUpperCase());
+        if(found) {
+            document.getElementById('posItemTradeRate').value = found.tradePrice || 0;
+            document.getElementById('posItemRetailRate').value = found.retailPrice || found.tradePrice || 0;
+            recalcPosPieceFromCarton();
+        }
     }
 
-    function getShopPreviousBalance(shopName) {
-        const shopInvoices = dbInvoices.filter(i => i.shop.toUpperCase() === shopName.toUpperCase());
-        const totalSales = shopInvoices.reduce((acc, i) => acc + i.grandTotal, 0);
-        const approvedRec = dbRecoveries.filter(r => r.shop.toUpperCase() === shopName.toUpperCase()).reduce((acc, r) => acc + r.amount + (r.extraDiscount || 0), 0) + shopInvoices.reduce((acc, i) => acc + i.paid, 0);
-        return totalSales - approvedRec;
+    function recalcPosPieceFromCarton() {
+        const name = document.getElementById('posStockInput').value.trim();
+        const ctnQty = parseFloat(document.getElementById('posItemCtnQty').value) || 0;
+        const found = dbStock.find(s => s.name.toUpperCase() === name.toUpperCase());
+        const packing = found ? (found.pcsPerCarton || 12) : 12;
+        if(ctnQty > 0) {
+            document.getElementById('posItemPcsQty').value = ctnQty * packing;
+        }
+    }
+
+    function addPosItem() {
+        const name = document.getElementById('posStockInput').value.trim().toUpperCase();
+        const ctnQty = parseFloat(document.getElementById('posItemCtnQty').value) || 0;
+        const pcsQty = parseFloat(document.getElementById('posItemPcsQty').value) || 0;
+        const tradeRate = parseFloat(document.getElementById('posItemTradeRate').value) || 0;
+        const retailRate = parseFloat(document.getElementById('posItemRetailRate').value) || 0;
+        const discType = document.getElementById('posItemDiscType').value;
+        const discVal = parseFloat(document.getElementById('posItemDiscVal').value) || 0;
+
+        if(!name || pcsQty <= 0) return alert('پروڈکٹ کی معلومات اور تعداد صحیح درج کریں!');
+
+        let fullTradeAmount = pcsQty * tradeRate;
+        let discountAmount = discType === 'Percent' ? (fullTradeAmount * discVal) / 100 : discVal;
+        let netRowTotal = fullTradeAmount - discountAmount;
+
+        currentPosItems.push({ name, ctnQty, pcsQty, tradeRate, retailRate, discType, discVal, discountAmount, fullTradeAmount, netRowTotal });
+        renderPosItemsTable();
+
+        document.getElementById('posStockInput').value = '';
+        document.getElementById('posItemCtnQty').value = '0';
+        document.getElementById('posItemPcsQty').value = '1';
+    }
+
+    function renderPosItemsTable() {
+        let html = '';
+        currentPosItems.forEach((it, i) => {
+            html += `<tr>
+                <td><strong>${it.name}</strong></td>
+                <td>${it.ctnQty} Ctn / ${it.pcsQty} Pcs</td>
+                <td>Rs. ${it.tradeRate}</td>
+                <td>Rs. ${it.retailRate}</td>
+                <td>Rs. ${it.discountAmount.toFixed(1)}</td>
+                <td>Rs. ${it.netRowTotal.toFixed(1)}</td>
+                <td><button class="btn-delete" onclick="currentPosItems.splice(${i},1);renderPosItemsTable();">X</button></td>
+            </tr>`;
+        });
+        document.getElementById('posItemsTbody').innerHTML = html;
+        calculatePosTotals();
+    }
+
+    function calculatePosTotals() {
+        let fullTradeSubtotal = currentPosItems.reduce((acc, item) => acc + item.fullTradeAmount, 0);
+        let itemDiscountsTotal = currentPosItems.reduce((acc, item) => acc + item.discountAmount, 0);
+        let remainingAfterDisc = fullTradeSubtotal - itemDiscountsTotal;
+
+        let taxPercent = parseFloat(document.getElementById('posTaxPercent').value) || 0;
+        let taxAmount = (remainingAfterDisc * taxPercent) / 100;
+
+        let currentBillTotal = remainingAfterDisc + taxAmount;
+        let shopName = document.getElementById('posShopSelect').value;
+        let prevBal = getShopPreviousBalance(shopName);
+        let recoveryPaid = parseFloat(document.getElementById('posPaid').value) || 0;
+
+        let newGrandTotalBalance = (currentBillTotal + prevBal) - recoveryPaid;
+
+        document.getElementById('posTradeSubtotalLbl').innerText = `Rs. ${fullTradeSubtotal.toLocaleString()}`;
+        document.getElementById('posItemDiscountsLbl').innerText = `Rs. ${itemDiscountsTotal.toLocaleString()}`;
+        document.getElementById('posRemainingSubtotalLbl').innerText = `Rs. ${remainingAfterDisc.toLocaleString()}`;
+        document.getElementById('posPrevBalanceLbl').innerText = `Rs. ${prevBal.toLocaleString()}`;
+        document.getElementById('posGrandTotalLbl').innerText = `Rs. ${newGrandTotalBalance.toLocaleString()}`;
+    }
+
+    function updatePrevShopName() { calculatePosTotals(); }
+
+    function savePosInvoice(shouldPrint) {
+        if(currentPosItems.length === 0) return alert('آرڈر خالی ہے!');
+
+        const invNum = document.getElementById('posInvNum').value;
+        const date = document.getElementById('posInvDate').value;
+        const deliveryDate = document.getElementById('posDeliveryDate').value;
+        const payType = document.getElementById('posPayType').value;
+        const booker = document.getElementById('posBookerSelect').value;
+        const supplyMan = document.getElementById('posSupplyManSelect').value;
+        const shop = document.getElementById('posShopSelect').value;
+
+        let fullTradeSubtotal = currentPosItems.reduce((acc, item) => acc + item.fullTradeAmount, 0);
+        let itemDiscountsTotal = currentPosItems.reduce((acc, item) => acc + item.discountAmount, 0);
+        let remainingAfterDisc = fullTradeSubtotal - itemDiscountsTotal;
+        let taxPercent = parseFloat(document.getElementById('posTaxPercent').value) || 0;
+        let taxAmount = (remainingAfterDisc * taxPercent) / 100;
+        let currentBillTotal = remainingAfterDisc + taxAmount;
+        let prevBal = getShopPreviousBalance(shop);
+        let recoveryPaid = parseFloat(document.getElementById('posPaid').value) || 0;
+        let newGrandTotalBalance = (currentBillTotal + prevBal) - recoveryPaid;
+
+        const newInv = { 
+            invNum, date, deliveryDate, payType, booker, supplyMan, shop, 
+            items: [...currentPosItems], fullTradeSubtotal, itemDiscountsTotal, taxPercent, taxAmount, 
+            currentBillTotal, prevBal, recoveryPaid, newGrandTotalBalance,
+            kpoProcessed: false
+        };
+
+        dbInvoices.push(newInv);
+        localStorage.setItem('ht_invoices', JSON.stringify(dbInvoices));
+
+        alert('آرڈر پنشنگ کامیابی سے محفوظ ہو گیا!');
+        currentPosItems = [];
+        generateInvoiceNumber();
+        renderPosItemsTable();
+        renderDashboard();
+        renderInvoicesTable();
     }
 
     function renderDashboard() {
-        let totalSales = dbInvoices.reduce((a, b) => a + b.grandTotal, 0);
-        let totalExpenses = dbExpenses.reduce((a, b) => a + b.amount, 0);
-        let totalDiscount = dbInvoices.reduce((a, b) => a + b.discount, 0);
-        let totalUdhaar = 0;
-
-        dbShops.forEach(s => totalUdhaar += getShopPreviousBalance(s.name));
+        let grossSales = dbInvoices.reduce((a, x) => a + x.currentBillTotal, 0);
+        let totalReturns = dbReturns.reduce((a, x) => a + x.totalRefund, 0);
+        let netSales = grossSales - totalReturns;
+        
+        let totalUdhaar = dbShops.reduce((a, x) => a + getShopPreviousBalance(x.name), 0);
+        let totalRecovery = dbRecoveries.filter(r => r.status === 'Approved').reduce((a, x) => a + x.amount, 0);
+        let totalExpenses = dbExpenses.reduce((a, x) => a + x.amount, 0);
 
         document.getElementById('dashTotalUdhaar').innerText = `Rs. ${totalUdhaar.toLocaleString()}`;
-        document.getElementById('dashTotalSales').innerText = `Rs. ${totalSales.toLocaleString()}`;
+        document.getElementById('dashTodaySales').innerText = `Rs. ${netSales.toLocaleString()}`;
+        document.getElementById('dashTodayRecovery').innerText = `Rs. ${totalRecovery.toLocaleString()}`;
+        document.getElementById('dashCashInHand').innerText = `Rs. ${dbCashInHand.toLocaleString()}`;
         document.getElementById('dashTotalExpenses').innerText = `Rs. ${totalExpenses.toLocaleString()}`;
-        document.getElementById('dashTotalDiscount').innerText = `Rs. ${totalDiscount.toLocaleString()}`;
+        document.getElementById('dashTotalReturns').innerText = `Rs. ${totalReturns.toLocaleString()}`;
     }
 
-    function initTradingCanvas() {
-        const canvas = document.getElementById('tradingBgCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    function renderLiveStockInventory() {
+        document.getElementById('liveStockInventoryTbody').innerHTML = dbStock.map(s => `
+            <tr>
+                <td>${s.sku || 'N/A'}</td>
+                <td>${s.category || 'General'}</td>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.pcsPerCarton || 12} Pcs</td>
+                <td>Rs. ${s.costPrice || 0}</td>
+                <td>Rs. ${s.tradePrice || 0}</td>
+                <td>Rs. ${s.retailPrice || 0}</td>
+                <td><strong style="color:${s.qty<10?'red':'green'};">${Math.floor(s.qty/(s.pcsPerCarton||12))} Ctn / ${s.qty%(s.pcsPerCarton||12)} Pcs</strong></td>
+                <td><strong>${s.qty} Pcs</strong></td>
+            </tr>
+        `).join('');
+    }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0056b3';
-            for(let i = 0; i < canvas.width; i += 40) {
-                let h = Math.sin(Date.now() / 1000 + i) * 50 + 100;
-                ctx.fillRect(i, canvas.height - h, 15, h);
-            }
-            requestAnimationFrame(draw);
-        }
-        draw();
+    function renderInvoicesTable() {
+        document.getElementById('invoicesTable').innerHTML = dbInvoices.map(inv => `
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><strong>${inv.invNum}</strong></td>
+                <td>${inv.date}</td>
+                <td>${inv.deliveryDate}</td>
+                <td>${inv.booker}</td>
+                <td>${inv.supplyMan || '--'}</td>
+                <td><strong>${inv.shop}</strong></td>
+                <td>${inv.payType}</td>
+                <td>Rs. ${inv.currentBillTotal.toLocaleString()}</td>
+                <td>${inv.kpoProcessed ? '<span style="color:green; font-weight:bold;">Processed</span>' : '<span style="color:orange; font-weight:bold;">Pending</span>'}</td>
+                <td><button class="btn-delete" onclick="dbInvoices=dbInvoices.filter(i=>i.invNum!='${inv.invNum}');localStorage.setItem('ht_invoices',JSON.stringify(dbInvoices));renderInvoicesTable();">Delete</button></td>
+            </tr>
+        `).join('') || `<tr><td colspan="11" style="text-align:center;">کوئی انوائس نہیں ہے</td></tr>`;
+    }
+
+    function renderShops() {
+        document.getElementById('shopsTable').innerHTML = dbShops.map(s => `
+            <tr>
+                <td><strong>${s.name}</strong></td>
+                <td>${s.owner || '--'}</td>
+                <td>${s.route || '--'}</td>
+                <td>${s.booker || '--'}</td>
+                <td>Rs. ${s.creditLimit || 0}</td>
+                <td style="color:red; font-weight:bold;">Rs. ${getShopPreviousBalance(s.name).toLocaleString()}</td>
+            </tr>
+        `).join('');
+    }
+
+    function addSingleShop() {
+        let name = document.getElementById('newShopName').value.trim().toUpperCase();
+        let owner = document.getElementById('newOwnerName').value.trim();
+        let contact = document.getElementById('newShopContact').value.trim();
+        let route = document.getElementById('newShopRoute').value.trim();
+        let creditLimit = parseFloat(document.getElementById('newShopCreditLimit').value) || 50000;
+        let booker = document.getElementById('newShopBooker').value;
+
+        if(!name) return alert('دوکان کا نام درج کریں!');
+
+        dbShops.push({ name, owner, contact, route, creditLimit, booker });
+        localStorage.setItem('ht_shops', JSON.stringify(dbShops));
+        alert('دوکان شامل ہو گئی!');
+        renderShops();
+        filterPosShopsByBooker();
+    }
+
+    function addExpenseRecord() {
+        let date = document.getElementById('expDate').value;
+        let title = document.getElementById('expTitle').value.trim();
+        let amount = parseFloat(document.getElementById('expAmount').value) || 0;
+
+        if(!title || amount <= 0) return alert('معلومات درست درج کریں!');
+
+        dbExpenses.push({ id: `EXP_${Date.now()}`, date, title, amount });
+        dbCashInHand -= amount;
+        localStorage.setItem('ht_expenses', JSON.stringify(dbExpenses));
+        localStorage.setItem('ht_cash_in_hand', dbCashInHand);
+
+        alert('اخراجات درج ہو گئے!');
+        renderDashboard();
     }
 </script>
 </body>
